@@ -7,6 +7,7 @@ public class String_Tree {
     private String data;
     private String_Tree parent;
     private List<String_Tree> children;
+    private List<String_Tree> hojas;
 
     private String_Tree() {
     }
@@ -14,15 +15,18 @@ public class String_Tree {
     public String_Tree(String data) {
         this.data = data;
         this.children = new ArrayList<>();
+        this.hojas= new ArrayList<>();
     }
 
     public String_Tree(String data, List<String_Tree> children) {
         this.data = data;
         this.children = children;
+        this.hojas= new ArrayList<>();
     }
 
-    public void add_children(String_Tree children) {
+    public String_Tree add_children(String_Tree children) {
         this.children.add(children);
+        return children;
     }
 
     public String getData() {
@@ -35,6 +39,62 @@ public class String_Tree {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public String_Tree clone_top() {
+        List<String_Tree> aux_hojas = new ArrayList<>();
+        //System.out.println(data);
+        String_Tree result = new String_Tree(data);
+        for (int i = 0; i < children.size(); ++i) {
+            result.children.add(children.get(i).clone(aux_hojas));
+        }
+        //System.out.println(children.size());
+        if (children.size() == 0) {
+            //System.out.println("YEP");
+            aux_hojas.add(result);
+        }
+        result.hojas = aux_hojas;
+        return result;
+    }
+
+
+    private String_Tree clone(List<String_Tree> aux_hojas) {
+        //System.out.println(data);
+        String_Tree result = new String_Tree(data);
+        for (int i = 0; i < children.size(); ++i) {
+            result.children.add(children.get(i).clone(aux_hojas));
+        }
+        //System.out.println(children.size());
+        if (children.size() == 0) {
+            //System.out.println("YEP");
+            aux_hojas.add(result);
+        }
+        return result;
+    }
+
+    public List<String_Tree> getHojas() {
+        return hojas;
+    }
+
+    public void print() {
+        //System.out.println(data);
+        for (int i = 0; i < children.size(); ++i) {
+            print_recursion(data,children.get(i));
+        }
+    }
+
+    private void print_recursion(String data, String_Tree node) {
+        data += " " + node.getData();
+        //System.out.println(data);
+        List<String_Tree> children = node.getChildren();
+        if (children.size() <= 0) {
+            System.out.println(data);
+        }
+        else {
+            for (int i = 0; i < children.size(); ++i) {
+                print_recursion(data, children.get(i));
+            }
+        }
     }
 }
 

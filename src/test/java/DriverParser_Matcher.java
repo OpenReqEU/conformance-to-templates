@@ -1,5 +1,8 @@
 import upc.req_quality.adapter.Parser_Matcher;
+import upc.req_quality.adapter.String_Tree;
 import upc.req_quality.exeption.BadBNFSyntaxException;
+
+import java.util.List;
 
 public class DriverParser_Matcher {
     public static void main(String[] args) {
@@ -12,8 +15,8 @@ public class DriverParser_Matcher {
                 "<opt-condition> <np> <vp-starting-with-modal> <np> " +
                 "<opt-details> | " +
                 "<opt-condition> <np> <modal> \"PROVIDE\" <np> " +
-                "\"WITH THE ABILITY\" <infinitive-vp> <np> <opt-details> | " +
-                "<opt-condition> <np> <modal> \"BE ABLE\" <infinitive-vp> " +
+                "\"WITH_THE_ABILITY\" <infinitive-vp> <np> <opt-details> | " +
+                "<opt-condition> <np> <modal> \"BE_ABLE\" <infinitive-vp> " +
                 "<np> <opt-details>\n" +
                 "<opt-details> ::= \"\" |" +
                 "<token-sequence-without-subordinate-conjunctions>\n" +
@@ -32,6 +35,31 @@ public class DriverParser_Matcher {
         }
         parser.print_trees();
 
+
         parser.print_matcher();
+    }
+
+    private static void test_clone() {
+        String_Tree aux = new String_Tree("main");
+        String_Tree aux1 = new String_Tree("left");
+        String_Tree aux2 = new String_Tree("down-left");
+        String_Tree aux3 = new String_Tree("right");
+
+        aux.add_children(aux1);
+        aux1.add_children(aux2);
+        aux.add_children(aux3);
+
+        aux.print();
+
+        System.out.println("\n\n");
+
+        String_Tree aux_clone = aux.clone_top();
+
+        aux_clone.print();
+
+        List<String_Tree> aux_hojas = aux_clone.getHojas();
+        System.out.println(aux_hojas.size());
+
+        for (int i = 0; i < aux_hojas.size(); ++i) System.out.println(aux_hojas.get(i).getData());
     }
 }

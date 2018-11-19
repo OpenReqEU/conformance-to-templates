@@ -33,7 +33,7 @@ public class Parser_Matcher {
     public void generate_matcher() throws BadBNFSyntaxException{
         //System.out.println(input);
         input = input.replaceAll("\"\"","<All>");
-        System.out.println(input);
+        //System.out.println(input);
         //String me = "";
         //for(int i = 0; i < input.length(); ++i) me += " " + input.charAt(i)  + i;
         //System.out.println(me);
@@ -41,7 +41,7 @@ public class Parser_Matcher {
         String[] sentences = input.split("((^<.*?> ::=)|(\n<.*?> ::=))");
         //System.out.println(sentences.length);
         //System.out.println(sentences[0]);
-        //for (int i = 0; i < sentences.length; ++i) System.out.println(sentences[i]);
+        for (int i = 0; i < sentences.length; ++i) System.out.println(sentences[i]);
         Pattern pattern = Pattern.compile("((^<.*?> ::=)|(\n<.*?> ::=))");
         Matcher matcher = pattern.matcher(input);
 
@@ -64,13 +64,16 @@ public class Parser_Matcher {
             ++count;
         }
 
+        //System.out.println("\n\n ---------------------------------");
+
         Mymatcher = new String_Tree("main");
         //System.out.println(sentences[2]);
         String[] parts = sentences[1].split("\\|");
         //for (int i = 0; i < parts.length; ++i) System.out.println(parts.length + " " + parts[i]);
-        for (int i = 0; i < parts.length; ++i) {
+        Ini_tree_builder_OR(sentences[1],Mymatcher);
+        /*for (int i = 0; i < parts.length; ++i) {
             Ini_tree_builder_OR(parts[i],Mymatcher);
-        }
+        }*/
     }
 
     private String_Tree Ini_tree_builder_OR(String sentence, String_Tree father) throws BadBNFSyntaxException{
@@ -85,34 +88,53 @@ public class Parser_Matcher {
     }
 
     private void Ini_tree_builder_Section(String sentence, String_Tree father) throws BadBNFSyntaxException{
-        //System.out.println(sentence);
+        //System.out.println(sentence + "tree_builer_section__________________");
         String[] parts = sentence.split("\\s+");
         //System.out.println(parts.length);
-        //for(int i = 0; i < parts.length; ++i) System.out.println("num:" + parts.length +  " " + parts[i]);
+        /*for(int i = 0; i < parts.length; ++i) {
+            System.out.println("num:" + parts.length +  " " + parts[i]);
+        }*/
         List<String_Tree> precessors = new ArrayList<>();
         precessors.add(father);
         for (int i = 0; i < parts.length; ++i) {
-            System.out.println(":_______________________________________");
-            for (int k = 0; k < precessors.size(); ++k) {
-                System.out.println(precessors.get(k).getData());
-            }
-            System.out.println(":_______________________________________\n");
-            List<String_Tree> new_precessors = new ArrayList<>();
-            for (int j = 0; j < precessors.size(); ++j) {
+            //System.out.println(parts[i]);
+            //System.out.println(":_______________________________________");
+            /*for (int k = 0; k < precessors.size(); ++k) {
+                //System.out.println(precessors.get(k).getData());
+            }*/
+            //System.out.println(":_______________________________________\n");
+            /*if (precessors.size() <= 0) {
+                List<String_Tree> new_precessors = new ArrayList<>();
                 List<String_Tree> aux = new ArrayList<>();
-                System.out.println("padre: " + precessors.get(j).getData() + "siguiente: " + parts[i]);
-                /*if(!parts[i].equals(""))*/ aux = Ini_tree_builder_Node(parts[i], precessors.get(j));
+                if (!parts[i].equals("")) {
+                    System.out.println("padre: " + precessors.get(j).getData() + "siguiente: " + parts[i]);
+                    aux = Ini_tree_builder_Node(parts[i], precessors.get(j));
+                }
                 for (int m = 0; m < aux.size(); ++m) {
                     new_precessors.add(aux.get(m));
                 }
-                //for (int k = 0; k < precessors.size(); ++k) System.out.println(precessors.get(k).getData());
-            }
-            precessors = new_precessors;
+                precessors = new_precessors;
+            }*/
+            //else {
+                List<String_Tree> new_precessors = new ArrayList<>();
+                for (int j = 0; j < precessors.size(); ++j) {
+                    List<String_Tree> aux = new ArrayList<>();
+                    if (!parts[i].equals("")) {
+                        //System.out.println("padre: " + precessors.get(j).getData() + "siguiente: " + parts[i]);
+                        aux = Ini_tree_builder_Node(parts[i], precessors.get(j));
+                    }
+                    for (int m = 0; m < aux.size(); ++m) {
+                        new_precessors.add(aux.get(m));
+                    }
+                    //for (int k = 0; k < precessors.size(); ++k) System.out.println(precessors.get(k).getData());
+                }
+                if (!parts[i].equals("")) precessors = new_precessors;
+            //}
         }
     }
 
     private List<String_Tree> Ini_tree_builder_Node(String data, String_Tree father) throws BadBNFSyntaxException {
-        System.out.println(data);
+        //System.out.println(data);
         boolean found = false;
         List<String_Tree> new_childrens = new ArrayList<>();
         if (data.contains("\"")) {
@@ -129,22 +151,27 @@ public class Parser_Matcher {
                     found = true;
                     break;
                 default:
-                    if (data.equals("<non-punctuation-token>")) System.out.println("Estamos");
+                    //if (data.equals("<non-punctuation-token>")) System.out.println("Estamos");
                     if (permited_clauses.contains(data)) {
-                        System.out.println("VAMOS BIEN");
+                        //System.out.println("VAMOS BIEN");
                         found = true;
                     }
                     else {
                         if (trees.containsKey(data)) {
                             //System.out.println("FOUND");
+                            //System.out.println("\n\n ---------------------------------");
+                            //if (data.equals("<conditional-keyword>")) print_trees();
                             merge_arbol_top(father, trees.get(data), new_childrens);
+                            //for (int i = 0; i < new_childrens.size(); ++i) System.out.println("childrens___" + i + ": " + new_childrens.get(i).getData());
+                            //if (data.equals("<conditional-keyword>")) print_trees();
+                            //System.out.println("---------------------------------\n\n ");
                         } else throw new BadBNFSyntaxException("The BNF diagram is not well build. The word " + data + " is not recognized by the parser");
                     }
                     break;
             }
         }
         if (found) {
-            System.out.println("Padre: " + father.getData());
+            //System.out.println("Padre: " + father.getData());
             List<String_Tree> children = father.getChildren();
             boolean repeated = false;
             for (int i = 0; ((!repeated) && (i < children.size())); ++i) {
@@ -156,21 +183,23 @@ public class Parser_Matcher {
                 }
             }
             if (!repeated) {
-                new_childrens.add(new String_Tree(data));
-                father.add_children(new String_Tree(data));
+                String_Tree aux = father.add_children(new String_Tree(data));
+                new_childrens.add(aux);
             }
         }
-        System.out.println("SALIMOS2");
+        //System.out.println("SALIMOS2");
+        //for (int i = 0; i < new_childrens.size(); ++i) System.out.println("childrens___" + i + ": " + new_childrens.get(i).getData());
         return new_childrens;
     }
     private void merge_arbol_top(String_Tree father, String_Tree tree_to_merge, List<String_Tree> new_childrens) {
         //Mezcla los hijos del arbol padre con el arbol auxiliar(tree_to_merge)
-        System.out.println("Mezclamos: " + father.getData() + "  con: " + tree_to_merge.getData());
+        //System.out.println("Mezclamos: " + father.getData() + "  con: " + tree_to_merge.getData());
         List<String_Tree> children_to_merge = tree_to_merge.getChildren();
         for (int i = 0; i < children_to_merge.size(); ++i) {
             merge_arbol(father,children_to_merge.get(i),new_childrens);
+            //for (int j = 0; j < new_childrens.size(); ++j) System.out.println("childrens___" + j + ": " + new_childrens.get(j).getData());
         }
-        System.out.println("SALIMOS1");
+        //System.out.println("SALIMOS1");
     }
 
 
@@ -189,17 +218,25 @@ public class Parser_Matcher {
                 for (int j = 0; j < children_to_merge.size(); ++j) {
                     merge_arbol(children_father,children_to_merge.get(j),new_childrens);
                 }
+                if (children_to_merge.size() == 0) new_childrens.add(children_father);
             }
         }
         if (!found) {
-            father.add_children(tree_to_merge);
-            new_childrens.add(tree_to_merge);//esta mal--_> hay que incluir todas las hojas del arbol tree_to_merge
+            //System.out.println("estamos: "+tree_to_merge.getData());
+            String_Tree aux = tree_to_merge.clone_top();
+            father.add_children(aux);
+            List<String_Tree> aux_hojas = aux.getHojas();
+            //System.out.println(aux_hojas.size());
+            for (int i = 0; i < aux_hojas.size(); ++i) {
+                new_childrens.add(aux_hojas.get(i));
+            }
+            //new_childrens.add(tree_to_merge.);//esta mal--_> hay que incluir todas las hojas del arbol tree_to_merge
             //System.out.println("1.Ponemos el nodo: " + tree_to_merge.getData() + " al padre: " + father.getData());
         }
     }
 
     public void print_trees() {
-        System.out.println("");
+        //System.out.println("");
         for (Map.Entry<String, String_Tree> entry : trees.entrySet()) {
             String_Tree aux_tree = entry.getValue();
             String data = aux_tree.getData();
@@ -207,7 +244,7 @@ public class Parser_Matcher {
             for (int i = 0; i < children.size(); ++i) {
                 print_recursion(data,children.get(i));
             }
-            System.out.println("");
+            //System.out.println("");
         }
     }
 
