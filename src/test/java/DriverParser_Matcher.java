@@ -6,7 +6,7 @@ import java.util.List;
 
 public class DriverParser_Matcher {
     public static void main(String[] args) {
-        String input1 = "\n<boilerplate> ::= <NP> <NP> <VP> \"something\" | <VP> <yep> | <NP> <nothing>\n" +
+        /*String input1 = "\n<boilerplate> ::= <NP> <NP> <VP> \"something\" | <VP> <yep> | <NP> <nothing>\n" +
                         "<modal> ::= <VP> | <NP>\n" +
                         "<yep> ::= <VP> <NP> <modal>\n" +
                         "<nothing> ::= <VP> | \"\"";
@@ -33,10 +33,14 @@ public class DriverParser_Matcher {
         } catch (BadBNFSyntaxException e) {
             e.printStackTrace();
         }
-        parser.print_trees();
-
-
+        //parser.print_trees();
         parser.print_matcher();
+
+        String[] tokens = {"If","you","lie","lie","lie","lie"};
+        String[] chunks = {"NP","<non-punctuation-token>","<NP>","<VP-starting-with-modal>","<np>","<token-sequence-without-subordinate-conjunctions>"};
+
+        boolean result = parser.match(tokens,chunks);
+        System.out.println(result);
     }
 
     private static void test_clone() {
@@ -60,6 +64,6 @@ public class DriverParser_Matcher {
         List<String_Tree> aux_hojas = aux_clone.getHojas();
         System.out.println(aux_hojas.size());
 
-        for (int i = 0; i < aux_hojas.size(); ++i) System.out.println(aux_hojas.get(i).getData());
+        for (int i = 0; i < aux_hojas.size(); ++i) System.out.println(aux_hojas.get(i).getData());*/
     }
 }

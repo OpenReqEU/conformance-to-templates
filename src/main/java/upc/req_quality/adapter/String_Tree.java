@@ -9,7 +9,9 @@ public class String_Tree {
     private List<String_Tree> children;
     private List<String_Tree> hojas;
 
-    private String_Tree() {
+    public String_Tree() {
+        this.children = new ArrayList<>();
+        this.hojas = new ArrayList<>();
     }
 
     public String_Tree(String data) {
@@ -97,41 +99,5 @@ public class String_Tree {
         }
     }
 }
-
-
-/*public class String_Tree<String> {
-    private Node<String> root;
-
-    public String_Tree(String rootData) {
-        root = new Node<String>();
-        root.data = rootData;
-        root.children = new ArrayList<Node<String>>();
-    }
-
-    public static class Node<String> {
-        private String data;
-        private Node<String> parent;
-        private List<Node<String>> children;
-
-        public Node() {}
-
-        public Node(String data) {
-            this.data = data;
-        }
-
-        public Node(String data, List<Node<String>> children) {
-            this.data = data;
-            this.children = children;
-        }
-
-        public void add_children(Node<String> node) {
-            children.add(node);
-        }
-
-        public void setData(String data) {
-            this.data = data;
-        }
-    }
-}*/
 
 

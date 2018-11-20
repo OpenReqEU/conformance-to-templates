@@ -1,10 +1,18 @@
 package upc.req_quality.service;
 
-import org.json.JSONObject;
-import upc.req_quality.entity.Requirement;
+import upc.req_quality.entity.*;
 
 import java.util.List;
 
 public interface ConformanceService {
-    public JSONObject check_conformance(List<Requirement> reqs);
+
+    public List<Requirement> check_conformance(List<Requirement> reqs);
+
+    public PermitedClauses check_permited_clauses();
+
+    public void enter_new_model(Model model);
+
+    public List<Model> check_all_models();
+
+    public void clear_db();
 }

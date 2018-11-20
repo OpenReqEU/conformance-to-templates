@@ -14,20 +14,22 @@ public class Parser_Matcher {
     private HashSet<String> words;
     private HashSet<String> permited_clauses;
     private String[] permited_static;
+    //private List<String>
 
     private Parser_Matcher() {
     }
 
-    public Parser_Matcher(String input) {
+    public Parser_Matcher(String input, String[] permited_static) {
         this.input = input;
         this.trees = new HashMap<>();
         this.words = new HashSet<>();
         this.permited_clauses = new HashSet<>();
-        this.permited_static = new String[]{"<np>","<vp>","<NP>","<VP>","<non-punctuation-token>","<vp-starting-with-modal>","<modal>","<infinitive-vp>","<token-sequence-without-subordinate-conjunctions>"};
+        this.permited_static = permited_static;
         for (int i = 0; i < permited_static.length; ++i) {
             //System.out.println(permited[i]);
             permited_clauses.add(permited_static[i]);
         }
+        this.Mymatcher = new String_Tree();
     }
 
     public void generate_matcher() throws BadBNFSyntaxException{
@@ -41,7 +43,7 @@ public class Parser_Matcher {
         String[] sentences = input.split("((^<.*?> ::=)|(\n<.*?> ::=))");
         //System.out.println(sentences.length);
         //System.out.println(sentences[0]);
-        for (int i = 0; i < sentences.length; ++i) System.out.println(sentences[i]);
+        //for (int i = 0; i < sentences.length; ++i) System.out.println(sentences[i]);
         Pattern pattern = Pattern.compile("((^<.*?> ::=)|(\n<.*?> ::=))");
         Matcher matcher = pattern.matcher(input);
 
@@ -97,49 +99,30 @@ public class Parser_Matcher {
         List<String_Tree> precessors = new ArrayList<>();
         precessors.add(father);
         for (int i = 0; i < parts.length; ++i) {
-            //System.out.println(parts[i]);
-            //System.out.println(":_______________________________________");
-            /*for (int k = 0; k < precessors.size(); ++k) {
-                //System.out.println(precessors.get(k).getData());
-            }*/
-            //System.out.println(":_______________________________________\n");
-            /*if (precessors.size() <= 0) {
-                List<String_Tree> new_precessors = new ArrayList<>();
+            List<String_Tree> new_precessors = new ArrayList<>();
+            for (int j = 0; j < precessors.size(); ++j) {
                 List<String_Tree> aux = new ArrayList<>();
                 if (!parts[i].equals("")) {
-                    System.out.println("padre: " + precessors.get(j).getData() + "siguiente: " + parts[i]);
+                    //System.out.println("padre: " + precessors.get(j).getData() + "siguiente: " + parts[i]);
                     aux = Ini_tree_builder_Node(parts[i], precessors.get(j));
                 }
                 for (int m = 0; m < aux.size(); ++m) {
                     new_precessors.add(aux.get(m));
                 }
-                precessors = new_precessors;
-            }*/
-            //else {
-                List<String_Tree> new_precessors = new ArrayList<>();
-                for (int j = 0; j < precessors.size(); ++j) {
-                    List<String_Tree> aux = new ArrayList<>();
-                    if (!parts[i].equals("")) {
-                        //System.out.println("padre: " + precessors.get(j).getData() + "siguiente: " + parts[i]);
-                        aux = Ini_tree_builder_Node(parts[i], precessors.get(j));
-                    }
-                    for (int m = 0; m < aux.size(); ++m) {
-                        new_precessors.add(aux.get(m));
-                    }
-                    //for (int k = 0; k < precessors.size(); ++k) System.out.println(precessors.get(k).getData());
-                }
-                if (!parts[i].equals("")) precessors = new_precessors;
-            //}
+                //for (int k = 0; k < precessors.size(); ++k) System.out.println(precessors.get(k).getData());
+            }
+            if (!parts[i].equals("")) precessors = new_precessors;
         }
     }
 
     private List<String_Tree> Ini_tree_builder_Node(String data, String_Tree father) throws BadBNFSyntaxException {
         //System.out.println(data);
+        data = data.toLowerCase();
         boolean found = false;
         List<String_Tree> new_childrens = new ArrayList<>();
         if (data.contains("\"")) {
             found = true;
-            String aux_data = data.replaceAll("\"","");
+            data = data.replaceAll("\"","");
             words.add(data);
         }
         else {
@@ -147,7 +130,7 @@ public class Parser_Matcher {
                 case "":
                     new_childrens.add(father);
                     break;
-                case "<All>":
+                case "<all>":
                     found = true;
                     break;
                 default:
@@ -271,7 +254,52 @@ public class Parser_Matcher {
         }
     }
 
-    public boolean match() {
-        return false;
+    public boolean match(String[] tokens, String[] tokens_tagged, String[] chunks) {
+        //List<String> to_match = new ArrayList<>();
+        //for (String s: words) System.out.println(s);
+        /*for (int i = 0; i < tokens.length; ++i) {
+            if (words.contains(tokens[i].toLowerCase())) to_match.add(tokens[i].toLowerCase());
+            else to_match.add(chunks[i].toLowerCase());
+        }*/
+        //for (int i = 0; i < to_match.size(); ++i) System.out.println(to_match.get(i));
+        boolean found = false;
+        List<String_Tree> children = Mymatcher.getChildren();
+        for (int i = 1; ((!found) && (i < children.size())); ++i) {
+            found = match_recursion(children.get(i),tokens, tokens_tagged, chunks,0);
+        }
+        if (found) return true;
+        else return false;
+    }
+
+    private boolean match_recursion(String_Tree tree, String[] tokens, String[] tokens_tagged, String[] chunks, int index) {
+        //System.out.println(tree.getData());
+        //System.out.println(to_match.get(index));
+        boolean b = tree.getData().toLowerCase().equals(tokens[index]) | tree.getData().toLowerCase().equals(tokens[index]) | tree.getData().toLowerCase().equals(tokens[index]);
+        if (!b) return false;
+        else {
+            List<String_Tree> children = tree.getChildren();
+            if (children.size() == 0) return true;
+            else {
+                boolean found = false;
+                for (int i = 0; ((!found) && (i < children.size())); ++i) {
+                    found = match_recursion(children.get(i),tokens, tokens_tagged, chunks,index+1);
+                }
+                if (found) return true;
+                else return false;
+            }
+        }
+    }
+
+    public String[] getPermited_static() {
+        return permited_static;
+    }
+
+    public void setPermited_static(String[] permited_static) {
+        this.permited_static = permited_static;
+        this.permited_clauses = new HashSet<>();
+        for (int i = 0; i < permited_static.length; ++i) {
+            //System.out.println(permited[i]);
+            permited_clauses.add(permited_static[i]);
+        }
     }
 }
