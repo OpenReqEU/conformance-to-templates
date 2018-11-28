@@ -12,7 +12,7 @@ import java.util.List;
 public class ConformanceServiceImpl implements ConformanceService {
 
     @Override
-    public List<Requirement> check_conformance(List<Requirement> reqs) {
+    public Requirements check_conformance(List<Requirement> reqs) {
 
         List<Requirement> result = new ArrayList<>();
 
@@ -38,14 +38,16 @@ public class ConformanceServiceImpl implements ConformanceService {
             System.out.println(ok);
         }
 
-        return result;
+        return new Requirements(result);
     }
 
     @Override
     public PermitedClauses check_permited_clauses() {
         AdapterFactory af = AdapterFactory.getInstance();
-        String[] permited_clauses = af.check_permited_clauses();
-        PermitedClauses aux = new PermitedClauses(null,permited_clauses);
+        String[] permited_pos_tags = af.check_permited_pos_tags();
+        String[] permited_sentence_tags = af.check_permited_sentence_tags();
+        String[] permited_matcher_tags = af.check_matcher_tags();
+        PermitedClauses aux = new PermitedClauses(permited_pos_tags,permited_sentence_tags,permited_matcher_tags);
         return aux;
     }
 
@@ -56,7 +58,7 @@ public class ConformanceServiceImpl implements ConformanceService {
     }
 
     @Override
-    public List<Model> check_all_models() {
+    public Models check_all_models() {
         AdapterFactory af = AdapterFactory.getInstance();
         return af.check_all_models();
     }

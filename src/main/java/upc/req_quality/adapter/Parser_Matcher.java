@@ -1,5 +1,6 @@
 package upc.req_quality.adapter;
 
+import com.google.common.collect.ObjectArrays;
 import upc.req_quality.exeption.BadBNFSyntaxException;
 
 import java.util.*;
@@ -14,9 +15,15 @@ public class Parser_Matcher {
     private HashSet<String> words;
     private HashSet<String> permited_clauses;
     private String[] permited_static;
-    //private List<String>
+    private static String[] matcher_tags = {"<*>","<all>"};
 
-    private Parser_Matcher() {
+    public static String[] getMatcher_tags() {
+        String[] aux = {"|"};
+        return ObjectArrays.concat(aux,matcher_tags,String.class);
+    }
+
+    //hacerla privada, es publica por los tests
+    public Parser_Matcher() {
     }
 
     public Parser_Matcher(String input, String[] permited_static) {
@@ -28,6 +35,9 @@ public class Parser_Matcher {
         for (int i = 0; i < permited_static.length; ++i) {
             //System.out.println(permited[i]);
             permited_clauses.add(permited_static[i]);
+        }
+        for (int i = 0; i < matcher_tags.length; ++i) {
+            permited_clauses.add(matcher_tags[i]);
         }
         this.Mymatcher = new String_Tree();
     }
@@ -130,9 +140,9 @@ public class Parser_Matcher {
                 case "":
                     new_childrens.add(father);
                     break;
-                case "<all>":
+                /*case "<all>":
                     found = true;
-                    break;
+                    break;*/
                 default:
                     //if (data.equals("<non-punctuation-token>")) System.out.println("Estamos");
                     if (permited_clauses.contains(data)) {
@@ -148,7 +158,7 @@ public class Parser_Matcher {
                             //for (int i = 0; i < new_childrens.size(); ++i) System.out.println("childrens___" + i + ": " + new_childrens.get(i).getData());
                             //if (data.equals("<conditional-keyword>")) print_trees();
                             //System.out.println("---------------------------------\n\n ");
-                        } else throw new BadBNFSyntaxException("The BNF diagram is not well build. The word " + data + " is not recognized by the parser");
+                        } else throw new BadBNFSyntaxException("The BNF diagram is not well build. The word " + data + " was not recognized by the parser");
                     }
                     break;
             }
@@ -264,28 +274,68 @@ public class Parser_Matcher {
         //for (int i = 0; i < to_match.size(); ++i) System.out.println(to_match.get(i));
         boolean found = false;
         List<String_Tree> children = Mymatcher.getChildren();
-        for (int i = 1; ((!found) && (i < children.size())); ++i) {
+        for (int i = 0; ((!found) && (i < children.size())); ++i) {
             found = match_recursion(children.get(i),tokens, tokens_tagged, chunks,0);
         }
         if (found) return true;
-        else return false;
+        else return false; //throw exception main clause vacia
     }
 
     private boolean match_recursion(String_Tree tree, String[] tokens, String[] tokens_tagged, String[] chunks, int index) {
         //System.out.println(tree.getData());
         //System.out.println(to_match.get(index));
-        boolean b = tree.getData().toLowerCase().equals(tokens[index]) | tree.getData().toLowerCase().equals(tokens[index]) | tree.getData().toLowerCase().equals(tokens[index]);
-        if (!b) return false;
+
+        List<String_Tree> children = tree.getChildren();
+        boolean b1 = tree.getData().toLowerCase().equals(tokens[index]);
+        boolean b2 = tree.getData().toLowerCase().equals(tokens_tagged[index]);
+        boolean b3 = tree.getData().toLowerCase().equals(chunks[index]);
+        if (!b1 && !b2 && !b3) return false;
         else {
-            List<String_Tree> children = tree.getChildren();
-            if (children.size() == 0) return true;
-            else {
-                boolean found = false;
-                for (int i = 0; ((!found) && (i < children.size())); ++i) {
-                    found = match_recursion(children.get(i),tokens, tokens_tagged, chunks,index+1);
+            if (b1 || b2) {
+                //matches a [postag] or a "word", so we continue the the matcher with the children
+                if (children.size() == 0) return true;
+                else {
+                    boolean found = false;
+                    for (int i = 0; ((!found) && (i < children.size())); ++i) {
+                        found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index + 1);
+                    }
+                    return found;
                 }
-                if (found) return true;
-                else return false;
+            } else {
+                if (children.size() == 0) return true;
+                else {
+                    //matches a sentence tag (nor [postag] nor "word"), so we pass by all elements that are inside the same sentence tag,
+                    //unless some child has a [postag] or "word" that matches some element with the same sentence tag
+                    HashSet<String> children_data = new HashSet<>();
+                    //children_data keeps the children tags
+                    for (int i = 0; i < children.size(); ++i) {
+                        children_data.add(children.get(i).getData());
+                    }
+                    String data_permanent = chunks[index];
+                    //data_permanent keeps the initial sentence tag
+                    boolean different = false;
+                    ++index;
+                    while (!different && index < tokens.length /*&& children_data.size() > 0*/) {
+                        if (!chunks[index].equals(data_permanent)) different = true;
+                        else {
+                            if (children_data.contains(tokens[index]) || children_data.contains(tokens_tagged[index])) {
+                                boolean found = false;
+                                for (int i = 0; !found && i < children.size(); ++i) {
+                                    if (tokens[index].equals(children.get(i).getData()) || tokens_tagged[index].equals(children.get(i).getData())) found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index);
+                                }
+                                return found;
+                            }
+                            ++index;
+                        }
+                    }
+                    if (different) {
+                        boolean found = false;
+                        for (int i = 0; ((!found) && (i < children.size())); ++i) {
+                            found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index);
+                        }
+                        return found;
+                    } else return false;
+                }
             }
         }
     }
@@ -301,5 +351,9 @@ public class Parser_Matcher {
             //System.out.println(permited[i]);
             permited_clauses.add(permited_static[i]);
         }
+    }
+
+    public void setMymatcher(String_Tree main) {
+        this.Mymatcher = main;
     }
 }
