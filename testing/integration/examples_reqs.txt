@@ -36,3 +36,31 @@ true
 
 13. The S&T module shall be able to launch the SFI local S&T application as a separate process.
 true
+
+
+---------------------------------------------------------------------------------------------------
+
+1. The Surveillance and Tracking module shall provide the system administrator with the ability to monitor system configuration changes posted to the database.
+
+2. If the guest is registered, the system should display the customer-specific menu to the guest.
+
+3. If the guest is not registered, the system should display the standard menu to the guest.
+
+4. After the guest has selected the function "Place order", the system shall display the menu to the guest
+----------------------------------------------------------------------------------------------------
+The system should check whether the guest is registered.
+After the guest has selected the function "Place order", the system shall display the menu to the guest.
+If the guest is registered, the system should display the customer-specific menu to the guest.
+If the guest is not registered, the system should display the standard menu to the guest.
+The system shall provide the guest with the ability to select dishes from the menu. As soon as the guest has selected a dish from the menu, the system shall add the dish to the guest's order.
+
+
+After the system has added the dish selected by the guest tot he guest's order, the system shall provide the guest with the ability to add special requests to his order.
+The system shall provide the guest with the ability to delete items from his order.
+The system shall provide the guest with the ability to place his order.
+The system shall inform the guest wether his order has been accepted XOR rejected.
+As soon as the dishes have been prepared, the system shall inform the guest that the dishes are ready for collection.
+After the guest has collected his dishes, the system shall add the order to the bill.
+If the chef has rejected the guest's order, the system should ask the guest whether the guest would like to choose another dish.
+
+

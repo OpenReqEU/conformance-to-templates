@@ -16,8 +16,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig {
     private static final String SWAGGER_API_VERSION = "0.1";
     private static final String LICENCE_TEXT = "License";
-    private static final String title = "Requirement Conformance to Templates API";
-    private static final String description = "REST API for check conformance to templates using opennlp";
+    private static final String title = "Requirement Conformance to Templates";
+    private static final String description = "The check-conformance-to-templates microservice checks that the text of the " +
+            "requirements received in the JSON follow one of the requirement templates defined. For doing so, the requirements" +
+            " are first converted to include their part-of-speech (POS) tags and their sentence tags. Afterwards, they are checked " +
+            "with respect to the different templates.\n\n" +
+            "Description of right writing of templates:\n\n" +
+            "The API uses UTF-8 charset.";
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()

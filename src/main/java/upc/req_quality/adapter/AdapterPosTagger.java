@@ -6,6 +6,10 @@ import java.util.List;
 
 public interface AdapterPosTagger {
 
+    public String[] getPos_tags();
+
+    public String[] getSentence_tags();
+
     public String[] tokenizer(String sentence);
 
     public String[] pos_tagger(String[] tokens);

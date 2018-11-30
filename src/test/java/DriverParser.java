@@ -7,7 +7,7 @@ import upc.req_quality.exeption.BadBNFSyntaxException;
 public class DriverParser {
 
     public static void main(String[] args) {
-        String input2 = "#<main> ::= \n" +
+       /* String input2 = "#<main> ::= \n" +
                 "    <opt-condition> <np> (md) <vp> <np> <*> |\n" +
                 "    <opt-condition> <np> <modal> \"PROVIDE\" <np> \"WITH\" \"THE\" \"ABILITY\" <vp> <np> <*> |\n" +
                 "    <opt-condition> <np> <modal> \"BE\" \"ABLE\" <vp> <np> <*>\n" +
@@ -22,6 +22,6 @@ public class DriverParser {
             e.printStackTrace();
         }
         parser.print_trees();
-        parser.print_matcher();
+        parser.print_matcher();*/
     }
 }

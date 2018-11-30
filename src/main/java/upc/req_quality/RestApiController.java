@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import upc.req_quality.entity.*;
+import upc.req_quality.exeption.BadRequestException;
 import upc.req_quality.service.ConformanceService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
 
 @RestController
 @RequestMapping(value = "/upc/reqquality/check-conformance-to-templates")
@@ -20,62 +20,45 @@ public class RestApiController {
     @Autowired
     ConformanceService conformanceService;
 
-    /*
-
-    @CrossOrigin
-    @RequestMapping(value = "/DB/AddReqs", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Add requirements to the Semilar library database", notes = "This method is only a precondition when using semilar component in other operations." +
-            " It is responsible for processing the requirements and saving them in a database. For a good performance of the API, very long sentences will be ignored. However" +
-            " the processing of requirements can take several minutes. ")
-    @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-            @ApiResponse(code=410, message = "Not Found"),
-            @ApiResponse(code=411, message = "Bad request"),
-            @ApiResponse(code=511, message = "Component Error")})
-    public ResponseEntity<?> addRequirements(@ApiParam(value="OpenreqJson with requirements", required = true, example = "SQ-132") @RequestBody Requirements json) {
-        try {
-            similarityService.addRequirements(json.getRequirements());
-            return new ResponseEntity<>(null,HttpStatus.OK);
-        } catch (ComponentException e) {
-            return getComponentError(e);
-        } catch (BadRequestException e) {
-            return getResponseBadRequest(e);
-        } catch (NotFoundException e) {
-            return getResponseNotFound(e);
-        }
-    }
-     */
-
     @CrossOrigin
     @RequestMapping(value="/Conformance", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Check requirements conformance to templates", notes = "The operation returns the ids" +
+            "of the requirements that do not conform to any template of the chosen organization saved in the database. " +
+            "To transform the requirements the operation can use different libraries. The available library is OpenNLP. " +
+            "In the future more libraries will be added.")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
             @ApiResponse(code=410, message = "Not Found")})
-    public Requirements check_conformance(@ApiParam(value="A Json with requirements", required = true, example = "SQ-132") @RequestBody Requirements json) {
-        return conformanceService.check_conformance(json.getRequirements());
+    public Requirements check_conformance(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization,
+                                          @ApiParam(value="The library to use", required = true, example = "OpenNLP") @RequestParam String library,
+                                          @ApiParam(value="A OpenReqJson with requirements", required = true, example = "SQ-132") @RequestBody Requirements json) throws BadRequestException {
+        return conformanceService.check_conformance(library,organization,json.getRequirements());
     }
 
     @RequestMapping(value="/Clauses", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns the API's permited clauses", notes = "")
-    public PermitedClauses check_permited_clauses() {
-        return conformanceService.check_permited_clauses();
+    @ApiOperation(value = "Returns the API's permitted clauses", notes = "Returns the different clauses permitted with the library selected and the particular API clauses. " +
+            "The available library is OpenNLP. In the future more libraries will be added.")
+    @ApiResponses(value = {@ApiResponse(code=200, message = "OK")})
+    public PermitedClauses check_permited_clauses(@ApiParam(value="The name of the library", required = true, example = "OpenNLP") @RequestParam String library) throws BadRequestException{
+        return conformanceService.check_permited_clauses(library);
     }
 
-    @RequestMapping(value="/InModels", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void enter_new_model(@RequestBody List<Model> json) {
-        for (int i = 0; i < json.size(); ++i) {
-            Model aux_model = json.get(i);
-            conformanceService.enter_new_model(aux_model);
-        }
-        return;
+    @RequestMapping(value="/InTemplates", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Save templates to the database", notes = "This operation save the specified templates to the database. Is needed to follow the rules explained in the top description" +
+            " for a proper functioning. ")
+    public void enter_new_templates(@RequestBody Templates json) throws BadRequestException{
+        conformanceService.enter_new_templates(json);
     }
 
-    @RequestMapping(value="/OutModels", method = RequestMethod.GET)
-    public Models check_models() {
-        return conformanceService.check_all_models();
+    @RequestMapping(value="/OutTemplates", method = RequestMethod.GET)
+    @ApiOperation(value = "Show the templates saved on the database", notes = "This operation show the templates of the specified organization")
+    public Templates check_templates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) throws SQLException {
+        return conformanceService.check_all_templates(organization);
     }
 
-    @RequestMapping(value="/DeleteModels", method = RequestMethod.DELETE)
-    public void clear_models() {
-        conformanceService.clear_db();
+    @RequestMapping(value="/DeleteTemplates", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete templates on the database", notes = "This operation deletes all the templates of the specified organization")
+    public void clear_templates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) throws SQLException {
+        conformanceService.clear_db(organization);
         return;
     }
 }

@@ -7,7 +7,8 @@ public class DriverOpenNLP {
     public static void main(String[] args) {
 
         AdapterPosTagger tagger = new OpenNLP_PosTagger();
-        String text = "The S&T module shall command the database to send the orbit configuration files to the Satellite Control Centre.";
+        String text = "If the guest is not registered, the system should display the standard menu to the guest.\n" +
+                "The system shall provide the guest with the ability to select dishes from the menu. As soon as the guest has selected a dish from the menu, the system shall add the dish to the guest's order.";
 
         Requirement aux_req = new Requirement("1",text);
 

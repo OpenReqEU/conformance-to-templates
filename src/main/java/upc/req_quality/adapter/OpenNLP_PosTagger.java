@@ -56,25 +56,29 @@ WP$ Possessive wh­pronoun
 WRB Wh­adverb
      */
 
-    private static String[] pos_tags = new String[]{"(cc)","(cd)","(dt)","(ex)","(fw)","(in)","(jj)","(jjr)","(jjs)","(ls)","(md)","(nn)","(nns)","(nnp)","(nnps)","(pdt)","(pos)","(prp)","(prp$)",
+    private String[] pos_tags = new String[]{"(cc)","(cd)","(dt)","(ex)","(fw)","(in)","(jj)","(jjr)","(jjs)","(ls)","(md)","(nn)","(nns)","(nnp)","(nnps)","(pdt)","(pos)","(prp)","(prp$)",
                                                     "(rb)","(rbr)","(rbs)","(rp)","(sym)","(to)","(uh)","(vb)","(vbd)","(vbg)","(vbn)","(vbp)","(vbp)","(vbz)","(wdt)","(wp)","(wp$)","(wrb)"};
-    private static String[] sentence_tags = new String[]{"<np>","<vp>","<pp>"};
+    private String[] sentence_tags = new String[]{"<np>","<vp>","<pp>"};
 
-    public static String[] getPos_tags() {
+    @Override
+    public String[] getPos_tags() {
         return pos_tags;
     }
 
-    public static String[] getSentence_tags() {
+    @Override
+    public String[] getSentence_tags() {
         return sentence_tags;
     }
 
 
+    @Override
     public String[] tokenizer(String sentence) {
         Tokenizer tokenizer = WhitespaceTokenizer.INSTANCE;
         String[] tokens = tokenizer.tokenize(sentence);
         return tokens;
     }
 
+    @Override
     public String[] pos_tagger(String[] tokens) {
 
         POSModel model = null;
@@ -95,6 +99,7 @@ WRB Wh­adverb
         return tags;
     }
 
+    @Override
     public String[] chunker(String[] tokens, String[] tokens_tagged) {
 
         ChunkerModel model = null;
@@ -111,12 +116,12 @@ WRB Wh­adverb
         for (int i = 0; i < chunks.length; ++i) {
             chunks[i] = chunks[i].toLowerCase();
             if (chunks[i].contains("vp")) chunks[i] = "<vp>";
-            else if (chunks[i].contains("pp")) chunks[i] = "<pp>";
             else chunks[i] = "<np>";
         }
         return chunks;
     }
 
+    @Override
     public List<SpanOut> chunker_spans(String[] tokens, String[] tokens_tagged) {
 
         ChunkerModel model = null;
