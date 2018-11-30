@@ -87,7 +87,10 @@ WRB Wh­adverb
         }
 
         POSTaggerME tagger = new POSTaggerME(model);
-        String[] tags= tagger.tag(tokens);
+        String[] tags = tagger.tag(tokens);
+        for (int i = 0; i < tags.length; ++i) {
+            tags[i] = "("+tags[i].toLowerCase()+")";
+        }
 
         return tags;
     }
@@ -105,7 +108,12 @@ WRB Wh­adverb
 
         ChunkerME chunker = new ChunkerME(model);
         String[] chunks = chunker.chunk(tokens,tokens_tagged);
-
+        for (int i = 0; i < chunks.length; ++i) {
+            chunks[i] = chunks[i].toLowerCase();
+            if (chunks[i].contains("vp")) chunks[i] = "<vp>";
+            else if (chunks[i].contains("pp")) chunks[i] = "<pp>";
+            else chunks[i] = "<np>";
+        }
         return chunks;
     }
 

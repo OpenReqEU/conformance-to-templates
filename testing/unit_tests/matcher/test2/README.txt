@@ -10,3 +10,10 @@ tree4 -> req1 -> false
 tree5 -> req1 -> false
 tree8 -> req1 -> false
 
+tree1 -> req2 -> true
+tree2 -> req2 -> true
+tree3 -> req2 -> false
+tree4 -> req2 -> true
+tree5 -> req2 -> false
+tree8 -> req2 -> true
+

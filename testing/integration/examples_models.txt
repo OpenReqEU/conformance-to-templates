@@ -1,0 +1,9 @@
+--------------------------------------------------------
+#<main> ::= 
+    <opt-condition> <np> (md) <vp> <np> <*> |
+    <opt-condition> <np> <modal> "PROVIDE" <np> "WITH" "THE" "ABILITY" <vp> <np> <*> |
+    <opt-condition> <np> <modal> "BE" "ABLE" <vp> <np> <*>
+#<conditional-keyword> ::= "IF" | "AFTER" | "AS" "SOON" "AS" | "AS" "LONG" "AS"
+#<modal> ::= "SHALL" | "SHOULD" | "WOULD"
+#<opt-condition> ::= <conditional-keyword> | (all)
+--------------------------------------------------------

@@ -1,0 +1,9 @@
+{
+    "tokens": [
+        "Hola", "como","va"],
+    "tokens_tags": [
+        "(NN)","(Algo)","(interesante)"],
+    "sentence_tags": [
+        "<np>","<np>","<vp>"]}
+    
+

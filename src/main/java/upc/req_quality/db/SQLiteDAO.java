@@ -61,6 +61,7 @@ public class SQLiteDAO implements Model_database {
 
     @Override
     public List<Model> getAllModels() throws SQLException{
+        System.out.println("Getting all models");
         String sql = "SELECT id, description, name FROM model";
 
         List<Model> models = new ArrayList<>();

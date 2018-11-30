@@ -9,6 +9,7 @@ import java.util.List;
 
 public class DriverMatcher {
 
+    //clase auxiliar
     private static class TagsAndOuput {
 
         private String[] tokens;
@@ -63,15 +64,39 @@ public class DriverMatcher {
         String PATH = "/home/ferran/Documents/trabajo/repositories/conformance_to_templates";
 
         System.out.println("Tests with one element on the matcher");
-        one_test(1, true,PATH+"/testing/unit_tests/matcher/test1/tree.txt", PATH+"/testing/unit_tests/matcher/test1/req1.json");
+        one_test(1, true,PATH+"/testing/unit_tests/matcher/test1/tree1.txt", PATH+"/testing/unit_tests/matcher/test1/req1.json");
+        one_test(2, false,PATH+"/testing/unit_tests/matcher/test1/tree2.txt", PATH+"/testing/unit_tests/matcher/test1/req1.json");
+        one_test(3, false,PATH+"/testing/unit_tests/matcher/test1/tree3.txt", PATH+"/testing/unit_tests/matcher/test1/req1.json");
+
+        one_test(4, false,PATH+"/testing/unit_tests/matcher/test1/tree1.txt", PATH+"/testing/unit_tests/matcher/test1/req2.json");
+        one_test(5, false,PATH+"/testing/unit_tests/matcher/test1/tree2.txt", PATH+"/testing/unit_tests/matcher/test1/req2.json");
+        one_test(6, false,PATH+"/testing/unit_tests/matcher/test1/tree3.txt", PATH+"/testing/unit_tests/matcher/test1/req2.json");
+
+        one_test(7, true,PATH+"/testing/unit_tests/matcher/test1/tree1.txt", PATH+"/testing/unit_tests/matcher/test1/req3.json");
+        one_test(8, false,PATH+"/testing/unit_tests/matcher/test1/tree2.txt", PATH+"/testing/unit_tests/matcher/test1/req3.json");
+        one_test(9, false,PATH+"/testing/unit_tests/matcher/test1/tree3.txt", PATH+"/testing/unit_tests/matcher/test1/req3.json");
+
+        one_test(9, true,PATH+"/testing/unit_tests/matcher/test1/tree1.txt", PATH+"/testing/unit_tests/matcher/test1/req4.json");
+        one_test(10, false,PATH+"/testing/unit_tests/matcher/test1/tree2.txt", PATH+"/testing/unit_tests/matcher/test1/req4.json");
+        one_test(11, true,PATH+"/testing/unit_tests/matcher/test1/tree3.txt", PATH+"/testing/unit_tests/matcher/test1/req4.json");
+
 
         System.out.println("\nTests with two elements on the matcher");
-        one_test(1, true,PATH+"/testing/unit_tests/matcher/test2/tree1.txt", PATH+"/testing/unit_tests/matcher/test1/req1.json");
-        one_test(2, false,PATH+"/testing/unit_tests/matcher/test2/tree2.txt", PATH+"/testing/unit_tests/matcher/test1/req1.json");
-        one_test(3, false,PATH+"/testing/unit_tests/matcher/test2/tree3.txt", PATH+"/testing/unit_tests/matcher/test1/req1.json");
-        one_test(4, false,PATH+"/testing/unit_tests/matcher/test2/tree4.txt", PATH+"/testing/unit_tests/matcher/test1/req1.json");
-        one_test(5, false,PATH+"/testing/unit_tests/matcher/test2/tree5.txt", PATH+"/testing/unit_tests/matcher/test1/req1.json");
-        one_test(6, false,PATH+"/testing/unit_tests/matcher/test2/tree6.txt", PATH+"/testing/unit_tests/matcher/test1/req1.json");
+        one_test(1, false,PATH+"/testing/unit_tests/matcher/test2/tree1.txt", PATH+"/testing/unit_tests/matcher/test2/req1.json");
+        one_test(2, false,PATH+"/testing/unit_tests/matcher/test2/tree2.txt", PATH+"/testing/unit_tests/matcher/test2/req1.json");
+        one_test(3, false,PATH+"/testing/unit_tests/matcher/test2/tree3.txt", PATH+"/testing/unit_tests/matcher/test2/req1.json");
+        one_test(4, false,PATH+"/testing/unit_tests/matcher/test2/tree4.txt", PATH+"/testing/unit_tests/matcher/test2/req1.json");
+        one_test(5, false,PATH+"/testing/unit_tests/matcher/test2/tree5.txt", PATH+"/testing/unit_tests/matcher/test2/req1.json");
+        one_test(6, false,PATH+"/testing/unit_tests/matcher/test2/tree6.txt", PATH+"/testing/unit_tests/matcher/test2/req1.json");
+
+        one_test(7, true,PATH+"/testing/unit_tests/matcher/test2/tree1.txt", PATH+"/testing/unit_tests/matcher/test2/req2.json");
+        one_test(8, true,PATH+"/testing/unit_tests/matcher/test2/tree2.txt", PATH+"/testing/unit_tests/matcher/test2/req2.json");
+        one_test(9, false,PATH+"/testing/unit_tests/matcher/test2/tree3.txt", PATH+"/testing/unit_tests/matcher/test2/req2.json");
+        one_test(10, true,PATH+"/testing/unit_tests/matcher/test2/tree4.txt", PATH+"/testing/unit_tests/matcher/test2/req2.json");
+        one_test(11, false,PATH+"/testing/unit_tests/matcher/test2/tree5.txt", PATH+"/testing/unit_tests/matcher/test2/req2.json");
+        one_test(12, true,PATH+"/testing/unit_tests/matcher/test2/tree8.txt", PATH+"/testing/unit_tests/matcher/test2/req2.json");
+
+        System.out.println("\nTests with <*> and (all) tags");
 
 
     }

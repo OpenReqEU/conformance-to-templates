@@ -1,0 +1,38 @@
+1. The S&T module shall command the database to send the orbit configuration files to the Satellite Control Centre.
+true
+
+2. The S&T module shall supply an SOT Operator role for monitoring purposes only.
+true
+
+3. The S&T module shall periodically poll the database for EDTM CSI information.
+true
+
+4. The S&T module shall present the operator with visual notification in case an alarm arises in the Ground Station or the Satellite Control Centre.
+false
+
+5. As soon as the visual notification is presented, the SOT Operator shall restart the local S&T module.
+true
+
+6. The S&T module shall notify the database when a reported anomaly is fixed and it's closed.
+false
+
+7. The S&T module shall write the polled CSM accompanied by a time-stamp and ground station ID data into the database.
+true
+
+8. The S&T module shall poll UGS status data using SMP interface.
+true
+
+9. The S&T module shall keep track of the latest configuration files sent to the Satellite Control Centres and Ground Stations.
+true
+
+10. The S&T module shall time out if there is no connection to the Ground Station components and local S&T module.
+false
+
+11. The S&T module shall supply the control mode information to the SOT Operator.
+true
+
+12. The S&T module shall provide the system administrator with the ability to test the SMP interface under maintenance.
+true
+
+13. The S&T module shall be able to launch the SFI local S&T application as a separate process.
+true

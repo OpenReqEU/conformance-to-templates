@@ -39,7 +39,7 @@ public class Input_Output {
     public List<List<String>> read_tree_matrix(String nombre_fichero) throws IOException {
         String fileName = nombre_fichero;
         String line;
-        List<String> row = new ArrayList<>();
+        List<String> row;
         List<List<String>> tree = new ArrayList<>();
 
         FileReader fileReader = new FileReader(fileName);
@@ -48,8 +48,13 @@ public class Input_Output {
 
         while((line = bufferedReader.readLine()) != null) {
             if (!line.equals("")) {
+                row = new ArrayList<>();
+                //System.out.println(line);
                 String[] words = line.split("\\s+");
-                for (int i = 0; i < words.length; ++i) row.add(words[i]);
+                for (int i = 0; i < words.length; ++i) {
+                    //System.out.println(words[i]);
+                    row.add(words[i]);
+                }
                 //System.out.println("tree row length" + words.length);
                 tree.add(row);
             }
@@ -58,6 +63,15 @@ public class Input_Output {
         //System.out.println("tree size " + tree.size());
 
         bufferedReader.close();
+
+        /*for (int i = 0; i < tree.size(); ++i) {
+            String res = "";
+            List<String> aux = tree.get(i);
+            for (int j = 0; j < aux.size(); ++j) {
+                res += aux.get(j) + " ";
+            }
+            System.out.println(res);
+        }*/
 
         return tree;
     }

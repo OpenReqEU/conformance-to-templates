@@ -1,0 +1,9 @@
+{
+    "tokens": [
+        "test","meh","ei"],
+    "tokens_tags": [
+        "(tag)","(E)","(2)"],
+    "sentence_tags": [
+        "<np>", "<vp>","<vp>"]}
+    
+
