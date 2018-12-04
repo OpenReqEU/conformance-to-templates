@@ -1,50 +1,65 @@
 
-#<main> ::= <opt-condition> <np> (md) (vb) <np> <*> | <opt-condition> <np> <modal> %PROVIDE <np> %WITH %THE %ABILITY <vp> <np> <*> | <opt-condition> <np> <modal> %BE %ABLE <vp> <np> <*> | <opt-condition> <np> <modal> <vp> <np> <*>
+
 --------------------------------------------------------
-#<main> ::= 
-    <opt-condition> <np> (md) (vb) <np> <*> |
-    <opt-condition> <np> <modal> "PROVIDE" <np> "WITH" "THE" "ABILITY" <vp> <np> <*> |
-    <opt-condition> <np> <modal> "BE" "ABLE" <vp> <np> <*> |
-    <opt-condition> <np> <modal> <vp> <np> <*>
+#<main> ::=  <opt-condition> <np> (md) (vb) <np> | 
+             <opt-condition> <np> <modal> %PROVIDE <np> %WITH %THE %ABILITY <infinitive-vp> <np> <*> | 
+             <opt-condition> <np> <modal> %BE %ABLE <vp> <np> | 
+             <opt-condition> <np> <modal> <vp> <np>
 #<conditional-keyword> ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS
 #<modal> ::= %SHALL | %SHOULD | %WOULD
 #<opt-condition> ::= <conditional-keyword> | (all)
+#<infinitive-vp> ::= %to <vp>
 --------------------------------------------------------
 
+main if <np> (md) (vb) <np>
+main if <np> shall provide <np> with the ability to <vp> <np> <*>
+main if <np> shall be able <vp> <np>
+main if <np> shall <vp> <np>
+main if <np> should provide <np> with the ability to <vp> <np> <*>
+main if <np> should be able <vp> <np>
+main if <np> should <vp> <np>
+main if <np> would provide <np> with the ability to <vp> <np> <*>
+main if <np> would be able <vp> <np>
+main if <np> would <vp> <np>
+main after <np> (md) (vb) <np>
+main after <np> shall provide <np> with the ability to <vp> <np> <*>
+main after <np> shall be able <vp> <np>
+main after <np> shall <vp> <np>
+main after <np> should provide <np> with the ability to <vp> <np> <*>
+main after <np> should be able <vp> <np>
+main after <np> should <vp> <np>
+main after <np> would provide <np> with the ability to <vp> <np> <*>
+main after <np> would be able <vp> <np>
+main after <np> would <vp> <np>
+main as soon as <np> (md) (vb) <np>
+main as soon as <np> shall provide <np> with the ability to <vp> <np> <*>
+main as soon as <np> shall be able <vp> <np>
+main as soon as <np> shall <vp> <np>
+main as soon as <np> should provide <np> with the ability to <vp> <np> <*>
+main as soon as <np> should be able <vp> <np>
+main as soon as <np> should <vp> <np>
+main as soon as <np> would provide <np> with the ability to <vp> <np> <*>
+main as soon as <np> would be able <vp> <np>
+main as soon as <np> would <vp> <np>
+main as long as <np> (md) (vb) <np>
+main as long as <np> shall provide <np> with the ability to <vp> <np> <*>
+main as long as <np> shall be able <vp> <np>
+main as long as <np> shall <vp> <np>
+main as long as <np> should provide <np> with the ability to <vp> <np> <*>
+main as long as <np> should be able <vp> <np>
+main as long as <np> should <vp> <np>
+main as long as <np> would provide <np> with the ability to <vp> <np> <*>
+main as long as <np> would be able <vp> <np>
+main as long as <np> would <vp> <np>
+main (all) <np> (md) (vb) <np>
+main (all) <np> shall provide <np> with the ability to <vp> <np> <*>
+main (all) <np> shall be able <vp> <np>
+main (all) <np> shall <vp> <np>
+main (all) <np> should provide <np> with the ability to <vp> <np> <*>
+main (all) <np> should be able <vp> <np>
+main (all) <np> should <vp> <np>
+main (all) <np> would provide <np> with the ability to <vp> <np> <*>
+main (all) <np> would be able <vp> <np>
+main (all) <np> would <vp> <np>
 
-main if <np> (md) <vp> <np> <*>
-main if <np> shall provide <np> with the ability <vp> <np> <*>
-main if <np> shall be able <vp> <np> <*>
-main if <np> should provide <np> with the ability <vp> <np> <*>
-main if <np> should be able <vp> <np> <*>
-main if <np> would provide <np> with the ability <vp> <np> <*>
-main if <np> would be able <vp> <np> <*>
-main after <np> (md) <vp> <np> <*>
-main after <np> shall provide <np> with the ability <vp> <np> <*>
-main after <np> shall be able <vp> <np> <*>
-main after <np> should provide <np> with the ability <vp> <np> <*>
-main after <np> should be able <vp> <np> <*>
-main after <np> would provide <np> with the ability <vp> <np> <*>
-main after <np> would be able <vp> <np> <*>
-main as soon as <np> (md) <vp> <np> <*>
-main as soon as <np> shall provide <np> with the ability <vp> <np> <*>
-main as soon as <np> shall be able <vp> <np> <*>
-main as soon as <np> should provide <np> with the ability <vp> <np> <*>
-main as soon as <np> should be able <vp> <np> <*>
-main as soon as <np> would provide <np> with the ability <vp> <np> <*>
-main as soon as <np> would be able <vp> <np> <*>
-main as long as <np> (md) <vp> <np> <*>
-main as long as <np> shall provide <np> with the ability <vp> <np> <*>
-main as long as <np> shall be able <vp> <np> <*>
-main as long as <np> should provide <np> with the ability <vp> <np> <*>
-main as long as <np> should be able <vp> <np> <*>
-main as long as <np> would provide <np> with the ability <vp> <np> <*>
-main as long as <np> would be able <vp> <np> <*>
-main (all) <np> (md) <vp> <np> <*>
-main (all) <np> shall provide <np> with the ability <vp> <np> <*>
-main (all) <np> shall be able <vp> <np> <*>
-main (all) <np> should provide <np> with the ability <vp> <np> <*>
-main (all) <np> should be able <vp> <np> <*>
-main (all) <np> would provide <np> with the ability <vp> <np> <*>
-main (all) <np> would be able <vp> <np> <*>
 

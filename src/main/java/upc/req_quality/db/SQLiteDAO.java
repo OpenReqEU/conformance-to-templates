@@ -33,6 +33,7 @@ public class SQLiteDAO implements Template_database {
         String rules = "";
         for (int i = 0; i < aux.size(); ++i) {
             if (i != (aux.size() - 1)) rules += aux.get(i) + "#####SEPARATION#####";
+            else rules += aux.get(i);
         }
         PreparedStatement ps;
         ps = db.prepareStatement ("INSERT INTO model (name, org, library, description) VALUES (?, ?, ?, ?)");

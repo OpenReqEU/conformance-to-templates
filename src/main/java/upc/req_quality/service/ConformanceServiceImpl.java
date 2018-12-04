@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import upc.req_quality.adapter.AdapterPosTagger;
 import upc.req_quality.adapter.AdapterTemplate;
 import upc.req_quality.entity.*;
+import upc.req_quality.exeption.BadBNFSyntaxException;
 import upc.req_quality.exeption.BadRequestException;
 
 import java.sql.SQLException;
@@ -32,7 +33,7 @@ public class ConformanceServiceImpl implements ConformanceService {
             boolean ok = false;
 
             for (int j = 0; ((!ok) && j < templates.size()); ++j) {
-                ok = templates.get(j).check_template(tokens,tokens_tagged,chunks);
+                if (templates.get(j).check_library().equals(library)) ok = templates.get(j).check_template(tokens,tokens_tagged,chunks);
             }
 
             if(!ok) result.add(new Requirement(aux_req.getId(),aux_req.getText()));
@@ -53,7 +54,7 @@ public class ConformanceServiceImpl implements ConformanceService {
     }
 
     @Override
-    public void enter_new_templates(Templates templates) throws BadRequestException{
+    public void enter_new_templates(Templates templates) throws BadRequestException, BadBNFSyntaxException {
         AdapterFactory af = AdapterFactory.getInstance();
         List<Template> aux_templates = templates.getTemplates();
         for (int i = 0; i < aux_templates.size(); ++i) {

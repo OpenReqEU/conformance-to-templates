@@ -58,7 +58,7 @@ WRB Wh­adverb
 
     private String[] pos_tags = new String[]{"(cc)","(cd)","(dt)","(ex)","(fw)","(in)","(jj)","(jjr)","(jjs)","(ls)","(md)","(nn)","(nns)","(nnp)","(nnps)","(pdt)","(pos)","(prp)","(prp$)",
                                                     "(rb)","(rbr)","(rbs)","(rp)","(sym)","(to)","(uh)","(vb)","(vbd)","(vbg)","(vbn)","(vbp)","(vbp)","(vbz)","(wdt)","(wp)","(wp$)","(wrb)"};
-    private String[] sentence_tags = new String[]{"<np>","<vp>","<pp>"};
+    private String[] sentence_tags = new String[]{"<np>","<vp>"};
 
     @Override
     public String[] getPos_tags() {

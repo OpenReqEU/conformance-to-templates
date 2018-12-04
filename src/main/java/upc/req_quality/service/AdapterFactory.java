@@ -6,6 +6,7 @@ import upc.req_quality.db.SQLiteDAO;
 import upc.req_quality.db.Template_database;
 import upc.req_quality.entity.Template;
 import upc.req_quality.entity.Templates;
+import upc.req_quality.exeption.BadBNFSyntaxException;
 import upc.req_quality.exeption.BadRequestException;
 
 import java.sql.SQLException;
@@ -46,7 +47,7 @@ public class AdapterFactory {
         return permited_matcher_tags;
     }
 
-    public void enter_new_template(Template template) throws BadRequestException{
+    public void enter_new_template(Template template) throws BadRequestException, BadBNFSyntaxException {
         String aux_name = template.getName();
         String aux_organization = template.getOrganization();
         String aux_library = template.getLibrary();

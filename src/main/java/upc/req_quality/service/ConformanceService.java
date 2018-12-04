@@ -1,6 +1,7 @@
 package upc.req_quality.service;
 
 import upc.req_quality.entity.*;
+import upc.req_quality.exeption.BadBNFSyntaxException;
 import upc.req_quality.exeption.BadRequestException;
 
 import java.sql.SQLException;
@@ -12,7 +13,7 @@ public interface ConformanceService {
 
     public PermitedClauses check_permited_clauses(String library) throws BadRequestException;
 
-    public void enter_new_templates(Templates templates) throws BadRequestException;
+    public void enter_new_templates(Templates templates) throws BadRequestException, BadBNFSyntaxException;
 
     public Templates check_all_templates(String organization) throws SQLException;
 

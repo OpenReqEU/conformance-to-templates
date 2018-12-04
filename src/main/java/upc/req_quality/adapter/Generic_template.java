@@ -1,17 +1,22 @@
 package upc.req_quality.adapter;
 
+import upc.req_quality.exeption.BadBNFSyntaxException;
+
 public class Generic_template implements AdapterTemplate{
 
     private Parser_Matcher parser_matcher;
     private String organization;
     private String library;
+    private String name;
 
-    public Generic_template(String name, String organization, String library, String rules, String[] permited_clauses) {
-        System.out.println("Creating model: " + name);
+    public Generic_template(String name, String organization, String library, String rules, String[] permited_clauses) throws BadBNFSyntaxException {
+        //System.out.println("Creating model: " + name);
         this.organization = organization;
         this.library = library;
+        this.name = name;
         this.parser_matcher = new Parser_Matcher(rules,permited_clauses);
-        System.out.println("Model " + name + " of " + organization + " loaded correctly");
+        this.parser_matcher.generate_matcher();
+        System.out.println("Model " + name + " of " + organization + " generated correctly with library " + library);
     }
 
     @Override
@@ -22,5 +27,10 @@ public class Generic_template implements AdapterTemplate{
     @Override
     public String check_organization() {
         return organization;
+    }
+
+    @Override
+    public String check_library() {
+        return library;
     }
 }

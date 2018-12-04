@@ -9,4 +9,6 @@ public interface AdapterTemplate {
     public boolean check_template(String[] tokens, String[] tokens_tagged, String[] chunks);
 
     public String check_organization();
+
+    public String check_library();
 }
