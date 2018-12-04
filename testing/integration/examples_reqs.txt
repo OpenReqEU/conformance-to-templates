@@ -1,3 +1,7 @@
+
+https://www.iaria.org/conferences2013/filesICCGI13/ICCGI_2013_Tutorial_Terzakis.pdf
+
+
 1. The S&T module shall command the database to send the orbit configuration files to the Satellite Control Centre.
 true
 

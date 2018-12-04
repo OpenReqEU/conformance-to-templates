@@ -47,7 +47,7 @@ public class AdapterFactory {
         return permited_matcher_tags;
     }
 
-    public void enter_new_template(Template template) throws BadRequestException, BadBNFSyntaxException {
+    public void enter_new_template(Template template) throws BadRequestException, BadBNFSyntaxException, SQLException {
         String aux_name = template.getName();
         String aux_organization = template.getOrganization();
         String aux_library = template.getLibrary();
@@ -68,7 +68,7 @@ public class AdapterFactory {
         try {
             Template_database db = new SQLiteDAO();
             db.saveTemplate(template);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

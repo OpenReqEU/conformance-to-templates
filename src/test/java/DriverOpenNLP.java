@@ -7,7 +7,7 @@ public class DriverOpenNLP {
     public static void main(String[] args) {
 
         AdapterPosTagger tagger = new OpenNLP_PosTagger();
-        String text = "If the guest is registered, the system should display the customer-specific menu to the guest.";
+        String text = "When an Unregistered Device is plugged into a USB port, the OS shall attempt to locate and load the driver for the device.";
         Requirement aux_req = new Requirement("1",text);
 
         String[] tokens = tagger.tokenizer(aux_req.getText());

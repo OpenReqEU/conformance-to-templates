@@ -54,7 +54,7 @@ public class ConformanceServiceImpl implements ConformanceService {
     }
 
     @Override
-    public void enter_new_templates(Templates templates) throws BadRequestException, BadBNFSyntaxException {
+    public void enter_new_templates(Templates templates) throws BadRequestException, BadBNFSyntaxException, SQLException {
         AdapterFactory af = AdapterFactory.getInstance();
         List<Template> aux_templates = templates.getTemplates();
         for (int i = 0; i < aux_templates.size(); ++i) {

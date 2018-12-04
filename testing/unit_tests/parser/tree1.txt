@@ -1,0 +1,2 @@
+#<main> ::= <np> <verb> <np>
+#<verb> ::= (vb) <vp> | <vp> | (vb)

@@ -89,7 +89,15 @@ public class Parser_Matcher {
                     new_precessors.add(aux.get(m));
                 }
             }
-            if (!parts[i].equals("")) precessors = new_precessors;
+            if (!parts[i].equals("")) {
+                precessors = new_precessors;
+                /*if (i == parts.length - 1) {
+                    for (int j = 0; j < precessors.size(); ++j) {
+                        String_Tree fin = new String_Tree("FFFFFIIIIINNNNN");
+                        precessors.get(j).add_children(fin);
+                    }
+                }*/
+            }
         }
     }
 

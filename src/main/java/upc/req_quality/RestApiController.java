@@ -27,9 +27,9 @@ public class RestApiController {
     @CrossOrigin
     @RequestMapping(value="/Conformance", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Check requirements conformance to templates", notes = "The operation returns the ids" +
-            "of the requirements that do not conform to any template of the chosen library and the chosen organization saved in the database. " +
-            "To transform the requirements the operation can use different libraries. The available library is OpenNLP. " +
-            "In the future more libraries will be added.")
+            " of the requirements that do not conform to any template of the chosen library and the chosen organization saved in the database." +
+            " To transform the requirements the operation can use different libraries. The available library is OpenNLP." +
+            " In the future more libraries will be added.")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=411, message = "Bad request")})
     public ResponseEntity<?> check_conformance(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization,
@@ -69,6 +69,8 @@ public class RestApiController {
             return getBadRequest(e);
         } catch (BadBNFSyntaxException e) {
             return getBadBNFSyntax(e);
+        } catch (SQLException e) {
+            return getDatabaseException(e);
         }
     }
 

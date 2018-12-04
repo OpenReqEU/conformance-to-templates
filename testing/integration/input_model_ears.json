@@ -5,9 +5,9 @@
       "name": "Ears",
       "organization": "Test",
       "rules": [
-        "#<main> ::=  <np> (md) <vp> <np> | <opt-condition> <np> (md) <vp> <np>",
-"#<opt-precondition> ::= (all) | <np> (all) | <np> <vp>",
-"#<opt-condition> ::= (all) | %WHEN <opt-precondition> <np> | %IF <opt-precondition> <np> %THEN | %WHILE <np> | %WHERE <np>"
+        "#<main> ::=  <opt-condition> <np> (md) <vp> <np>",
+"#<opt-precondition> ::= <np> | <vp> | <np> <vp>",
+"#<opt-condition> ::= (all) | %WHEN <opt-precondition> | %IF <opt-precondition> <np> %THEN | %WHILE | %WHERE"
       ]
     }
   ]

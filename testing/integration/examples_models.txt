@@ -1,14 +1,16 @@
 
 
 --------------------------------------------------------
-#<main> ::=  <opt-condition> <np> (md) (vb) <np> | 
-             <opt-condition> <np> <modal> %PROVIDE <np> %WITH %THE %ABILITY <infinitive-vp> <np> <*> | 
-             <opt-condition> <np> <modal> %BE %ABLE <vp> <np> | 
-             <opt-condition> <np> <modal> <vp> <np>
-#<conditional-keyword> ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS
-#<modal> ::= %SHALL | %SHOULD | %WOULD
-#<opt-condition> ::= <conditional-keyword> | (all)
-#<infinitive-vp> ::= %to <vp>
+
+	#<main> ::=  <opt-condition> <np> (md) (vb) <np> | 
+             	     <opt-condition> <np> <modal> %PROVIDE <np> %WITH %THE %ABILITY <infinitive-vp> <np> <*> | 
+            	     <opt-condition> <np> <modal> %BE %ABLE <vp> <np> | 
+             	     <opt-condition> <np> <modal> <vp> <np>
+	#<conditional-keyword> ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS
+	#<modal> ::= %SHALL | %SHOULD | %WOULD
+	#<opt-condition> ::= <conditional-keyword> | (all)
+	#<infinitive-vp> ::= %to <vp>
+
 --------------------------------------------------------
 
 main if <np> (md) (vb) <np>
@@ -63,3 +65,24 @@ main (all) <np> would be able <vp> <np>
 main (all) <np> would <vp> <np>
 
 
+--------------------------------------------------------------------------------
+#<main> ::=  <opt-condition> <np> (md) <verb> <np>
+#<verb> ::= (vb) <vp> | <vp> | (vb)
+#<opt-precondition> ::= <np> | <vp> | <np> <vp>
+#<opt-condition> ::= (all) | %WHEN <opt-precondition> | %IF <opt-precondition> <np> %THEN | %WHILE | %WHERE
+--------------------------------------------------------------------------------
+
+main (all) <np> (md) (vb) <vp> <np>
+main (all) <np> (md) <vp> <np>
+main when <np> <vp> <np> (md) (vb) <vp> <np>
+main when <np> <vp> <np> (md) <vp> <np>
+main when <vp> <np> (md) (vb) <vp> <np>
+main when <vp> <np> (md) <vp> <np>
+main if <np> <vp> <np> then <np> (md) (vb) <vp> <np>
+main if <np> <vp> <np> then <np> (md) <vp> <np>
+main if <vp> <np> then <np> (md) (vb) <vp> <np>
+main if <vp> <np> then <np> (md) <vp> <np>
+main while <np> (md) (vb) <vp> <np>
+main while <np> (md) <vp> <np>
+main where <np> (md) (vb) <vp> <np>
+main where <np> (md) <vp> <np>
