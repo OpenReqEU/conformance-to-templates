@@ -27,7 +27,7 @@ public class RestApiController {
     @CrossOrigin
     @RequestMapping(value="/Conformance", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Check requirements conformance to templates", notes = "The operation returns the ids" +
-            " of the requirements that do not conform to any template of the chosen library and the chosen organization saved in the database." +
+            " of the requirements that do not conform to any template of the chosen library and organization saved in the database." +
             " To transform the requirements the operation can use different libraries. The available library is OpenNLP." +
             " In the future more libraries will be added.")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
@@ -43,7 +43,7 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/Clauses", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns the API's permitted clauses", notes = "Returns the different clauses permitted with the library selected and the particular API clauses. " +
+    @ApiOperation(value = "Returns the API's permitted clauses", notes = "Returns the different clauses permitted by the library selected and the particular API clauses. " +
             "The available library is OpenNLP. In the future more libraries will be added.")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=411, message = "Bad request")})
@@ -57,7 +57,7 @@ public class RestApiController {
 
     @RequestMapping(value="/InTemplates", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Save templates to the database", notes = "This operation save the specified templates to the database. Is needed to follow the rules explained in the top description" +
-            " for a proper functioning. It must be specified the library use to make the template.")
+            " for a proper functioning. It must be specified the library used to write the template.")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=411, message = "Bad request"),
                            @ApiResponse(code=412, message = "Bad BNF syntax")})

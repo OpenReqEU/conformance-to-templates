@@ -91,12 +91,12 @@ public class Parser_Matcher {
             }
             if (!parts[i].equals("")) {
                 precessors = new_precessors;
-                /*if (i == parts.length - 1) {
+                if (i == parts.length - 1) {
                     for (int j = 0; j < precessors.size(); ++j) {
-                        String_Tree fin = new String_Tree("FFFFFIIIIINNNNN");
+                        String_Tree fin = new String_Tree("***FINISH***");
                         precessors.get(j).add_children(fin);
                     }
-                }*/
+                }
             }
         }
     }
@@ -156,26 +156,31 @@ public class Parser_Matcher {
     private void merge_arbol(String_Tree father, String_Tree tree_to_merge, List<String_Tree> new_childrens) {
         //Mezcla los hijos del arbol padre con el arbol auxiliar(tree_to_merge)
         String data_merge = tree_to_merge.getData();
-        List<String_Tree> children = father.getChildren();
-        boolean found = false;
-        for (int i = 0; (!found) && (i <children.size()); ++i) {
-            String_Tree children_father = children.get(i);
-            if (children_father.getData().equals(data_merge)) {
-                found = true;
-                List<String_Tree> children_to_merge = tree_to_merge.getChildren();
-                for (int j = 0; j < children_to_merge.size(); ++j) {
-                    merge_arbol(children_father,children_to_merge.get(j),new_childrens);
+        if (data_merge.equals("***FINISH***")) new_childrens.add(father);
+        else {
+            List<String_Tree> children = father.getChildren();
+            boolean found = false;
+            for (int i = 0; (!found) && (i < children.size()); ++i) {
+                String_Tree children_father = children.get(i);
+                if (children_father.getData().equals(data_merge)) {
+                    found = true;
+                    List<String_Tree> children_to_merge = tree_to_merge.getChildren();
+                    for (int j = 0; j < children_to_merge.size(); ++j) {
+                        merge_arbol(children_father, children_to_merge.get(j), new_childrens);
+                    }
+                    //if (children_to_merge.size() == 0) new_childrens.add(children_father);
                 }
-                if (children_to_merge.size() == 0) new_childrens.add(children_father);
             }
-        }
-        if (!found) {
-            String_Tree aux = tree_to_merge.clone_top();
-            father.add_children(aux);
-            List<String_Tree> aux_hojas = aux.getHojas();
-            //System.out.println(aux_hojas.size());
-            for (int i = 0; i < aux_hojas.size(); ++i) {
-                new_childrens.add(aux_hojas.get(i));
+            if (!found) {
+                String_Tree aux = tree_to_merge.clone_top();
+                if (aux != null) {
+                    father.add_children(aux);
+                    List<String_Tree> aux_hojas = aux.getHojas();
+                    //System.out.println(aux_hojas.size());
+                    for (int i = 0; i < aux_hojas.size(); ++i) {
+                        new_childrens.add(aux_hojas.get(i));
+                    }
+                }
             }
         }
     }
@@ -224,95 +229,74 @@ public class Parser_Matcher {
     }
 
     private boolean match_recursion(String_Tree tree, String[] tokens, String[] tokens_tagged, String[] chunks, int index) {
-        List<String_Tree> children = tree.getChildren();
-        boolean b1 = tree.getData().toLowerCase().equals(tokens[index]);
-        boolean b2 = tree.getData().toLowerCase().equals(tokens_tagged[index]);
-        boolean b3 = tree.getData().toLowerCase().equals(chunks[index]);
-        if (!b1 && !b2 && !b3) {
-            if (tree.getData().equals("<*>")) return true;
-            else {
-                if (tree.getData().equals("(all)")) {
-                    //ignore
-                    if (children.size() == 0) {
-                        if ((tokens.length - 1) > index) return false;
-                        else return true;
-                    }
-                    else {
-                        boolean found = false;
-                        for (int i = 0; ((!found) && (i < children.size())); ++i) {
-                            found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index);
-                        }
-                        return found;
-                    }
-                } else return false;
+
+        //matcher tags
+        if (tree.getData().equals("<*>")) return true;
+        if (tree.getData().equals("(all)")) {
+            boolean found = false;
+            for (int i = 0; ((!found) && (i < tree.getChildren().size())); ++i) {
+                found = match_recursion(tree.getChildren().get(i), tokens, tokens_tagged, chunks, index);
             }
+            return found;
         }
+
+        //finish clauses
+        if (tokens.length <= index && tree.getData().equals("***FINISH***")) return true;
+        else if (tree.getData().equals("***FINISH***")) return false;
+        else if (tokens.length <= index) return false;
+
         else {
+            List<String_Tree> children = tree.getChildren();
+            boolean result = false;
+            boolean b1 = tree.getData().toLowerCase().equals(tokens[index]);
+            boolean b2 = tree.getData().toLowerCase().equals(tokens_tagged[index]);
+            boolean b3 = tree.getData().toLowerCase().equals(chunks[index]);
             if (b1 || b2) {
-                //matches a [postag] or a "word", so we continue the the matcher with the children
-                if (children.size() == 0) {
-                    if ((tokens.length - 1) > index) return false;
-                    else return true;
+                //matches a [postag] or a "word", so we continue with the matcher_tree children
+                boolean found = false;
+                for (int i = 0; ((!found) && (i < children.size())); ++i) {
+                    found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index + 1);
                 }
-                else {
+                result = found;
+            }
+            if (b3 && !result) {
+                //matches a sentence tag , so we pass by all elements that are inside the same sentence tag,
+                //unless some child has a [postag] or "word" that matches some element with the same sentence tag
+
+                //children_data keeps the children tags
+                HashSet<String> children_data = new HashSet<>();
+                for (int i = 0; i < children.size(); ++i) {
+                    children_data.add(children.get(i).getData());
+                }
+                //data_permanent keeps the initial sentence tag
+                String data_permanent = chunks[index].toLowerCase();
+                boolean different = false;
+                ++index;
+                while (!different && index < tokens.length) {
+                    if (!chunks[index].toLowerCase().equals(data_permanent)) different = true;
+                    else {
+                        if (children_data.contains(tokens[index].toLowerCase()) || children_data.contains(tokens_tagged[index].toLowerCase())) {
+                            boolean found = false;
+                            for (int i = 0; !found && i < children.size(); ++i) {
+                                if (tokens[index].toLowerCase().equals(children.get(i).getData()) || tokens_tagged[index].toLowerCase().equals(children.get(i).getData())) found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index);
+                            }
+                            result = result || found;
+                        }
+                        ++index;
+                    }
+                }
+                if (!result) {
                     boolean found = false;
                     for (int i = 0; ((!found) && (i < children.size())); ++i) {
-                        found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index + 1);
+                        found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index);
                     }
-                    return found;
-                }
-            } else {
-                if (children.size() == 0) {
-                    String data_permanent = chunks[index].toLowerCase();
-                    if ((tokens.length - 1) > index) {
-                        boolean correct = true;
-                        ++index;
-                        while (correct && (index < tokens.length)) {
-                            if(!chunks[index].toLowerCase().equals(data_permanent)) correct = false;
-                            ++index;
-                        }
-                        return correct;
-                    }
-                    else return true;
-                }
-                else {
-                    //matches a sentence tag (nor [postag] nor "word"), so we pass by all elements that are inside the same sentence tag,
-                    //unless some child has a [postag] or "word" that matches some element with the same sentence tag
-                    HashSet<String> children_data = new HashSet<>();
-                    //children_data keeps the children tags
-                    for (int i = 0; i < children.size(); ++i) {
-                        children_data.add(children.get(i).getData());
-                    }
-                    String data_permanent = chunks[index].toLowerCase();
-                    //data_permanent keeps the initial sentence tag
-                    boolean different = false;
-                    ++index;
-                    while (!different && index < tokens.length /*&& children_data.size() > 0*/) {
-                        if (!chunks[index].toLowerCase().equals(data_permanent)) different = true;
-                        else {
-                            if (children_data.contains(tokens[index].toLowerCase()) || children_data.contains(tokens_tagged[index].toLowerCase())) {
-                                boolean found = false;
-                                for (int i = 0; !found && i < children.size(); ++i) {
-                                    if (tokens[index].toLowerCase().equals(children.get(i).getData()) || tokens_tagged[index].toLowerCase().equals(children.get(i).getData())) found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index);
-                                }
-                                return found;
-                            }
-                            ++index;
-                        }
-                    }
-                    if (different) {
-                        boolean found = false;
-                        for (int i = 0; ((!found) && (i < children.size())); ++i) {
-                            found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index);
-                        }
-                        return found;
-                    } else {
-                        return false;
-                    }
+                    result = found;
                 }
             }
+            return result;
         }
     }
+
 
     public String[] getPermited_static() {
         return permited_static;

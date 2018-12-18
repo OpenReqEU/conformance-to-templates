@@ -5,7 +5,6 @@ import java.util.List;
 
 public class String_Tree {
     private String data;
-    private String_Tree parent;
     private List<String_Tree> children;
     private List<String_Tree> hojas;
 
@@ -48,28 +47,32 @@ public class String_Tree {
         //System.out.println(data);
         String_Tree result = new String_Tree(data);
         for (int i = 0; i < children.size(); ++i) {
-            result.children.add(children.get(i).clone(aux_hojas));
+            String_Tree aux = children.get(i).clone(result,aux_hojas);
+            if (aux != null) result.children.add(aux);
         }
         //System.out.println(children.size());
         if (children.size() == 0) {
             //System.out.println("YEP");
-            aux_hojas.add(result);
+            //aux_hojas.add(result);
+            return null;
         }
         result.hojas = aux_hojas;
         return result;
     }
 
 
-    private String_Tree clone(List<String_Tree> aux_hojas) {
+    private String_Tree clone(String_Tree father, List<String_Tree> aux_hojas) {
         //System.out.println(data);
         String_Tree result = new String_Tree(data);
         for (int i = 0; i < children.size(); ++i) {
-            result.children.add(children.get(i).clone(aux_hojas));
+            String_Tree aux = children.get(i).clone(result,aux_hojas);
+            if (aux != null) result.children.add(aux);
         }
         //System.out.println(children.size());
         if (children.size() == 0) {
             //System.out.println("YEP");
-            aux_hojas.add(result);
+            aux_hojas.add(father);
+            return null;
         }
         return result;
     }
