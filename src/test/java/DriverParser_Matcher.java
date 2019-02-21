@@ -15,7 +15,7 @@ public class DriverParser_Matcher {
                 "#<infinitive-vp> ::= %to <vp>";
 
 
-        String[] permited_clauses = ObjectArrays.concat(new OpenNLP_PosTagger().getPos_tags(), new OpenNLP_PosTagger().getSentence_tags(), String.class);
+        /*String[] permited_clauses = ObjectArrays.concat(new OpenNLP_PosTagger().getPos_tags(), new OpenNLP_PosTagger().getSentence_tags(), String.class);
         Parser_Matcher parser = new Parser_Matcher(input,permited_clauses);
         try {
             parser.generate_matcher();
@@ -40,6 +40,6 @@ public class DriverParser_Matcher {
         }
 
         boolean result = parser.match(tokens,tokens_tagged,chunks);
-        System.out.println(result);
+        System.out.println(result);*/
     }
 }

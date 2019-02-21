@@ -2,6 +2,8 @@ package upc.req_quality.adapter;
 
 import upc.req_quality.exeption.BadBNFSyntaxException;
 
+import java.util.List;
+
 public class Generic_template implements AdapterTemplate{
 
     private Parser_Matcher parser_matcher;
@@ -9,7 +11,7 @@ public class Generic_template implements AdapterTemplate{
     private String library;
     private String name;
 
-    public Generic_template(String name, String organization, String library, String rules, String[] permited_clauses) throws BadBNFSyntaxException {
+    public Generic_template(String name, String organization, String library, List<String> rules, String[] permited_clauses) throws BadBNFSyntaxException {
         //System.out.println("Creating model: " + name);
         this.organization = organization;
         this.library = library;

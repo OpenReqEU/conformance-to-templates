@@ -51,7 +51,7 @@ public class AdapterFactory {
         String aux_name = template.getName();
         String aux_organization = template.getOrganization();
         String aux_library = template.getLibrary();
-        String aux_rules = template.ToStringRules();
+        List<String> aux_rules = template.getRules();
         String[] permited_pos_tags;
         String[] permited_sentence_tags;
         switch (aux_library) {
@@ -105,7 +105,7 @@ public class AdapterFactory {
                 String aux_name = template.getName();
                 String aux_organization = template.getOrganization();
                 String aux_library = template.getLibrary();
-                String aux_rules = template.ToStringRules();
+                List<String> aux_rules = template.getRules();
                 String[] permited_pos_tags;
                 String[] permited_sentence_tags;
                 switch (aux_library) {

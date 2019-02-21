@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class Parser_Matcher {
 
-    private String input;
+    private List<String> input;
     private String_Tree Mymatcher;
     private Map<String,String_Tree> trees;
     private HashSet<String> words;
@@ -22,11 +22,11 @@ public class Parser_Matcher {
         return ObjectArrays.concat(aux,matcher_tags,String.class);
     }
 
-    //hacerla privada, es publica por los tests
+    //Is public just for testing
     public Parser_Matcher() {
     }
 
-    public Parser_Matcher(String input, String[] permited_static) {
+    public Parser_Matcher(List<String> input, String[] permited_static) {
         this.input = input;
         this.trees = new HashMap<>();
         this.words = new HashSet<>();
@@ -41,32 +41,144 @@ public class Parser_Matcher {
         this.Mymatcher = new String_Tree();
     }
 
-    public void generate_matcher() throws BadBNFSyntaxException{
-        input = input.replaceAll("\"\"","(all)");
-        String[] sentences = input.split("((^<.*?> ::=)|(#<.*?> ::=))");
-        Pattern pattern = Pattern.compile("((^<.*?> ::=)|(#<.*?> ::=))");
-        Matcher matcher = pattern.matcher(input);
+    //Is public just for testing
+    public class Rule {
+        private String title;
+        private String description;
+        public Rule(String title, String description) {
+            this.title = title;
+            this.description = description;
+        }
+        //just for testing
+        public String getTitle() {
+            return title;
+        }
+        //just for testing
+        public String getDescription() {
+            return description;
+        }
+    }
 
-        int count = 1;
-        while(matcher.find()) {
-            if (count < sentences.length && count > 1) {
-                String aux_title = input.substring(matcher.start(), matcher.end());
-                aux_title = aux_title.replaceAll("(\\s+)","");
-                aux_title = aux_title.replaceAll("::=","");
-                aux_title = aux_title.replaceAll("#","");
-                String_Tree aux_ini_tree = new String_Tree(aux_title);
-                String_Tree aux_tree = Ini_tree_builder_OR(sentences[count], aux_ini_tree);
-                trees.put(aux_title, aux_tree);
+    //Is public just for testing
+    public List<Rule> parse_rules_and_check(List<String> rules) throws BadBNFSyntaxException {
+
+        //To show all rules with their title and description
+        HashMap<String,String> rules_with_description = new HashMap<>();
+        //To show on which dependencies it depends
+        HashMap<String,Set<String>> rules_with_dependencies = new HashMap<>();
+        //To show which dependencies depend on it
+        HashMap<String,Set<String>> rules_depend_on_me = new HashMap<>();
+        //To show rules with not dependencies
+        LinkedList<String> rules_without_dependencies = new LinkedList<>();
+
+        if (rules.size() <= 0) throw new BadBNFSyntaxException("No rules specified");
+        if (!rules.get(0).contains("main")) throw new BadBNFSyntaxException("No main rule specified");
+        for (int i = 0; i < rules.size(); ++i) {
+            String text = rules.get(i);
+            Pattern pattern = Pattern.compile("(^<.*?> ::=)");
+            Matcher matcher = pattern.matcher(text);
+            if(!matcher.find()) throw new BadBNFSyntaxException("Rule in position " + i + " is not well written. It must start with \"<name_rule> ::=\"");
+            String aux_title = text.substring(matcher.start(), matcher.end());
+            aux_title = aux_title.replaceAll("(\\s+)","");
+            aux_title = aux_title.replaceAll("::=","");
+            String aux_description = text.replaceAll("(^<.*?> ::=)","");
+            rules_with_description.put(aux_title,aux_description);
+            //rules_with_dependencies.put(aux_title,new HashSet<>());
+            rules_depend_on_me.put(aux_title,new HashSet<>());
+        }
+
+        //Check if exist two rules with the same title
+        if (rules_with_description.size() != rules.size()) throw new BadBNFSyntaxException("Exist two rules with the same title");
+
+        //Check dependencies between rules
+        Iterator it1 = rules_with_description.entrySet().iterator();
+        while (it1.hasNext()) {
+            Map.Entry pair = (Map.Entry)it1.next();
+            String aux_title = pair.getKey() + "";
+            String aux_description = pair.getValue() + "";
+            check_rule(aux_title,aux_description,rules_with_description,rules_with_dependencies,rules_without_dependencies,rules_depend_on_me,0);
+        }
+
+        //Return ordered rules
+        List<Rule> result = new ArrayList<>();
+        while (rules_without_dependencies.size() > 0) {
+            String title = rules_without_dependencies.getFirst();
+            Set<String> rules_that_depend_on_me = rules_depend_on_me.get(title);
+            Iterator<String> it2 = rules_that_depend_on_me.iterator();
+            while (it2.hasNext()) {
+                String aux = it2.next();
+                rules_with_dependencies.get(aux).remove(title);
+                if (rules_with_dependencies.get(aux).size() == 0) {
+                    rules_without_dependencies.addLast(aux);
+                    rules_with_dependencies.remove(aux);
+                }
             }
-            ++count;
+            result.add(new Rule(title,rules_with_description.get(title)));
+            rules_without_dependencies.removeFirst();
+        }
+
+        //exists a cycle
+        if (rules_with_dependencies.size() > 0) {
+            Iterator it = rules_with_dependencies.entrySet().iterator();
+            String aux = "";
+            boolean firstComa = true;
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                if (firstComa) aux = aux.concat("" + pair.getKey());
+                else aux = aux.concat(", " + pair.getKey());
+                firstComa = false;
+                it.remove();
+            }
+            throw new BadBNFSyntaxException("Exists a cycle between the input rules: " + aux);
+        }
+
+        //put main clause at index 0
+        for (Rule aux_rule: result) {
+            if (aux_rule.getTitle().equals("<main>")) {
+                result.remove(aux_rule);
+                result.add(0,aux_rule);
+            }
+        }
+
+        return result;
+    }
+
+    private void check_rule(String title, String description, HashMap<String,String> rules_with_description, HashMap<String,Set<String>> rules_with_dependencies, LinkedList<String> rules_without_dependencies, HashMap<String,Set<String>> rules_depend_on_me, int total) {
+        String[] tokens = description.split("\\s+");
+        boolean isolation = true;
+        for (String text: tokens) {
+            if (rules_with_description.containsKey(text)) {
+                isolation = false;
+                Set<String> new_dependencies = rules_with_dependencies.get(title);
+                if (new_dependencies == null) new_dependencies = new HashSet<>();
+                new_dependencies.add(text);
+                rules_with_dependencies.put(title,new_dependencies);
+                Set<String> new_depend_on_me = rules_depend_on_me.get(text);
+                new_depend_on_me.add(title);
+                rules_depend_on_me.put(text,new_depend_on_me);
+            }
+        }
+        if (isolation) rules_without_dependencies.addLast(title);
+    }
+
+    public void generate_matcher() throws BadBNFSyntaxException {
+
+        List<Rule> rules = parse_rules_and_check(input);
+
+        Rule main_rule = rules.get(0);
+        List<Rule> auxiliary_rules = rules.subList(1,rules.size());
+
+        for (Rule auxiliary_rule: auxiliary_rules) {
+            String_Tree aux_ini_tree = new String_Tree(auxiliary_rule.title);
+            String_Tree aux_tree = Ini_tree_builder_OR(auxiliary_rule.description, aux_ini_tree);
+            trees.put(auxiliary_rule.title, aux_tree);
         }
 
         Mymatcher = new String_Tree("main");
-        String[] parts = sentences[1].split("\\|");
-        Ini_tree_builder_OR(sentences[1],Mymatcher);
+        Ini_tree_builder_OR(main_rule.description,Mymatcher);
     }
 
-    private String_Tree Ini_tree_builder_OR(String sentence, String_Tree father) throws BadBNFSyntaxException{
+    private String_Tree Ini_tree_builder_OR(String sentence, String_Tree father) throws BadBNFSyntaxException {
         String[] parts = sentence.split("\\|");
         for (int i = 0; i < parts.length; ++i) {
             Ini_tree_builder_Section(parts[i],father);
@@ -74,7 +186,7 @@ public class Parser_Matcher {
         return father;
     }
 
-    private void Ini_tree_builder_Section(String sentence, String_Tree father) throws BadBNFSyntaxException{
+    private void Ini_tree_builder_Section(String sentence, String_Tree father) throws BadBNFSyntaxException {
         String[] parts = sentence.split("\\s+");
         List<String_Tree> precessors = new ArrayList<>();
         precessors.add(father);

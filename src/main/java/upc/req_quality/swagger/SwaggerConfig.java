@@ -30,22 +30,21 @@ public class SwaggerConfig {
             " each one has different tags (at the moment only is allow OpenNLP library). A template follows a modified BNF diagram:</p>" +
             " <ul>" +
             " <li>A template is defined by one or more rules (the input is defined by an array of strings).</li>" +
-            " <li>The first word of each rule must be written as \" #&ltname_of_the_rule&gt ::= \" that defines the name of the rule.</li>" +
+            " <li>The first word of each rule must be written as \" &ltname_of_the_rule&gt ::= \" that defines the name of the rule.</li>" +
             " <li>The name of the first rule must be main.</li>" +
             " <li>The first rule must define the structure of the requirement.</li>" +
             " <li>The other rules should be used to define auxiliary structures.</li>" +
-            " <li>The auxiliary rules must be in incremental order.</li>" +
             " <li>For writing rules are permitted the next tags (their meaning can be seen in the get clauses method): <ul>" +
             " <li> words (specified with \"%\"). </li>" +
             " <li> pos tags of the template's library (specified with \"()\"). </li>" +
             " <li> sentence tags of the template's library (specified with \"<>\"). </li>" +
             " <li> service special tags:  \"|\" , (all)  and <*>.</li></ul></li></ul>" +
             "<p> An example: </p> <ul> " +
-            "<li> #&ltmain&gt ::= &ltopt-condition&gt &ltnp&gt (md) (vb) &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %PROVIDE &ltnp&gt %WITH %THE %ABILITY &ltinfinitive-vp&gt &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %BE %ABLE &ltvp&gt &ltnp&gt </li>" +
-            "<li> #&ltconditional-keyword&gt ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS </li>" +
-            "<li> #&ltmodal&gt ::= %SHALL | %SHOULD | %WOULD </li>" +
-            "<li> #&ltopt-condition&gt ::= &ltconditional-keyword&gt | (all) </li>" +
-            "<li> #&ltinfinitive-vp&gt ::= %to &ltvp&gt </li> </ul>";
+            "<li> &ltmain&gt ::= &ltopt-condition&gt &ltnp&gt (md) (vb) &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %PROVIDE &ltnp&gt %WITH %THE %ABILITY &ltinfinitive-vp&gt &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %BE %ABLE &ltvp&gt &ltnp&gt </li>" +
+            "<li> &ltconditional-keyword&gt ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS </li>" +
+            "<li> &ltmodal&gt ::= %SHALL | %SHOULD | %WOULD </li>" +
+            "<li> &ltopt-condition&gt ::= &ltconditional-keyword&gt | (all) </li>" +
+            "<li> &ltinfinitive-vp&gt ::= %to &ltvp&gt </li> </ul>";
 
 
     /*

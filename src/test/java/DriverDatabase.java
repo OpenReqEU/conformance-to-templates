@@ -7,7 +7,7 @@ public class DriverDatabase {
     public static void main(String[] args) {
         try {
             Template_database db = new SQLiteDAO();
-            db.getAllTemplates("UPC");
+            ((SQLiteDAO) db).createDB();
         } catch (Exception e) {
             e.printStackTrace();
         }

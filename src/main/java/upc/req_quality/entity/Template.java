@@ -41,12 +41,6 @@ public class Template implements Serializable {
         return rules;
     }
 
-    public String ToStringRules() {
-        String result = "";
-        for (int i = 0; i < rules.size(); ++i) result += rules.get(i) + " ";
-        return result;
-    }
-
     public String getLibrary() {
         return library;
     }

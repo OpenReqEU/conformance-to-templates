@@ -1,5 +1,6 @@
 package upc.req_quality;
 
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -14,6 +15,9 @@ import upc.req_quality.exeption.BadBNFSyntaxException;
 import upc.req_quality.exeption.BadRequestException;
 import upc.req_quality.service.ConformanceService;
 
+
+
+import java.io.*;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
@@ -23,6 +27,9 @@ public class RestApiController {
 
     @Autowired
     ConformanceService conformanceService;
+
+
+
 
     @CrossOrigin
     @RequestMapping(value="/Conformance", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -68,6 +75,7 @@ public class RestApiController {
         } catch (BadRequestException e) {
             return getBadRequest(e);
         } catch (BadBNFSyntaxException e) {
+            e.printStackTrace();
             return getBadBNFSyntax(e);
         } catch (SQLException e) {
             return getDatabaseException(e);
@@ -98,7 +106,6 @@ public class RestApiController {
             return getDatabaseException(e);
         }
     }
-
 
     private ResponseEntity<?> getBadRequest(BadRequestException e) {
         e.printStackTrace();

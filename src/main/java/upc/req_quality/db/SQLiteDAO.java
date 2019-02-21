@@ -108,7 +108,7 @@ public class SQLiteDAO implements Template_database {
         System.out.println("DB Cleared");
     }
 
-    private void createDB() throws SQLException {
+    public void createDB() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS model (\n"
                 + "	name varchar,\n"
                 + "	org varchar,\n"
