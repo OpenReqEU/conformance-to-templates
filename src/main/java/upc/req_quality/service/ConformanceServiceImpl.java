@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import upc.req_quality.adapter.AdapterPosTagger;
 import upc.req_quality.adapter.AdapterTemplate;
 import upc.req_quality.entity.*;
+import upc.req_quality.entity.input_output.Template;
+import upc.req_quality.entity.input_output.Templates;
 import upc.req_quality.exeption.BadBNFSyntaxException;
 import upc.req_quality.exeption.BadRequestException;
 
@@ -32,11 +34,19 @@ public class ConformanceServiceImpl implements ConformanceService {
 
             boolean ok = false;
 
+            List<Tip> tips = new ArrayList<>();
+
             for (int j = 0; ((!ok) && j < templates.size()); ++j) {
-                if (templates.get(j).check_library().equals(library)) ok = templates.get(j).check_template(tokens,tokens_tagged,chunks);
+                if (templates.get(j).check_library().equals(library)) {
+                    Matcher_Response matcher_response = templates.get(j).check_template(tokens,tokens_tagged,chunks);
+                    ok = matcher_response.isResult();
+                    if (!ok) {
+                        tips.add(new Tip(templates.get(j).check_name(),matcher_response.getErrorDescriptions(),matcher_response.getScore()));
+                    }
+                }
             }
 
-            if(!ok) result.add(new Requirement(aux_req.getId(),aux_req.getText()));
+            if (!ok) result.add(new Requirement(aux_req.getId(),aux_req.getText(),tips));
         }
 
         return new Requirements(result);

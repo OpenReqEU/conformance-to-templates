@@ -1,6 +1,7 @@
 package upc.req_quality.service;
 
 import upc.req_quality.entity.*;
+import upc.req_quality.entity.input_output.Templates;
 import upc.req_quality.exeption.BadBNFSyntaxException;
 import upc.req_quality.exeption.BadRequestException;
 

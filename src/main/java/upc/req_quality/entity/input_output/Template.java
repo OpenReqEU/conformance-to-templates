@@ -1,4 +1,4 @@
-package upc.req_quality.entity;
+package upc.req_quality.entity.input_output;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;

@@ -16,7 +16,7 @@ public class DriverParser_Matcher {
 
 
         /*String[] permited_clauses = ObjectArrays.concat(new OpenNLP_PosTagger().getPos_tags(), new OpenNLP_PosTagger().getSentence_tags(), String.class);
-        Parser_Matcher parser = new Parser_Matcher(input,permited_clauses);
+        Parser_Matcher parser = new Parser_Matcher(input_output,permited_clauses);
         try {
             parser.generate_matcher();
         } catch (BadBNFSyntaxException e) {

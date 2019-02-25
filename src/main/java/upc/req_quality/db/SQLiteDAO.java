@@ -1,6 +1,6 @@
 package upc.req_quality.db;
 
-import upc.req_quality.entity.Template;
+import upc.req_quality.entity.input_output.Template;
 
 import java.sql.*;
 import java.util.ArrayList;

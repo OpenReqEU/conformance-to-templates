@@ -1,5 +1,6 @@
 package upc.req_quality.adapter;
 
+import upc.req_quality.entity.Matcher_Response;
 import upc.req_quality.exeption.BadBNFSyntaxException;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class Generic_template implements AdapterTemplate{
     }
 
     @Override
-    public boolean check_template(String[] tokens, String[] tokens_tagged, String[] chunks) {
+    public Matcher_Response check_template(String[] tokens, String[] tokens_tagged, String[] chunks) {
         return this.parser_matcher.match(tokens,tokens_tagged,chunks);
     }
 
@@ -34,5 +35,10 @@ public class Generic_template implements AdapterTemplate{
     @Override
     public String check_library() {
         return library;
+    }
+
+    @Override
+    public String check_name() {
+        return name;
     }
 }

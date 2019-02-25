@@ -11,13 +11,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upc.req_quality.entity.*;
+import upc.req_quality.entity.input_output.Templates;
 import upc.req_quality.exeption.BadBNFSyntaxException;
 import upc.req_quality.exeption.BadRequestException;
 import upc.req_quality.service.ConformanceService;
 
 
-
-import java.io.*;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 

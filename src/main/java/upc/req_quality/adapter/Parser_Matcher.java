@@ -1,6 +1,7 @@
 package upc.req_quality.adapter;
 
 import com.google.common.collect.ObjectArrays;
+import upc.req_quality.entity.Matcher_Response;
 import upc.req_quality.exeption.BadBNFSyntaxException;
 
 import java.util.*;
@@ -129,7 +130,7 @@ public class Parser_Matcher {
                 firstComa = false;
                 it.remove();
             }
-            throw new BadBNFSyntaxException("Exists a cycle between the input rules: " + aux);
+            throw new BadBNFSyntaxException("Exists a cycle between the input_output rules: " + aux);
         }
 
         //put main clause at index 0
@@ -330,32 +331,39 @@ public class Parser_Matcher {
         }
     }
 
-    public boolean match(String[] tokens, String[] tokens_tagged, String[] chunks) {
+    public Matcher_Response match(String[] tokens, String[] tokens_tagged, String[] chunks) {
+        Matcher_Response result = new Matcher_Response(tokens.length);
         boolean found = false;
         List<String_Tree> children = Mymatcher.getChildren();
         for (int i = 0; ((!found) && (i < children.size())); ++i) {
-            found = match_recursion(children.get(i),tokens, tokens_tagged, chunks,0);
+            found = match_recursion(children.get(i),tokens, tokens_tagged, chunks,0, result);
         }
-        if (found) return true;
-        else return false; //throw exception main clause vacia
+        result.setResult(found);
+        return result;
     }
 
-    private boolean match_recursion(String_Tree tree, String[] tokens, String[] tokens_tagged, String[] chunks, int index) {
+    private boolean match_recursion(String_Tree tree, String[] tokens, String[] tokens_tagged, String[] chunks, int index, Matcher_Response response) {
 
         //matcher tags
         if (tree.getData().equals("<*>")) return true;
         if (tree.getData().equals("(all)")) {
             boolean found = false;
             for (int i = 0; ((!found) && (i < tree.getChildren().size())); ++i) {
-                found = match_recursion(tree.getChildren().get(i), tokens, tokens_tagged, chunks, index);
+                found = match_recursion(tree.getChildren().get(i),tokens,tokens_tagged,chunks,index,response);
             }
             return found;
         }
 
         //finish clauses
         if (tokens.length <= index && tree.getData().equals("***FINISH***")) return true;
-        else if (tree.getData().equals("***FINISH***")) return false;
-        else if (tokens.length <= index) return false;
+        else if (tree.getData().equals("***FINISH***")) {
+            response.addError(index,"The requirement has more tokens than expected");
+            return false;
+        }
+        else if (tokens.length <= index) {
+            response.addError(index,"The requirement has less tokens than expected");
+            return false;
+        }
 
         else {
             List<String_Tree> children = tree.getChildren();
@@ -367,7 +375,7 @@ public class Parser_Matcher {
                 //matches a [postag] or a "word", so we continue with the matcher_tree children
                 boolean found = false;
                 for (int i = 0; ((!found) && (i < children.size())); ++i) {
-                    found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index + 1);
+                    found = match_recursion(children.get(i),tokens,tokens_tagged,chunks,index + 1,response);
                 }
                 result = found;
             }
@@ -390,7 +398,7 @@ public class Parser_Matcher {
                         if (children_data.contains(tokens[index].toLowerCase()) || children_data.contains(tokens_tagged[index].toLowerCase())) {
                             boolean found = false;
                             for (int i = 0; !found && i < children.size(); ++i) {
-                                if (tokens[index].toLowerCase().equals(children.get(i).getData()) || tokens_tagged[index].toLowerCase().equals(children.get(i).getData())) found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index);
+                                if (tokens[index].toLowerCase().equals(children.get(i).getData()) || tokens_tagged[index].toLowerCase().equals(children.get(i).getData())) found = match_recursion(children.get(i),tokens,tokens_tagged,chunks,index,response);
                             }
                             result = result || found;
                         }
@@ -400,11 +408,12 @@ public class Parser_Matcher {
                 if (!result) {
                     boolean found = false;
                     for (int i = 0; ((!found) && (i < children.size())); ++i) {
-                        found = match_recursion(children.get(i), tokens, tokens_tagged, chunks, index);
+                        found = match_recursion(children.get(i),tokens,tokens_tagged,chunks,index,response);
                     }
                     result = found;
                 }
             }
+            if (!b1 && !b2 && !b3) response.addError(index, "The token at index " + index + " is not equal to template scheme. The token was defined as \""+tokens[index]+"\", \""+tokens_tagged[index]+"\" or \""+chunks[index]+"\" and was expected \"" + tree.getData() + "\".");
             return result;
         }
     }

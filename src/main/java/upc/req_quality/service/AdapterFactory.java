@@ -4,8 +4,8 @@ import com.google.common.collect.ObjectArrays;
 import upc.req_quality.adapter.*;
 import upc.req_quality.db.SQLiteDAO;
 import upc.req_quality.db.Template_database;
-import upc.req_quality.entity.Template;
-import upc.req_quality.entity.Templates;
+import upc.req_quality.entity.input_output.Template;
+import upc.req_quality.entity.input_output.Templates;
 import upc.req_quality.exeption.BadBNFSyntaxException;
 import upc.req_quality.exeption.BadRequestException;
 
