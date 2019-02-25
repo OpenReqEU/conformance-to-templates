@@ -20,25 +20,27 @@ public class SwaggerConfig {
     private static final String description = "<p> This service is meant to provide automation for checking requirements" +
             " conformance to boilerplates/templates. A boilerplate or template organizes the syntactic structure of a" +
             " requirement statement into a number of pre-defined slots.</p>" +
-            "" +
-            " <p> This API allows the writing of templates following a defined format. The templates are stored in a" +
-            " database taking into account the organization and the NLP library used to write them. Also the API allows checking if a" +
-            " set of requirements follows the structure of the templates saved in the database. For doing so, the requirements are" +
-            " first converted to include their part-of-speech and sentence tags with a library that can be specified.</p>" +
-            "" +
-            " <p>Before writing a new template you should choose a NLP library of those permitted by this service because" +
-            " each one has different tags (at the moment only is allow OpenNLP library). A template follows a modified BNF diagram:</p>" +
+            " <p> This API has two main operations:</p>" +
             " <ul>" +
-            " <li>A template is defined by one or more rules (the input_output is defined by an array of strings).</li>" +
+            " <li> InTemplates </li>" +
+            " <li> Conformance </li></ul>" +
+            " <p> The first operation serves to add templates to the API database. The templates must be written following a defined format explained later in this section. The " +
+            "operation receives the template and organization names as parameters which identify the template in the database. We use the OpenNLP library to process the templates and the requirements. </p>" +
+            " <p> The second operation checks if the input requirements follow one or more templates stored in the database. Each requirement is compare with all the templates " +
+            "of the organization receive as parameter and only return if it doesn't conform to any of them. In this case, the API also returns a conformance score and one or more tips " +
+            " to help improving the requirement. </p>" +
+            " <p> A template follows a modified BNF diagram:</p>" +
+            " <ul>" +
+            " <li>A template is defined by one or more rules (the rules are defined by an array of strings).</li>" +
             " <li>The first word of each rule must be written as \" &ltname_of_the_rule&gt ::= \" that defines the name of the rule.</li>" +
             " <li>The name of the first rule must be main.</li>" +
             " <li>The first rule must define the structure of the requirement.</li>" +
             " <li>The other rules should be used to define auxiliary structures.</li>" +
-            " <li>For writing rules are permitted the next tags (their meaning can be seen in the get clauses method): <ul>" +
-            " <li> words (specified with \"%\"). </li>" +
-            " <li> pos tags of the template's library (specified with \"()\"). </li>" +
-            " <li> sentence tags of the template's library (specified with \"<>\"). </li>" +
-            " <li> service special tags:  \"|\" , (all)  and <*>.</li></ul></li></ul>" +
+            " <li> Are only permitted the next tags : <ul>" +
+            " <li> plain words (specified with \"%\"). </li>" +
+            " <li> pos tags of the <a href=\"http://dpdearing.com/posts/2011/12/opennlp-part-of-speech-pos-tags-penn-english-treebank/\">OpenNLP</a> library (specified with \"()\"). </li>" +
+            " <li> sentence tags -NP or VP- (specified with \"<>\"). </li>" +
+            " <li> service special tags:  \"|\" , (all)  or <*>.</li></ul></li></ul>" +
             "<p> An example: </p> <ul> " +
             "<li> &ltmain&gt ::= &ltopt-condition&gt &ltnp&gt (md) (vb) &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %PROVIDE &ltnp&gt %WITH %THE %ABILITY &ltinfinitive-vp&gt &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %BE %ABLE &ltvp&gt &ltnp&gt </li>" +
             "<li> &ltconditional-keyword&gt ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS </li>" +
