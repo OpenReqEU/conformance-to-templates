@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DriverMatcher {
+public class DriverMatcher {/*
 
     //clase auxiliar
     private static class TagsAndOuput {
@@ -156,5 +156,5 @@ public class DriverMatcher {
         List<String> array_sentence_tags = new ArrayList<>();
         for (int i = 0; i < aux_array_sentence_tags.length(); ++i) array_sentence_tags.add(aux_array_sentence_tags.getString(i));
         return new TagsAndOuput(array_tokens,array_tokens_tags,array_sentence_tags);
-    }
+    }*/
 }

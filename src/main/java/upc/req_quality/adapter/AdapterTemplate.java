@@ -11,7 +11,5 @@ public interface AdapterTemplate {
 
     public String check_organization();
 
-    public String check_library();
-
     public String check_name();
 }

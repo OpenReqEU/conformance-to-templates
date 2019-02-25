@@ -4,7 +4,7 @@ import upc.req_quality.entity.Requirement;
 
 public class DriverOpenNLP {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {/*
 
         AdapterPosTagger tagger = new OpenNLP_PosTagger();
         String text = "If the guest is not registered, the system should display the standard menu to the guest.";
@@ -17,6 +17,6 @@ public class DriverOpenNLP {
         for (int i = 0; i < tokens.length; ++i) {
             String result = tokens[i] +  " " + tokens_tagged[i] + " " + chunks[i];
             System.out.println(result);
-        }
+        }*/
     }
 }

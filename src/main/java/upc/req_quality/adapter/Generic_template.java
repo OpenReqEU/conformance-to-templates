@@ -9,17 +9,14 @@ public class Generic_template implements AdapterTemplate{
 
     private Parser_Matcher parser_matcher;
     private String organization;
-    private String library;
     private String name;
 
-    public Generic_template(String name, String organization, String library, List<String> rules, String[] permited_clauses) throws BadBNFSyntaxException {
-        //System.out.println("Creating model: " + name);
+    public Generic_template(String name, String organization, List<String> rules, String[] permited_clauses) throws BadBNFSyntaxException {
         this.organization = organization;
-        this.library = library;
         this.name = name;
         this.parser_matcher = new Parser_Matcher(rules,permited_clauses);
         this.parser_matcher.generate_matcher();
-        System.out.println("Model " + name + " of " + organization + " generated correctly with library " + library);
+        System.out.println("Model " + name + " of " + organization + "generated correctly.");
     }
 
     @Override
@@ -30,11 +27,6 @@ public class Generic_template implements AdapterTemplate{
     @Override
     public String check_organization() {
         return organization;
-    }
-
-    @Override
-    public String check_library() {
-        return library;
     }
 
     @Override

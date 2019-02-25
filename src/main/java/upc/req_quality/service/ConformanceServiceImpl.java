@@ -17,7 +17,9 @@ import java.util.List;
 public class ConformanceServiceImpl implements ConformanceService {
 
     @Override
-    public Requirements check_conformance(String library, String organization, List<Requirement> reqs) throws BadRequestException{
+    public Requirements check_conformance(String organization, List<Requirement> reqs) throws BadRequestException {
+
+        String library = "OpenNLP";
 
         List<Requirement> result = new ArrayList<>();
 
@@ -37,12 +39,10 @@ public class ConformanceServiceImpl implements ConformanceService {
             List<Tip> tips = new ArrayList<>();
 
             for (int j = 0; ((!ok) && j < templates.size()); ++j) {
-                if (templates.get(j).check_library().equals(library)) {
-                    Matcher_Response matcher_response = templates.get(j).check_template(tokens,tokens_tagged,chunks);
-                    ok = matcher_response.isResult();
-                    if (!ok) {
-                        tips.add(new Tip(templates.get(j).check_name(),matcher_response.getErrorDescriptions(),matcher_response.getScore()));
-                    }
+                Matcher_Response matcher_response = templates.get(j).check_template(tokens,tokens_tagged,chunks);
+                ok = matcher_response.isResult();
+                if (!ok) {
+                    tips.add(new Tip(templates.get(j).check_name(),matcher_response.getErrorDescriptions(),matcher_response.getScore()));
                 }
             }
 
@@ -50,17 +50,6 @@ public class ConformanceServiceImpl implements ConformanceService {
         }
 
         return new Requirements(result);
-    }
-
-    @Override
-    public PermitedClauses check_permited_clauses(String library) throws BadRequestException {
-        AdapterFactory af = AdapterFactory.getInstance();
-        AdapterPosTagger ap = af.getAdapterPosTagger(library);
-        String[] permited_pos_tags = ap.getPos_tags();
-        String[] permited_sentence_tags = ap.getSentence_tags();
-        String[] permited_matcher_tags = af.check_matcher_tags();
-        PermitedClauses aux = new PermitedClauses(permited_pos_tags,permited_sentence_tags,permited_matcher_tags);
-        return aux;
     }
 
     @Override

@@ -8,9 +8,9 @@ import upc.req_quality.exeption.BadBNFSyntaxException;
 
 public class DriverGenericTemplate {
     public static void main(String[] args) throws BadBNFSyntaxException {
-        AdapterPosTagger tagger = new OpenNLP_PosTagger();
+        /*AdapterPosTagger tagger = new OpenNLP_PosTagger();
         String text = "The system shall inform the guest wether his order has been accepted XOR rejected.o";
-        Requirement aux_req = new Requirement("1",text);
+        Requirement aux_req = new Requirement("1",text);*/
 
         /*String[] tokens = tagger.tokenizer(aux_req.getText());
         String[] tokens_tagged = tagger.pos_tagger(tokens);

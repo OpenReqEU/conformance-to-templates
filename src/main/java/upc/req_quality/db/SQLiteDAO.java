@@ -20,11 +20,11 @@ public class SQLiteDAO implements Template_database {
         }
     }
 
-    private Template create_template(String name, String organization, String library, String rules) {
+    private Template create_template(String name, String organization, String rules) {
         String[] r = rules.split("#####SEPARATION#####");
         List<String> aux = new ArrayList<>();
         for (int i = 0; i < r.length; ++i) aux.add(r[i]);
-        return new Template(name,organization,library,aux);
+        return new Template(name,organization,aux);
     }
 
     @Override
@@ -36,11 +36,10 @@ public class SQLiteDAO implements Template_database {
             else rules += aux.get(i);
         }
         PreparedStatement ps;
-        ps = db.prepareStatement ("INSERT INTO model (name, org, library, description) VALUES (?, ?, ?, ?)");
+        ps = db.prepareStatement ("INSERT INTO model (name, org, description) VALUES (?, ?, ?)");
         ps.setString(1, template.getName());
         ps.setString(2, template.getOrganization());
-        ps.setString(3, template.getLibrary());
-        ps.setString(4, rules);
+        ps.setString(3, rules);
         ps.execute();
     }
 
@@ -49,7 +48,7 @@ public class SQLiteDAO implements Template_database {
         if (organization != null) {
             System.out.println("Getting all models");
             System.out.println(organization);
-            String sql = "SELECT name, org, library, description FROM model WHERE org = ?";
+            String sql = "SELECT name, org, description FROM model WHERE org = ?";
 
             List<Template> templates = new ArrayList<>();
 
@@ -67,14 +66,13 @@ public class SQLiteDAO implements Template_database {
             while (rs.next()) {
                 aux_name = rs.getString("name");
                 aux_organization = rs.getString("org");
-                aux_library = rs.getString("library");
                 aux_description = rs.getString("description");
-                templates.add(create_template(aux_name, aux_organization, aux_library, aux_description));
+                templates.add(create_template(aux_name,aux_organization,aux_description));
             }
             return templates;
         } else {
             System.out.println("Getting all models");
-            String sql = "SELECT name, org, library, description FROM model";
+            String sql = "SELECT name, org, description FROM model";
 
             List<Template> templates = new ArrayList<>();
 
@@ -90,9 +88,8 @@ public class SQLiteDAO implements Template_database {
             while (rs.next()) {
                 aux_name = rs.getString("name");
                 aux_organization = rs.getString("org");
-                aux_library = rs.getString("library");
                 aux_description = rs.getString("description");
-                templates.add(create_template(aux_name, aux_organization, aux_library, aux_description));
+                templates.add(create_template(aux_name, aux_organization, aux_description));
             }
 
             return templates;
@@ -112,9 +109,8 @@ public class SQLiteDAO implements Template_database {
         String sql = "CREATE TABLE IF NOT EXISTS model (\n"
                 + "	name varchar,\n"
                 + "	org varchar,\n"
-                + " library varchar,\n"
                 + "	description text NOT NULL,\n"
-                + " PRIMARY KEY (name, org, library)"
+                + " PRIMARY KEY (name, org)"
                 + ");";
 
         try (Connection conn = DriverManager.getConnection(url);

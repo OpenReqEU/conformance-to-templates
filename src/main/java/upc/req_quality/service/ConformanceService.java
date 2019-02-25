@@ -10,9 +10,7 @@ import java.util.List;
 
 public interface ConformanceService {
 
-    public Requirements check_conformance(String library, String organization, List<Requirement> reqs) throws BadRequestException;
-
-    public PermitedClauses check_permited_clauses(String library) throws BadRequestException;
+    public Requirements check_conformance(String organization, List<Requirement> reqs) throws BadRequestException;
 
     public void enter_new_templates(Templates templates) throws BadRequestException, BadBNFSyntaxException, SQLException;
 

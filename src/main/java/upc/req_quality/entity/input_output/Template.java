@@ -17,16 +17,13 @@ public class Template implements Serializable {
     private List<String> rules;
     @ApiModelProperty(value="organization")
     private String organization;
-    @ApiModelProperty(value="library")
-    private String library;
 
     public Template() {}
 
-    public Template(String name, String organization, String library, List<String> rules) {
+    public Template(String name, String organization, List<String> rules) {
         this.organization = organization;
         this.name = name;
         this.rules = rules;
-        this.library = library;
     }
 
     public String getOrganization() {
@@ -39,9 +36,5 @@ public class Template implements Serializable {
 
     public List<String> getRules() {
         return rules;
-    }
-
-    public String getLibrary() {
-        return library;
     }
 }

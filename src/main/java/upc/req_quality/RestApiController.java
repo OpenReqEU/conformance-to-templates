@@ -27,9 +27,6 @@ public class RestApiController {
     @Autowired
     ConformanceService conformanceService;
 
-
-
-
     @CrossOrigin
     @RequestMapping(value="/Conformance", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Check requirements conformance to templates", notes = "The operation returns the ids" +
@@ -39,25 +36,11 @@ public class RestApiController {
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=411, message = "Bad request")})
     public ResponseEntity<?> check_conformance(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization,
-                                            @ApiParam(value="The library to use", required = true, example = "OpenNLP") @RequestParam String library,
                                             @ApiParam(value="A OpenReqJson with requirements", required = true, example = "SQ-132") @RequestBody Requirements json) {
         try {
-            return new ResponseEntity<>(conformanceService.check_conformance(library,organization,json.getRequirements()), HttpStatus.OK);
+            return new ResponseEntity<>(conformanceService.check_conformance(organization,json.getRequirements()), HttpStatus.OK);
         } catch (BadRequestException e) {
            return getBadRequest(e);
-        }
-    }
-
-    @RequestMapping(value="/Clauses", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns the API's permitted clauses", notes = "Returns the different clauses permitted by the library selected and the particular API clauses. " +
-            "The available library is OpenNLP. In the future more libraries will be added.")
-    @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-                           @ApiResponse(code=411, message = "Bad request")})
-    public ResponseEntity<?> check_permited_clauses(@ApiParam(value="The name of the library", required = true, example = "OpenNLP") @RequestParam String library) {
-        try {
-            return new ResponseEntity<>(conformanceService.check_permited_clauses(library),HttpStatus.OK);
-        } catch (BadRequestException e) {
-            return getBadRequest(e);
         }
     }
 
