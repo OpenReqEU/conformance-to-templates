@@ -26,7 +26,7 @@ public class SwaggerConfig {
             " <li> Conformance </li></ul>" +
             " <p> The first operation serves to add templates to the API database. The templates must be written following a defined format explained later in this section. The " +
             "operation receives the template and organization names as parameters which identify the template in the database. We use the OpenNLP library to process the templates and the requirements. </p>" +
-            " <p> The second operation checks if the input requirements follow one or more templates stored in the database. Each requirement is compare with all the templates " +
+            " <p> The second operation checks if the input requirements follow one or more templates stored in the database. Each requirement is compared with all the templates " +
             "of the organization receive as parameter and only return if it doesn't conform to any of them. In this case, the API also returns a conformance score and one or more tips " +
             " to help improving the requirement. </p>" +
             " <p> A template follows a modified BNF diagram:</p>" +
@@ -46,7 +46,8 @@ public class SwaggerConfig {
             "<li> &ltconditional-keyword&gt ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS </li>" +
             "<li> &ltmodal&gt ::= %SHALL | %SHOULD | %WOULD </li>" +
             "<li> &ltopt-condition&gt ::= &ltconditional-keyword&gt | (all) </li>" +
-            "<li> &ltinfinitive-vp&gt ::= %to &ltvp&gt </li> </ul>";
+            "<li> &ltinfinitive-vp&gt ::= %to &ltvp&gt </li> </ul>" +
+            "<p> The API uses UTF-8 charset. Also, it uses the OpenReq format for input JSONs. </p>";
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()

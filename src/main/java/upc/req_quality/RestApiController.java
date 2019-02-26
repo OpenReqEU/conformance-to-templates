@@ -30,9 +30,7 @@ public class RestApiController {
     @CrossOrigin
     @RequestMapping(value="/Conformance", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Check requirements conformance to templates", notes = "The operation returns the ids" +
-            " of the requirements that do not conform to any template of the chosen library and organization saved in the database." +
-            " To transform the requirements the operation can use different libraries. The available library is OpenNLP." +
-            " In the future more libraries will be added.")
+            " of the requirements that do not conform to any template saved in the database of the chosen organization.")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=411, message = "Bad request")})
     public ResponseEntity<?> check_conformance(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization,
@@ -45,8 +43,8 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/InTemplates", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Save templates to the database", notes = "This operation save the specified templates to the database. Is needed to follow the rules explained in the top description" +
-            " for a proper functioning. It must be specified the library used to write the template.")
+    @ApiOperation(value = "Save templates to the database", notes = "This operation saves the specified templates to the database. The templates must follow the structure explained in the " +
+            "top description.")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=411, message = "Bad request"),
                            @ApiResponse(code=412, message = "Bad BNF syntax")})
@@ -65,7 +63,7 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/OutTemplates", method = RequestMethod.GET)
-    @ApiOperation(value = "Show the templates saved on the database", notes = "This operation show the templates of the specified organization")
+    @ApiOperation(value = "Show the templates saved on the database", notes = "This operation shows the templates saved in the database of the specified organization")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=413, message = "Database exception")})
     public ResponseEntity<?> check_templates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
@@ -77,7 +75,7 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/DeleteTemplates", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Delete templates on the database", notes = "This operation deletes all the templates of the specified organization")
+    @ApiOperation(value = "Delete templates on the database", notes = "This operation deletes all the templates of the specified organization.")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=413, message = "Database exception")})
     public ResponseEntity<?> clear_templates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
