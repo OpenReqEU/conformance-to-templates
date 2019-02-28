@@ -18,50 +18,58 @@ public class Input_Output {
     }
 
     public String leer_fichero(String nombre_fichero) throws IOException {
-        String fileName = nombre_fichero;
         String result = "";
         String line;
+        BufferedReader bufferedReader = null;
+        FileReader fileReader = null;
 
-        FileReader fileReader = new FileReader(fileName);
+        try {
+            fileReader = new FileReader(nombre_fichero);
 
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
+            bufferedReader = new BufferedReader(fileReader);
 
-        while((line = bufferedReader.readLine()) != null) {
-            result += line;
+            while ((line = bufferedReader.readLine()) != null) {
+                result += line;
+            }
+
+            bufferedReader.close();
+
+            return result;
+        } finally {
+            if (bufferedReader != null) bufferedReader.close();
+            if (fileReader != null) fileReader.close();
         }
-
-        bufferedReader.close();
-
-        return result;
     }
 
     public List<List<String>> read_tree_matrix(String nombre_fichero) throws IOException {
-        String fileName = nombre_fichero;
         String line;
         List<String> row;
         List<List<String>> tree = new ArrayList<>();
+        BufferedReader bufferedReader = null;
+        FileReader fileReader = null;
 
-        FileReader fileReader = new FileReader(fileName);
+        try {
+            fileReader = new FileReader(nombre_fichero);
 
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
+            bufferedReader = new BufferedReader(fileReader);
 
-        while((line = bufferedReader.readLine()) != null) {
-            if (!line.equals("")) {
-                row = new ArrayList<>();
-                //System.out.println(line);
-                String[] words = line.split("\\s+");
-                for (int i = 0; i < words.length; ++i) {
-                    //System.out.println(words[i]);
-                    row.add(words[i]);
+            while ((line = bufferedReader.readLine()) != null) {
+                if (!line.equals("")) {
+                    row = new ArrayList<>();
+                    //System.out.println(line);
+                    String[] words = line.split("\\s+");
+                    for (int i = 0; i < words.length; ++i) {
+                        //System.out.println(words[i]);
+                        row.add(words[i]);
+                    }
+                    //System.out.println("tree row length" + words.length);
+                    tree.add(row);
                 }
-                //System.out.println("tree row length" + words.length);
-                tree.add(row);
             }
-        }
 
-        //System.out.println("tree size " + tree.size());
+            //System.out.println("tree size " + tree.size());
 
-        bufferedReader.close();
+            bufferedReader.close();
 
         /*for (int i = 0; i < tree.size(); ++i) {
             String res = "";
@@ -72,7 +80,11 @@ public class Input_Output {
             System.out.println(res);
         }*/
 
-        return tree;
+            return tree;
+        } finally {
+            if (bufferedReader != null) bufferedReader.close();
+            if (fileReader != null) fileReader.close();
+        }
     }
 
     public JSONObject read_json_file(String nombre_fichero) throws IOException, JSONException {
@@ -107,12 +119,15 @@ public class Input_Output {
         BufferedWriter bw = null;
         FileWriter fw = null;
 
-        fw = new FileWriter(nombre_fichero);
-        bw = new BufferedWriter(fw);
-        bw.write(content);
-        System.out.println("Done");
-        if (bw != null) bw.close();
-        if (fw != null) fw.close();
+        try {
+            fw = new FileWriter(nombre_fichero);
+            bw = new BufferedWriter(fw);
+            bw.write(content);
+            System.out.println("Done");
+        } finally {
+            if (bw != null) bw.close();
+            if (fw != null) fw.close();
+        }
     }
 
 }
