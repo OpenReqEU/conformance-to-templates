@@ -3,6 +3,7 @@ package upc.req_quality.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import upc.req_quality.entity.input_output.Tip;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,15 +19,18 @@ public class Requirement implements Serializable {
     private String text;
     @ApiModelProperty(value="tips")
     private List<Tip> tips;
+    @ApiModelProperty(value="tokens")
+    private List<String> tokens;
 
     public Requirement() {
         this.tips = new ArrayList<>();
     }
 
-    public Requirement(String id, String text, List<Tip> tips) {
+    public Requirement(String id, String text, List<Tip> tips, List<String> tokens) {
         this.id = id;
         this.text = text;
         this.tips = tips;
+        this.tokens = tokens;
     }
 
     public String getId() {
@@ -35,6 +39,14 @@ public class Requirement implements Serializable {
 
     public String getText() {
         return text;
+    }
+
+    public List<Tip> getTips() {
+        return tips;
+    }
+
+    public List<String> getTokens() {
+        return tokens;
     }
 
     public void setId(String id) {

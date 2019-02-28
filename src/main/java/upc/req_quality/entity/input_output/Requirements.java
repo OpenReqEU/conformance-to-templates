@@ -1,9 +1,10 @@
-package upc.req_quality.entity;
+package upc.req_quality.entity.input_output;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import upc.req_quality.entity.Requirement;
 
 import java.io.Serializable;
 import java.util.ArrayList;

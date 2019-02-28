@@ -4,6 +4,7 @@ import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
+import opennlp.tools.stemmer.PorterStemmer;
 import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.WhitespaceTokenizer;
 import opennlp.tools.util.Span;
@@ -77,6 +78,7 @@ WRB Wh­adverb
         String[] tokens = tokenizer.tokenize(sentence);
         return tokens;
     }
+
 
     @Override
     public String[] pos_tagger(String[] tokens) {

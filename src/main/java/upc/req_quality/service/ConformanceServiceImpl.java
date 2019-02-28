@@ -4,12 +4,14 @@ import org.springframework.stereotype.Service;
 import upc.req_quality.adapter.AdapterPosTagger;
 import upc.req_quality.adapter.AdapterTemplate;
 import upc.req_quality.entity.*;
+import upc.req_quality.entity.input_output.Requirements;
 import upc.req_quality.entity.input_output.Template;
 import upc.req_quality.entity.input_output.Templates;
+import upc.req_quality.entity.input_output.Tip;
 import upc.req_quality.exeption.BadBNFSyntaxException;
 import upc.req_quality.exeption.BadRequestException;
+import upc.req_quality.exeption.InternalErrorException;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,7 @@ import java.util.List;
 public class ConformanceServiceImpl implements ConformanceService {
 
     @Override
-    public Requirements check_conformance(String organization, List<Requirement> reqs) throws BadRequestException {
+    public Requirements check_conformance(String organization, List<Requirement> reqs) throws BadRequestException, BadBNFSyntaxException, InternalErrorException {
 
         String library = "OpenNLP";
 
@@ -25,7 +27,9 @@ public class ConformanceServiceImpl implements ConformanceService {
 
         AdapterFactory factory = AdapterFactory.getInstance();
         AdapterPosTagger tagger = factory.getAdapterPosTagger(library);
-        List<AdapterTemplate> templates = factory.getAdapterTemplates();
+        List<AdapterTemplate> templates = factory.getAdapterTemplates(organization);
+
+        if (templates == null) throw new BadRequestException("This organization has zero templates.");
 
         for (int i = 0; i < reqs.size(); ++i) {
             Requirement aux_req = reqs.get(i);
@@ -46,14 +50,14 @@ public class ConformanceServiceImpl implements ConformanceService {
                 }
             }
 
-            if (!ok) result.add(new Requirement(aux_req.getId(),aux_req.getText(),tips));
+            if (!ok) result.add(new Requirement(aux_req.getId(),aux_req.getText(),tips,create_tokens_output(tokens,tokens_tagged,chunks)));
         }
 
         return new Requirements(result);
     }
 
     @Override
-    public void enter_new_templates(Templates templates) throws BadRequestException, BadBNFSyntaxException, SQLException {
+    public void enter_new_templates(Templates templates) throws BadBNFSyntaxException, InternalErrorException {
         AdapterFactory af = AdapterFactory.getInstance();
         List<Template> aux_templates = templates.getTemplates();
         for (int i = 0; i < aux_templates.size(); ++i) {
@@ -62,15 +66,22 @@ public class ConformanceServiceImpl implements ConformanceService {
     }
 
     @Override
-    public Templates check_all_templates(String organization) throws SQLException {
+    public Templates check_organization_templates(String organization) throws InternalErrorException, BadBNFSyntaxException {
         AdapterFactory af = AdapterFactory.getInstance();
-        return af.check_all_models(organization);
+        return af.check_organization_models(organization);
     }
 
     @Override
-    public void clear_db(String organization) throws SQLException{
+    public void clear_db(String organization) throws InternalErrorException, BadBNFSyntaxException {
         AdapterFactory af = AdapterFactory.getInstance();
         af.clear_db(organization);
-        return;
+    }
+
+    private List<String> create_tokens_output(String[] tokens, String[] tokens_tagged, String[] chunks) {
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < tokens.length; ++i) {
+            result.add(tokens[i] + " " + tokens_tagged[i] + " " + chunks[i]);
+        }
+        return result;
     }
 }

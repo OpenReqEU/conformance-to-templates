@@ -4,11 +4,13 @@ import upc.req_quality.entity.Requirement;
 
 public class DriverOpenNLP {
 
-    public static void main(String[] args) {/*
+    public static void main(String[] args) {
 
         AdapterPosTagger tagger = new OpenNLP_PosTagger();
-        String text = "If the guest is not registered, the system should display the standard menu to the guest.";
-        Requirement aux_req = new Requirement("1",text);
+        String text = "The S&T module shall command the database to send the orbit configuration files to the Satellite Control Centre.";
+        Requirement aux_req = new Requirement();
+        aux_req.setId("1");
+        aux_req.setText(text);
 
         String[] tokens = tagger.tokenizer(aux_req.getText());
         String[] tokens_tagged = tagger.pos_tagger(tokens);
@@ -17,6 +19,6 @@ public class DriverOpenNLP {
         for (int i = 0; i < tokens.length; ++i) {
             String result = tokens[i] +  " " + tokens_tagged[i] + " " + chunks[i];
             System.out.println(result);
-        }*/
+        }
     }
 }

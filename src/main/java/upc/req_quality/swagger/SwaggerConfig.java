@@ -40,7 +40,10 @@ public class SwaggerConfig {
             " <li> plain words (specified with \"%\"). </li>" +
             " <li> pos tags of the <a href=\"http://dpdearing.com/posts/2011/12/opennlp-part-of-speech-pos-tags-penn-english-treebank/\">OpenNLP</a> library (specified with \"()\"). </li>" +
             " <li> sentence tags -NP or VP- (specified with \"<>\"). </li>" +
-            " <li> service special tags:  \"|\" , (all)  or <*>.</li></ul></li></ul>" +
+            " <li> component special tags:  " +
+            " <ul> <li> | : OR </li>" +
+            " <li> (all) : ignores the rule</li>" +
+            " <li> <*> : accepts anything that comes after </li></ul></li></ul></li></ul>" +
             "<p> An example: </p> <ul> " +
             "<li> &ltmain&gt ::= &ltopt-condition&gt &ltnp&gt (md) (vb) &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %PROVIDE &ltnp&gt %WITH %THE %ABILITY &ltinfinitive-vp&gt &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %BE %ABLE &ltvp&gt &ltnp&gt </li>" +
             "<li> &ltconditional-keyword&gt ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS </li>" +

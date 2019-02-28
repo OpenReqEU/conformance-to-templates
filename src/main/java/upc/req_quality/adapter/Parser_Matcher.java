@@ -413,7 +413,7 @@ public class Parser_Matcher {
                     result = found;
                 }
             }
-            if (!b1 && !b2 && !b3) response.addError(index, "The token at index " + index + " is not equal to template scheme. The token was defined as \""+tokens[index]+"\", \""+tokens_tagged[index]+"\" or \""+chunks[index]+"\" and was expected \"" + tree.getData() + "\".");
+            if (!b1 && !b2 && !b3) response.addError(index, "The requirement token at index " + index + " is not equal to template scheme. The token was defined as \""+tokens[index]+"\", \""+tokens_tagged[index]+"\" or \""+chunks[index]+"\" and the the expected token was \"" + tree.getData() + "\".");
             return result;
         }
     }

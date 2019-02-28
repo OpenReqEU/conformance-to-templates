@@ -1,7 +1,6 @@
 {
   "templates": [
     {
-      "library": "OpenNLP",
       "name": "Rupp",
       "organization": "Test",
       "rules": [

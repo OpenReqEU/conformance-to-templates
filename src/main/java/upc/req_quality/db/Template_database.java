@@ -9,7 +9,7 @@ public interface Template_database {
 
     public void saveTemplate(Template model) throws SQLException;
 
-    public List<Template> getAllTemplates(String organization) throws SQLException;
+    public List<Template> getOrganizationTemplates(String organization) throws SQLException;
 
     public void clearDB(String organization) throws SQLException;
 

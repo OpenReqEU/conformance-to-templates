@@ -44,7 +44,7 @@ public class SQLiteDAO implements Template_database {
     }
 
     @Override
-    public List<Template> getAllTemplates(String organization) throws SQLException{
+    public List<Template> getOrganizationTemplates(String organization) throws SQLException {
         if (organization != null) {
             System.out.println("Getting all models");
             System.out.println(organization);
@@ -97,7 +97,7 @@ public class SQLiteDAO implements Template_database {
     }
 
     @Override
-    public void clearDB(String organization) throws SQLException{
+    public void clearDB(String organization) throws SQLException {
         String sql = "DELETE FROM model WHERE org = ?";
         PreparedStatement pstmt = db.prepareStatement(sql);
         pstmt.setString(1, organization);
@@ -105,7 +105,7 @@ public class SQLiteDAO implements Template_database {
         System.out.println("DB Cleared");
     }
 
-    public void createDB() throws SQLException {
+    private void createDB() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS model (\n"
                 + "	name varchar,\n"
                 + "	org varchar,\n"

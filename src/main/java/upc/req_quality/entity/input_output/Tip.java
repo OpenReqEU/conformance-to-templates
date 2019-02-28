@@ -1,4 +1,4 @@
-package upc.req_quality.entity;
+package upc.req_quality.entity.input_output;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
@@ -27,5 +27,17 @@ public class Tip implements Serializable {
         this.template = template;
         this.description = description;
         this.score = score;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public float getScore() {
+        return score;
+    }
+
+    public List<String> getDescription() {
+        return description;
     }
 }

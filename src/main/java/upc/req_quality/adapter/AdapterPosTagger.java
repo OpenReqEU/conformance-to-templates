@@ -1,6 +1,7 @@
 package upc.req_quality.adapter;
 
 import upc.req_quality.entity.SpanOut;
+import upc.req_quality.exeption.InternalErrorException;
 
 import java.util.List;
 
