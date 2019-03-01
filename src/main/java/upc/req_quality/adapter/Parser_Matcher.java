@@ -2,7 +2,7 @@ package upc.req_quality.adapter;
 
 import com.google.common.collect.ObjectArrays;
 import upc.req_quality.entity.Matcher_Response;
-import upc.req_quality.exeption.BadBNFSyntaxException;
+import upc.req_quality.exception.BadBNFSyntaxException;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -413,7 +413,7 @@ public class Parser_Matcher {
                     result = found;
                 }
             }
-            if (!b1 && !b2 && !b3) response.addError(index, "The requirement token at index " + index + " is not equal to template scheme. The token was defined as \""+tokens[index]+"\", \""+tokens_tagged[index]+"\" or \""+chunks[index]+"\" and the the expected token was \"" + tree.getData() + "\".");
+            if (!b1 && !b2 && !b3) response.addError(index, "The requirement token at index " + index + " is not equal to template scheme. The token was defined as '"+tokens[index]+"', '"+tokens_tagged[index]+"' or '"+chunks[index]+"' and the the expected token was '" + tree.getData() + "'.");
             return result;
         }
     }

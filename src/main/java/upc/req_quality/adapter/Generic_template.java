@@ -1,7 +1,7 @@
 package upc.req_quality.adapter;
 
 import upc.req_quality.entity.Matcher_Response;
-import upc.req_quality.exeption.BadBNFSyntaxException;
+import upc.req_quality.exception.BadBNFSyntaxException;
 
 import java.util.List;
 

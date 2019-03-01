@@ -32,29 +32,32 @@ public class SQLiteDAO implements Template_database {
         List<String> aux = template.getRules();
         String rules = "";
         for (int i = 0; i < aux.size(); ++i) {
-            if (i != (aux.size() - 1)) rules += aux.get(i) + "#####SEPARATION#####";
-            else rules += aux.get(i);
+            if (i != (aux.size() - 1)) rules = rules.concat(aux.get(i) + "#####SEPARATION#####");
+            else rules = rules.concat(aux.get(i));
         }
-        PreparedStatement ps;
-        ps = db.prepareStatement ("INSERT INTO model (name, org, description) VALUES (?, ?, ?)");
-        ps.setString(1, template.getName());
-        ps.setString(2, template.getOrganization());
-        ps.setString(3, rules);
-        ps.execute();
-        ps.close();
+        PreparedStatement ps = null;
+        try {
+            ps = db.prepareStatement("INSERT INTO model (name, org, description) VALUES (?, ?, ?)");
+            ps.setString(1, template.getName());
+            ps.setString(2, template.getOrganization());
+            ps.setString(3, rules);
+            ps.execute();
+        } finally {
+            if (ps != null) ps.close();
+        }
     }
 
     @Override
     public List<Template> getOrganizationTemplates(String organization) throws SQLException {
-        if (organization != null) {
-            PreparedStatement pstmt = null;
-            ResultSet rs = null;
-            try {
+        List<Template> templates = new ArrayList<>();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Statement stmt = null;
+        try {
+            if (organization != null) {
                 System.out.println("Getting all models");
                 System.out.println(organization);
                 String sql = "SELECT name, org, description FROM model WHERE org = ?";
-
-                List<Template> templates = new ArrayList<>();
 
                 String aux_name;
                 String aux_organization;
@@ -72,19 +75,9 @@ public class SQLiteDAO implements Template_database {
                     aux_description = rs.getString("description");
                     templates.add(create_template(aux_name, aux_organization, aux_description));
                 }
-                return templates;
-            } finally {
-                if (pstmt != null) pstmt.close();
-                if (rs != null) rs.close();
-            }
-        } else {
-            Statement stmt = null;
-            ResultSet rs = null;
-            try {
+            } else {
                 System.out.println("Getting all models");
                 String sql = "SELECT name, org, description FROM model";
-
-                List<Template> templates = new ArrayList<>();
 
                 String aux_name;
                 String aux_organization;
@@ -100,11 +93,13 @@ public class SQLiteDAO implements Template_database {
                     aux_description = rs.getString("description");
                     templates.add(create_template(aux_name, aux_organization, aux_description));
                 }
-                return templates;
-            } finally {
-                if (stmt != null) stmt.close();
-                if (rs != null) rs.close();
+
             }
+            return templates;
+        } finally {
+            if (pstmt != null) pstmt.close();
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
         }
     }
 

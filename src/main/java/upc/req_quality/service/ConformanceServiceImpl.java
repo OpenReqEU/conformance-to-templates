@@ -8,9 +8,9 @@ import upc.req_quality.entity.input_output.Requirements;
 import upc.req_quality.entity.input_output.Template;
 import upc.req_quality.entity.input_output.Templates;
 import upc.req_quality.entity.input_output.Tip;
-import upc.req_quality.exeption.BadBNFSyntaxException;
-import upc.req_quality.exeption.BadRequestException;
-import upc.req_quality.exeption.InternalErrorException;
+import upc.req_quality.exception.BadBNFSyntaxException;
+import upc.req_quality.exception.BadRequestException;
+import upc.req_quality.exception.InternalErrorException;
 
 import java.util.ArrayList;
 import java.util.List;

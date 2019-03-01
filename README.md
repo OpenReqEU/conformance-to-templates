@@ -38,7 +38,11 @@ A template follows a modified BNF diagram:
         - plain words (specified with "%").
         - pos tags of the OpenNLP library (specified with "()").
         - sentence tags -NP or VP- (specified with "<>").
-        - service special tags: "|" , (all) or <*>.
+        - component special tags:
+            - | : OR
+            - (all) : ignores the rule
+            - <*> : accepts anything that comes after
+
         
 An example:
 
@@ -51,6 +55,21 @@ An example:
 
 ### How to install
 
+Steps to configure the service:
+
+1. Download the next opennlp models from http://opennlp.sourceforge.net/models-1.5/ and save them in $ServiceDirectory:
+
+	- en-chunker.bin
+	- en-pos-maxent.bin
+	- en-pos-perceptron.bin
+
+2. Download and install 8 JDK and last Maven version. 
+
+Steps to run the service:
+
+1. Open a terminal and copy-paste "sh run_conformance_to_templates.sh". Wait for an exit like this: upc.req_quality.ConformanceApplication : Started ConformanceApplication in 3.24 seconds
+
+2. Go to http://localhost:9409/swagger-ui.html#/ to see the swagger generated. You can use the component through the swagger or through http connections to the endpoints indicated in the documentation. 
 
 ### How to use it
 
