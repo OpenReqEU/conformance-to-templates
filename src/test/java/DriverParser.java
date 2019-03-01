@@ -1,7 +1,7 @@
 import com.google.common.collect.ObjectArrays;
 import upc.req_quality.adapter.OpenNLP_PosTagger;
 import upc.req_quality.adapter.Parser_Matcher;
-import upc.req_quality.exeption.BadBNFSyntaxException;
+import upc.req_quality.exception.BadBNFSyntaxException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class DriverParser {
 
         test_initial_checking(input_modified);
 
-        /*String[] permited_clauses = ObjectArrays.concat(new OpenNLP_PosTagger().getPos_tags(), new OpenNLP_PosTagger().getSentence_tags(), String.class);
+        String[] permited_clauses = ObjectArrays.concat(new OpenNLP_PosTagger().getPos_tags(), new OpenNLP_PosTagger().getSentence_tags(), String.class);
         Parser_Matcher parser = new Parser_Matcher(input_modified,permited_clauses);
 
         try {
@@ -31,7 +31,7 @@ public class DriverParser {
         }
         parser.print_trees();
         System.out.println("\n");
-        parser.print_matcher();*/
+        parser.print_matcher();
     }
 
     private static void test_initial_checking(List<String> input) throws BadBNFSyntaxException{

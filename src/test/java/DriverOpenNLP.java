@@ -7,7 +7,7 @@ public class DriverOpenNLP {
     public static void main(String[] args) {
 
         AdapterPosTagger tagger = new OpenNLP_PosTagger();
-        String text = "The S&T module shall command the database to send the orbit configuration files to the Satellite Control Centre.";
+        String text = "";
         Requirement aux_req = new Requirement();
         aux_req.setId("1");
         aux_req.setText(text);

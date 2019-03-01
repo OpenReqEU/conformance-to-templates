@@ -6,9 +6,9 @@ import upc.req_quality.db.SQLiteDAO;
 import upc.req_quality.db.Template_database;
 import upc.req_quality.entity.input_output.Template;
 import upc.req_quality.entity.input_output.Templates;
-import upc.req_quality.exeption.BadBNFSyntaxException;
-import upc.req_quality.exeption.BadRequestException;
-import upc.req_quality.exeption.InternalErrorException;
+import upc.req_quality.exception.BadBNFSyntaxException;
+import upc.req_quality.exception.BadRequestException;
+import upc.req_quality.exception.InternalErrorException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

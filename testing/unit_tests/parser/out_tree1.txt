@@ -1,3 +1,0 @@
-main <np> (vb) <vp> <np>
-main <np> <vp> <np>
-main <np> (vb) <np>

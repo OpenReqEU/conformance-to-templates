@@ -1,8 +1,0 @@
-{
-    "requirements":[
-        {"id":"3","text":"If the guest is not registered, the system should display the standard menu to the guest."},
-        {"id":"4","text":"After the guest has selected the function something, the system shall display the menu to the guest"},
-        {"id":"6","text":"The system shall inform the guest wether his order has been accepted XOR rejected.o"},
-        {"id":"7","text":"As soon as the dishes have been prepared, the system shall inform the guest that the dishes are ready for collection."}
-    ]
-}
