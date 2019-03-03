@@ -36,7 +36,7 @@ A template follows a modified BNF diagram:
     - The other rules should be used to define auxiliary structures.
     - Are only permitted the next tags :
         - plain words (specified with "%").
-        - pos tags of the OpenNLP library (specified with "()").
+        - pos tags of the OpenNLP library (specified with "()"). These tags are explained in the file opennlp_tags.
         - sentence tags -NP or VP- (specified with "<>").
         - component special tags:
             - | : OR

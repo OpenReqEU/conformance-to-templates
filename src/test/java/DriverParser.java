@@ -1,4 +1,5 @@
 import com.google.common.collect.ObjectArrays;
+import upc.req_quality.adapter.AdapterPosTagger;
 import upc.req_quality.adapter.OpenNLP_PosTagger;
 import upc.req_quality.adapter.Parser_Matcher;
 import upc.req_quality.exception.BadBNFSyntaxException;
@@ -21,8 +22,11 @@ public class DriverParser {
 
         test_initial_checking(input_modified);
 
-        String[] permited_clauses = ObjectArrays.concat(new OpenNLP_PosTagger().getPos_tags(), new OpenNLP_PosTagger().getSentence_tags(), String.class);
-        Parser_Matcher parser = new Parser_Matcher(input_modified,permited_clauses);
+        AdapterPosTagger tagger = new OpenNLP_PosTagger();
+        List<String> pos_tags = tagger.getPos_tags();
+        List<String> sen_tags = tagger.getSentence_tags();
+        pos_tags.addAll(sen_tags);
+        Parser_Matcher parser = new Parser_Matcher(input_modified,pos_tags);
 
         try {
             parser.generate_matcher();

@@ -14,30 +14,30 @@ public class Tip implements Serializable {
 
     @ApiModelProperty(value="name_template")
     private String template;
-    @ApiModelProperty(value="score")
-    private float score;
-    @ApiModelProperty(value="description")
-    private List<String> description;
+    @ApiModelProperty(value="index")
+    private int index;
+    @ApiModelProperty(value="expected_tokens")
+    private List<String> errors;
 
     public Tip (){
-        this.description = new ArrayList<>();
+        this.errors = new ArrayList<>();
     }
 
-    public Tip (String template, List<String> description, float score) {
+    public Tip (String template, List<String> description, int index) {
         this.template = template;
-        this.description = description;
-        this.score = score;
+        this.errors = description;
+        this.index = index;
     }
 
     public String getTemplate() {
         return template;
     }
 
-    public float getScore() {
-        return score;
+    public int getIndex() {
+        return index;
     }
 
     public List<String> getDescription() {
-        return description;
+        return errors;
     }
 }

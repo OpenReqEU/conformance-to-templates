@@ -11,7 +11,7 @@ public class Generic_template implements AdapterTemplate{
     private String organization;
     private String name;
 
-    public Generic_template(String name, String organization, List<String> rules, String[] permited_clauses) throws BadBNFSyntaxException {
+    public Generic_template(String name, String organization, List<String> rules, List<String> permited_clauses) throws BadBNFSyntaxException {
         this.organization = organization;
         this.name = name;
         this.parser_matcher = new Parser_Matcher(rules,permited_clauses);
