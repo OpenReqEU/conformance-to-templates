@@ -21,12 +21,10 @@ public class ConformanceServiceImpl implements ConformanceService {
     @Override
     public Requirements check_conformance(String organization, List<Requirement> reqs) throws BadRequestException, BadBNFSyntaxException, InternalErrorException {
 
-        String library = "OpenNLP";
-
         List<Requirement> result = new ArrayList<>();
 
         AdapterFactory factory = AdapterFactory.getInstance();
-        AdapterPosTagger tagger = factory.getAdapterPosTagger(library);
+        AdapterPosTagger tagger = factory.getAdapterPosTagger();
         List<AdapterTemplate> templates = factory.getAdapterTemplates(organization);
 
         if (templates == null) throw new BadRequestException("This organization has zero templates.");
@@ -46,11 +44,11 @@ public class ConformanceServiceImpl implements ConformanceService {
                 Matcher_Response matcher_response = templates.get(j).check_template(tokens,tokens_tagged,chunks);
                 ok = matcher_response.isResult();
                 if (!ok) {
-                    tips.add(new Tip(templates.get(j).check_name(),matcher_response.getErrorDescriptions(),matcher_response.getScore()));
+                    tips.add(new Tip(templates.get(j).check_name(),explain_errors(matcher_response.getErrorDescriptions(),tagger),matcher_response.getIndex()));
                 }
             }
 
-            if (!ok) result.add(new Requirement(aux_req.getId(),aux_req.getText(),tips,create_tokens_output(tokens,tokens_tagged,chunks)));
+            if (!ok) result.add(new Requirement(aux_req.getId(),aux_req.getText(),tips));
         }
 
         return new Requirements(result);
@@ -75,6 +73,21 @@ public class ConformanceServiceImpl implements ConformanceService {
     public void clear_db(String organization) throws InternalErrorException, BadBNFSyntaxException {
         AdapterFactory af = AdapterFactory.getInstance();
         af.clear_db(organization);
+    }
+
+    private List<String> explain_errors(List<String> tags, AdapterPosTagger tagger) throws InternalErrorException {
+        List<String> result = new ArrayList<>();
+        for (String tag: tags) {
+            String aux = "";
+            if (tag.contains(")")) aux = tagger.getTagDescription(tag);
+            else {
+                if (tag.contains("<")) aux = tagger.getTagDescription(tag);
+                else aux = tag;
+            }
+            if (aux == null) throw new InternalErrorException("Tag "+ tag + " not recognized");
+            result.add(aux);
+        }
+        return result;
     }
 
     private List<String> create_tokens_output(String[] tokens, String[] tokens_tagged, String[] chunks) {

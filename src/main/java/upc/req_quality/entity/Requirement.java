@@ -19,18 +19,15 @@ public class Requirement implements Serializable {
     private String text;
     @ApiModelProperty(value="tips")
     private List<Tip> tips;
-    @ApiModelProperty(value="tokens")
-    private List<String> tokens;
 
     public Requirement() {
         this.tips = new ArrayList<>();
     }
 
-    public Requirement(String id, String text, List<Tip> tips, List<String> tokens) {
+    public Requirement(String id, String text, List<Tip> tips) {
         this.id = id;
         this.text = text;
         this.tips = tips;
-        this.tokens = tokens;
     }
 
     public String getId() {
@@ -43,10 +40,6 @@ public class Requirement implements Serializable {
 
     public List<Tip> getTips() {
         return tips;
-    }
-
-    public List<String> getTokens() {
-        return tokens;
     }
 
     public void setId(String id) {

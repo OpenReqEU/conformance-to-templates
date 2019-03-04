@@ -15,7 +15,6 @@ public class Parser_Matcher {
     private Map<String,String_Tree> trees;
     private HashSet<String> words;
     private HashSet<String> permited_clauses;
-    private String[] permited_static;
     private static String[] matcher_tags = {"<*>","(all)"};
 
     public static String[] getMatcher_tags() {
@@ -27,17 +26,16 @@ public class Parser_Matcher {
     public Parser_Matcher() {
     }
 
-    public Parser_Matcher(List<String> input, String[] permited_static) {
+    public Parser_Matcher(List<String> input, List<String> permited_clauses) {
         this.input = input;
         this.trees = new HashMap<>();
         this.words = new HashSet<>();
         this.permited_clauses = new HashSet<>();
-        this.permited_static = permited_static;
-        for (int i = 0; i < permited_static.length; ++i) {
-            permited_clauses.add(permited_static[i]);
+        for (int i = 0; i < permited_clauses.size(); ++i) {
+            this.permited_clauses.add(permited_clauses.get(i));
         }
         for (int i = 0; i < matcher_tags.length; ++i) {
-            permited_clauses.add(matcher_tags[i]);
+            this.permited_clauses.add(matcher_tags[i]);
         }
         this.Mymatcher = new String_Tree();
     }
@@ -332,7 +330,7 @@ public class Parser_Matcher {
     }
 
     public Matcher_Response match(String[] tokens, String[] tokens_tagged, String[] chunks) {
-        Matcher_Response result = new Matcher_Response(tokens.length);
+        Matcher_Response result = new Matcher_Response();
         boolean found = false;
         List<String_Tree> children = Mymatcher.getChildren();
         for (int i = 0; ((!found) && (i < children.size())); ++i) {
@@ -413,25 +411,8 @@ public class Parser_Matcher {
                     result = found;
                 }
             }
-            if (!b1 && !b2 && !b3) response.addError(index, "The requirement token at index " + index + " is not equal to template scheme. The token was defined as '"+tokens[index]+"', '"+tokens_tagged[index]+"' or '"+chunks[index]+"' and the the expected token was '" + tree.getData() + "'.");
+            if (!b1 && !b2 && !b3) response.addError(index,tree.getData());
             return result;
         }
-    }
-
-
-    public String[] getPermited_static() {
-        return permited_static;
-    }
-
-    public void setPermited_static(String[] permited_static) {
-        this.permited_static = permited_static;
-        this.permited_clauses = new HashSet<>();
-        for (int i = 0; i < permited_static.length; ++i) {
-            permited_clauses.add(permited_static[i]);
-        }
-    }
-
-    public void setMymatcher(String_Tree main) {
-        this.Mymatcher = main;
     }
 }

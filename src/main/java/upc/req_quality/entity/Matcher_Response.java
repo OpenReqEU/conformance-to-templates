@@ -28,14 +28,12 @@ public class Matcher_Response {
     }
 
     private boolean result;
-    private int tokens_lenght;
-    private float score;
+    private int index;
     private LinkedList<Matcher_Error> errors;
 
-    public Matcher_Response(int tokens_lenght) {
-        this.tokens_lenght = tokens_lenght;
+    public Matcher_Response() {
         this.errors = new LinkedList<>();
-        this.score = 0;
+        this.index = 0;
     }
 
     public void setResult(boolean result) {
@@ -43,12 +41,7 @@ public class Matcher_Response {
     }
 
     public void addError(int index, String description) {
-        if (this.errors.size() > 0) {
-            if (this.errors.getLast().index < index) {
-                this.score = (float) index / this.tokens_lenght;
-                if (this.score >= 1) this.score = 0.9f;
-            }
-        }
+        if (index > this.index) this.index = index;
         this.errors.add(new Matcher_Error(index,description));
     }
 
@@ -76,7 +69,7 @@ public class Matcher_Response {
         return result;
     }
 
-    public float getScore() {
-        return score;
+    public int getIndex() {
+        return this.index;
     }
 }

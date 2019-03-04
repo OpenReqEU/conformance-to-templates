@@ -38,19 +38,25 @@ public class ControllerIntegration {
      */
 
     @Test
-    public void aTestInTemplates() throws Exception {
+    public void aAuxiliary() throws Exception {
+        this.mockMvc.perform(delete("/upc/reqquality/check-conformance-to-templates/DeleteTemplates?organization=_---Test---_"))
+                .andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    public void bTestInTemplates() throws Exception {
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/InTemplates").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"input_InTemplates_simple.json")))
                 .andDo(print()).andExpect(status().isOk());
     }
 
     @Test
-    public void bTestOutTemplates() throws Exception {
+    public void cTestOutTemplates() throws Exception {
         this.mockMvc.perform(get("/upc/reqquality/check-conformance-to-templates/OutTemplates?organization=_---Test---_"))
                 .andDo(print()).andExpect(status().isOk()).andExpect(content().string(read_file_raw(path+"output_outTemplates_simple.json")));
     }
 
     @Test
-    public void cTestDeleteTemplates() throws Exception {
+    public void dTestDeleteTemplates() throws Exception {
         this.mockMvc.perform(delete("/upc/reqquality/check-conformance-to-templates/DeleteTemplates?organization=_---Test---_"))
                 .andDo(print()).andExpect(status().isOk());
         this.mockMvc.perform(get("/upc/reqquality/check-conformance-to-templates/OutTemplates?organization=_---Test---_"))
@@ -58,7 +64,7 @@ public class ControllerIntegration {
     }
 
     @Test
-    public void dTestConformanceOK() throws Exception {
+    public void eTestConformanceOK() throws Exception {
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/InTemplates").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"templates/input_model_rupp.json")))
                 .andDo(print()).andExpect(status().isOk());
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/Conformance").param("organization", "_---Test---_").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"input_conformance_OK_simple.json")))
@@ -68,7 +74,7 @@ public class ControllerIntegration {
     }
 
     @Test
-    public void eTestConformanceNOTOK() throws Exception {
+    public void fTestConformanceNOTOK() throws Exception {
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/InTemplates").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"templates/input_model_rupp.json")))
                 .andDo(print()).andExpect(status().isOk());
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/Conformance").param("organization", "_---Test---_").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"input_conformance_NOTOK_simple.json")))

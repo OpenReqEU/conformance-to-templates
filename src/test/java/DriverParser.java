@@ -1,14 +1,16 @@
 import com.google.common.collect.ObjectArrays;
+import upc.req_quality.adapter.AdapterPosTagger;
 import upc.req_quality.adapter.OpenNLP_PosTagger;
 import upc.req_quality.adapter.Parser_Matcher;
 import upc.req_quality.exception.BadBNFSyntaxException;
+import upc.req_quality.exception.InternalErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DriverParser {
 
-    public static void main(String[] args) throws BadBNFSyntaxException {
+    public static void main(String[] args) throws BadBNFSyntaxException, InternalErrorException {
 
         String[] input = {"<main> ::=  <opt-condition> <np> (md) (vb) <np> | <opt-condition> <np> <modal> %PROVIDE <np> %WITH %THE %ABILITY <infinitive-vp> <np> <*> | <opt-condition> <np> <modal> %BE %ABLE <vp> <np> | <opt-condition> <np> <modal> <vp> <np>",
                 "<conditional-keyword> ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS",
@@ -21,8 +23,11 @@ public class DriverParser {
 
         test_initial_checking(input_modified);
 
-        String[] permited_clauses = ObjectArrays.concat(new OpenNLP_PosTagger().getPos_tags(), new OpenNLP_PosTagger().getSentence_tags(), String.class);
-        Parser_Matcher parser = new Parser_Matcher(input_modified,permited_clauses);
+        AdapterPosTagger tagger = OpenNLP_PosTagger.getInstance();
+        List<String> pos_tags = tagger.getPos_tags();
+        List<String> sen_tags = tagger.getSentence_tags();
+        pos_tags.addAll(sen_tags);
+        Parser_Matcher parser = new Parser_Matcher(input_modified,pos_tags);
 
         try {
             parser.generate_matcher();

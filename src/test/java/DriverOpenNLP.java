@@ -1,12 +1,13 @@
 import upc.req_quality.adapter.AdapterPosTagger;
 import upc.req_quality.adapter.OpenNLP_PosTagger;
 import upc.req_quality.entity.Requirement;
+import upc.req_quality.exception.InternalErrorException;
 
 public class DriverOpenNLP {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InternalErrorException {
 
-        AdapterPosTagger tagger = new OpenNLP_PosTagger();
+        AdapterPosTagger tagger = OpenNLP_PosTagger.getInstance();
         String text = "";
         Requirement aux_req = new Requirement();
         aux_req.setId("1");
