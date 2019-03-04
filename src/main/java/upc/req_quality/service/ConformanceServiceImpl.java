@@ -21,12 +21,10 @@ public class ConformanceServiceImpl implements ConformanceService {
     @Override
     public Requirements check_conformance(String organization, List<Requirement> reqs) throws BadRequestException, BadBNFSyntaxException, InternalErrorException {
 
-        String library = "OpenNLP";
-
         List<Requirement> result = new ArrayList<>();
 
         AdapterFactory factory = AdapterFactory.getInstance();
-        AdapterPosTagger tagger = factory.getAdapterPosTagger(library);
+        AdapterPosTagger tagger = factory.getAdapterPosTagger();
         List<AdapterTemplate> templates = factory.getAdapterTemplates(organization);
 
         if (templates == null) throw new BadRequestException("This organization has zero templates.");

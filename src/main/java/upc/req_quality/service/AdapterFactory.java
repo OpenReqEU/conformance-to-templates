@@ -19,9 +19,11 @@ public class AdapterFactory {
 
     private static AdapterFactory ourInstance;
     private HashMap<String,List<AdapterTemplate>> templates;
+    private AdapterPosTagger posTagger;
 
     private AdapterFactory() throws BadBNFSyntaxException, InternalErrorException {
         templates = new HashMap<>();
+        posTagger = OpenNLP_PosTagger.getInstance();
         load_models();
     }
 
@@ -30,13 +32,8 @@ public class AdapterFactory {
         return ourInstance;
     }
 
-    public AdapterPosTagger getAdapterPosTagger(String library) throws BadRequestException {
-        switch (library) {
-            case "OpenNLP":
-                return new OpenNLP_PosTagger();
-            default:
-                throw new BadRequestException("The library " + library + " does not exist");
-        }
+    public AdapterPosTagger getAdapterPosTagger() {
+        return posTagger;
     }
 
     public List<AdapterTemplate> getAdapterTemplates(String organization) {
@@ -50,8 +47,8 @@ public class AdapterFactory {
             String aux_name = template.getName();
             String aux_organization = template.getOrganization();
             List<String> aux_rules = template.getRules();
-            List<String> permited_pos_tags = new OpenNLP_PosTagger().getPos_tags();
-            List<String> permited_sentence_tags = new OpenNLP_PosTagger().getSentence_tags();
+            List<String> permited_pos_tags = posTagger.getPos_tags();
+            List<String> permited_sentence_tags = posTagger.getSentence_tags();
             permited_pos_tags.addAll(permited_sentence_tags);
             AdapterTemplate aux_template = new Generic_template(aux_name, aux_organization, aux_rules, permited_pos_tags);
             List<AdapterTemplate> organization_templates = templates.get(aux_organization);
@@ -68,7 +65,7 @@ public class AdapterFactory {
     }
 
     public Templates check_organization_models(String organization) throws InternalErrorException {
-        List<Template> aux_models = new ArrayList<>();
+        List<Template> aux_models;
         Template_database db;
         try {
             db = new SQLiteDAO();
@@ -94,7 +91,7 @@ public class AdapterFactory {
             e.printStackTrace();
             throw new InternalErrorException("Database error: " + e.getMessage());
         }
-        //load_models();
+        templates.remove(organization);
     }
 
     private void load_models() throws InternalErrorException, BadBNFSyntaxException {
@@ -106,8 +103,8 @@ public class AdapterFactory {
                 String aux_name = template.getName();
                 String aux_organization = template.getOrganization();
                 List<String> aux_rules = template.getRules();
-                List<String> permited_pos_tags = new OpenNLP_PosTagger().getPos_tags();
-                List<String> permited_sentence_tags = new OpenNLP_PosTagger().getSentence_tags();
+                List<String> permited_pos_tags = posTagger.getPos_tags();
+                List<String> permited_sentence_tags = posTagger.getSentence_tags();
                 permited_pos_tags.addAll(permited_sentence_tags);
                 AdapterTemplate aux_template = new Generic_template(aux_name,aux_organization,aux_rules,permited_pos_tags);
                 List<AdapterTemplate> organization_templates = templates.get(aux_organization);
