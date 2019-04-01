@@ -44,7 +44,9 @@ public class ConformanceServiceImpl implements ConformanceService {
                 Matcher_Response matcher_response = templates.get(j).check_template(tokens,tokens_tagged,chunks);
                 ok = matcher_response.isResult();
                 if (!ok) {
-                    tips.add(new Tip(templates.get(j).check_name(),explain_errors(matcher_response.getErrorDescriptions(),tagger),matcher_response.getIndex()));
+                    for (Matcher_Error matcher_error: matcher_response.getErrors()) {
+                        tips.add(new Tip(templates.get(j).check_name(),matcher_error.getIndex()+":"+matcher_error.getFinal_index(),explain_error(matcher_error.getDescription(),tagger),matcher_error.getComment()));
+                    }
                 }
             }
 
@@ -75,19 +77,32 @@ public class ConformanceServiceImpl implements ConformanceService {
         af.clear_db(organization);
     }
 
-    private List<String> explain_errors(List<String> tags, AdapterPosTagger tagger) throws InternalErrorException {
-        List<String> result = new ArrayList<>();
-        for (String tag: tags) {
+    private String explain_error(String tag, AdapterPosTagger tagger) throws InternalErrorException {
+        if (tag.contains("||")) {
+            String[] parts = tag.split("\\|\\|");
+            boolean first = true;
             String aux = "";
-            if (tag.contains(")")) aux = tagger.getTagDescription(tag);
-            else {
-                if (tag.contains("<")) aux = tagger.getTagDescription(tag);
-                else aux = tag;
+            for (String part: parts) {
+                if (first) {
+                    aux = aux.concat(recognize_tag(part,tagger));
+                    first = false;
+                }
+                else aux = aux.concat(" or " + recognize_tag(part,tagger));
             }
-            if (aux == null) throw new InternalErrorException("Tag "+ tag + " not recognized");
-            result.add(aux);
+            tag = aux;
         }
-        return result;
+        return recognize_tag(tag,tagger);
+    }
+
+    private String recognize_tag(String tag,AdapterPosTagger tagger) throws InternalErrorException {
+        String aux = "";
+        if (tag.contains(")")) aux = tagger.getTagDescription(tag);
+        else {
+            if (tag.contains("<")) aux = tagger.getTagDescription(tag);
+            else aux = tag;
+        }
+        if (aux == null) throw new InternalErrorException("Tag "+ tag + " not recognized");
+        return aux;
     }
 
     private List<String> create_tokens_output(String[] tokens, String[] tokens_tagged, String[] chunks) {

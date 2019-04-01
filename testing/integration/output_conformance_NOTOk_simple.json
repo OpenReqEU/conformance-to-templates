@@ -1,1 +1,22 @@
-{"requirements":[{"id":"1","text":"As soon as the dishes have been prepared, the system shall inform the guest that the dishes are ready for collection.","tips":[{"template":"Rupp","index":5,"description":["would","should","shall","modal verb"]}]}]}
+{
+  "requirements": [
+    {
+      "id": "1",
+      "text": "As soon as the dishes have been prepared, the system shall inform the guest that the dishes are ready for collection.",
+      "tips": [
+        {
+          "template": "Rupp",
+          "index": "17:20",
+          "expected_tokens": "noun phrase",
+          "comments": ""
+        },
+        {
+          "template": "Rupp",
+          "index": "5:7",
+          "expected_tokens": "noun phrase",
+          "comments": ""
+        }
+      ]
+    }
+  ]
+}

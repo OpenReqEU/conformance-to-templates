@@ -42,8 +42,6 @@ public class AdapterFactory {
 
     public void enter_new_template(Template template) throws InternalErrorException, BadBNFSyntaxException {
         try {
-            Template_database db = new SQLiteDAO();
-            db.saveTemplate(template);
             String aux_name = template.getName();
             String aux_organization = template.getOrganization();
             List<String> aux_rules = template.getRules();
@@ -55,6 +53,8 @@ public class AdapterFactory {
             if (organization_templates == null) organization_templates = new ArrayList<>();
             organization_templates.add(aux_template);
             templates.put(aux_organization, organization_templates);
+            Template_database db = new SQLiteDAO();
+            db.saveTemplate(template);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             throw new InternalErrorException("Error loading database");

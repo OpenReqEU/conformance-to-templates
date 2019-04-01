@@ -120,6 +120,10 @@ public class OpenNLP_PosTagger implements AdapterPosTagger {
 
     @Override
     public String[] tokenizer(String sentence) {
+        sentence = sentence.replaceAll("\\.","");
+        sentence = sentence.replaceAll(",","");
+        sentence = sentence.replaceAll(";","");
+        sentence = sentence.replaceAll(":","");
         return tokenizer.tokenize(sentence);
     }
 

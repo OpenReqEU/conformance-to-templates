@@ -1,68 +1,58 @@
 package upc.req_quality.entity;
 
+import upc.req_quality.adapter.String_Tree;
+
 import java.util.*;
 
 public class Matcher_Response {
 
-    private class Matcher_Error implements Comparator<Matcher_Error> {
-        private int index;
-        private String description;
-
-        public Matcher_Error(int index, String description) {
-            this.index = index;
-            this.description = description;
-        }
-
-        @Override
-        public int compare(Matcher_Error a, Matcher_Error b) {
-            int compare = 0;
-
-            int valA =  a.index;
-            int valB = b.index;
-            if (valA > valB) compare = -1;
-            else if (valA < valB) compare = 1;
-
-            return compare;
-        }
-
-    }
-
     private boolean result;
     private int index;
+    private int length;
     private LinkedList<Matcher_Error> errors;
 
-    public Matcher_Response() {
+    public Matcher_Response(int length) {
         this.errors = new LinkedList<>();
         this.index = 0;
+        this.length = length;
     }
 
     public void setResult(boolean result) {
         this.result = result;
     }
 
-    public void addError(int index, String description) {
+    public void addError(int index, int final_index, String description, String_Tree node, String comment) {
         if (index > this.index) this.index = index;
-        this.errors.add(new Matcher_Error(index,description));
+        this.errors.add(new Matcher_Error(index,final_index,description,node,comment));
     }
 
-    public List<String> getErrorDescriptions() {
-        List<String> result = new ArrayList<>();
+    public List<String_Tree> getLastErrorNodes() {
+        List<String_Tree> result = new ArrayList<>();
         if (errors.size() > 0) {
-            int max_index = errors.getLast().index;
-            boolean next = true;
-            while (next) {
-                if (errors.size() == 0) next = false;
-                else {
-                    if (errors.getLast().index < max_index) next = false;
-                    else {
-                        result.add(errors.getLast().description);
-                        errors.removeLast();
-                    }
-                }
+            int max_index = errors.getLast().getIndex();
+            for (Matcher_Error error : errors) {
+                if (error.getIndex() > max_index) max_index = error.getIndex();
+            }
+            for (Matcher_Error error : errors) {
+                if (error.getIndex() == max_index) result.add(error.getNode());
             }
         }
-
         return result;
+    }
+
+
+    public int getSizeErrors() {
+        return errors.size();
+    }
+
+    public void addAllErrors(LinkedList<Matcher_Error> errors) {
+        for (Matcher_Error error: errors) {
+            this.addError(error.getIndex(),error.getFinal_index(),error.getDescription(),error.getNode(),error.getComment());
+        }
+    }
+
+    public void removeAllErrors() {
+        errors = new LinkedList<>();
     }
 
     public boolean isResult() {
@@ -71,5 +61,9 @@ public class Matcher_Response {
 
     public int getIndex() {
         return this.index;
+    }
+
+    public LinkedList<Matcher_Error> getErrors() {
+        return errors;
     }
 }

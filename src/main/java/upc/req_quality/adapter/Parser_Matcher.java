@@ -37,7 +37,7 @@ public class Parser_Matcher {
         for (int i = 0; i < matcher_tags.length; ++i) {
             this.permited_clauses.add(matcher_tags[i]);
         }
-        this.Mymatcher = new String_Tree();
+        this.Mymatcher = new String_Tree(null);
     }
 
     //Is public just for testing
@@ -168,12 +168,12 @@ public class Parser_Matcher {
         List<Rule> auxiliary_rules = rules.subList(1,rules.size());
 
         for (Rule auxiliary_rule: auxiliary_rules) {
-            String_Tree aux_ini_tree = new String_Tree(auxiliary_rule.title);
+            String_Tree aux_ini_tree = new String_Tree(null,auxiliary_rule.title);
             String_Tree aux_tree = Ini_tree_builder_OR(auxiliary_rule.description, aux_ini_tree);
             trees.put(auxiliary_rule.title, aux_tree);
         }
 
-        Mymatcher = new String_Tree("main");
+        Mymatcher = new String_Tree(null,"main");
         Ini_tree_builder_OR(main_rule.description,Mymatcher);
     }
 
@@ -204,7 +204,7 @@ public class Parser_Matcher {
                 precessors = new_precessors;
                 if (i == parts.length - 1) {
                     for (int j = 0; j < precessors.size(); ++j) {
-                        String_Tree fin = new String_Tree("***FINISH***");
+                        String_Tree fin = new String_Tree(precessors.get(j),"***FINISH***");
                         precessors.get(j).add_children(fin);
                     }
                 }
@@ -249,7 +249,7 @@ public class Parser_Matcher {
                 }
             }
             if (!repeated) {
-                String_Tree aux = father.add_children(new String_Tree(data));
+                String_Tree aux = father.add_children(new String_Tree(father,data));
                 new_childrens.add(aux);
             }
         }
@@ -286,6 +286,7 @@ public class Parser_Matcher {
                 String_Tree aux = tree_to_merge.clone_top();
                 if (aux != null) {
                     father.add_children(aux);
+                    aux.setFather(father);
                     List<String_Tree> aux_hojas = aux.getHojas();
                     //System.out.println(aux_hojas.size());
                     for (int i = 0; i < aux_hojas.size(); ++i) {
@@ -330,13 +331,28 @@ public class Parser_Matcher {
     }
 
     public Matcher_Response match(String[] tokens, String[] tokens_tagged, String[] chunks) {
-        Matcher_Response result = new Matcher_Response();
+        Matcher_Response result = new Matcher_Response(tokens.length);
         boolean found = false;
         List<String_Tree> children = Mymatcher.getChildren();
         for (int i = 0; ((!found) && (i < children.size())); ++i) {
             found = match_recursion(children.get(i),tokens, tokens_tagged, chunks,0, result);
         }
         result.setResult(found);
+        if (!found) {
+            List<String_Tree> error_nodes = result.getLastErrorNodes();
+            Matcher_Response aux_better = null;
+            int index = result.getIndex();
+            for (String_Tree node: error_nodes) {
+                Matcher_Response aux = match_recursion_error(node,tokens,tokens_tagged,chunks,index);
+                if (aux_better == null || (aux.getSizeErrors() < aux_better.getSizeErrors())) {
+                    aux_better = aux;
+                }
+            }
+            if (aux_better != null) {
+                result.removeAllErrors();
+                result.addAllErrors(aux_better.getErrors());
+            }
+        }
         return result;
     }
 
@@ -355,20 +371,21 @@ public class Parser_Matcher {
         //finish clauses
         if (tokens.length <= index && tree.getData().equals("***FINISH***")) return true;
         else if (tree.getData().equals("***FINISH***")) {
-            response.addError(index,"The requirement has more tokens than expected");
+            if (!tree.getFather().getData().contains("<")) response.addError(index,tokens.length-1,"The requirement has more tokens than expected",tree,"");
+            else response.addError(index,tokens.length-1,tree.getFather().getData(),tree,"");
             return false;
         }
         else if (tokens.length <= index) {
-            response.addError(index,"The requirement has less tokens than expected");
+            response.addError(index,index,"The requirement has less tokens than expected",tree,"The clause " + tree.getData() + " does not appear in the suitable index.");
             return false;
         }
 
         else {
             List<String_Tree> children = tree.getChildren();
             boolean result = false;
-            boolean b1 = tree.getData().toLowerCase().equals(tokens[index]);
-            boolean b2 = tree.getData().toLowerCase().equals(tokens_tagged[index]);
-            boolean b3 = tree.getData().toLowerCase().equals(chunks[index]);
+            boolean b1 = tree.getData().toLowerCase().equals(tokens[index].toLowerCase());
+            boolean b2 = tree.getData().toLowerCase().equals(tokens_tagged[index].toLowerCase());
+            boolean b3 = tree.getData().toLowerCase().equals(chunks[index].toLowerCase());
             if (b1 || b2) {
                 //matches a [postag] or a "word", so we continue with the matcher_tree children
                 boolean found = false;
@@ -411,8 +428,228 @@ public class Parser_Matcher {
                     result = found;
                 }
             }
-            if (!b1 && !b2 && !b3) response.addError(index,tree.getData());
+            if (!b1 && !b2 && !b3) {
+                boolean found = false;
+                if (tree.getData().contains("<")) {
+                    int aux_index = search_phrase(tree.getData(), chunks, index);
+                    if (aux_index != -1) {
+                        found = true;
+                        --aux_index;
+                        if (!tree.getFather().getData().contains("<")) response.addError(index, aux_index, tree.getData(), tree, "");
+                        else response.addError(index, aux_index, tree.getData() + "||" + tree.getFather().getData(), tree, "");
+                    }
+                } else {
+                    int aux_index = search_phrase(tree.getData(), tokens_tagged, index);
+                    if (aux_index != -1) {
+                        found = true;
+                        --aux_index;
+                        if (!tree.getFather().getData().contains("<")) response.addError(index,aux_index,"This part does not correspond to the template",tree,"");
+                        else response.addError(index, get_max_match(tree.getFather().getData(),chunks,index,aux_index),tree.getFather().getData(),tree,"");
+                    }
+                }
+                if (!found) {
+                    response.addError(index,index,tree.getData(),tree,"");
+                }
+            }
             return result;
         }
+    }
+
+    private Matcher_Response match_recursion_error(String_Tree tree, String[] tokens, String[] tokens_tagged, String[] chunks, int index) {
+
+        Matcher_Response response = new Matcher_Response(tokens.length);
+
+        //matcher tags
+        if (tree.getData().equals("<*>")) {
+            response.setResult(true);
+            return response;
+        }
+
+        if (tree.getData().equals("(all)")) {
+            boolean found = false;
+            Matcher_Response aux_better = new Matcher_Response(tokens.length);
+            Integer errors_min = null;
+            Matcher_Response aux;
+            for (int i = 0; ((!found) && (i < tree.getChildren().size())); ++i) {
+                aux = match_recursion_error(tree.getChildren().get(i),tokens,tokens_tagged,chunks,index);
+                found = aux.isResult();
+                if (!found && (errors_min == null || (errors_min > aux.getSizeErrors()))) {
+                    errors_min = aux_better.getSizeErrors();
+                    aux_better = aux;
+                }
+            }
+            response.setResult(found);
+            if (!found) {
+                response.addAllErrors(aux_better.getErrors());
+            }
+            return response;
+        }
+
+        //finish clauses
+        if (tokens.length <= index && tree.getData().equals("***FINISH***")) {
+            response.setResult(true);
+            return response;
+        }
+        else if (tree.getData().equals("***FINISH***")) {
+            if (!tree.getFather().getData().contains("<")) response.addError(index,tokens.length-1,"The requirement has more tokens than expected",tree,"");
+            else response.addError(index,tokens.length-1,tree.getFather().getData(),tree,"");
+            response.setResult(false);
+            return response;
+        }
+        else if (tokens.length <= index) {
+            response.addError(index,index,"The requirement has less tokens than expected",tree,"The clause " + tree.getData() + " does not appear in the requirement.");
+            response.setResult(false);
+            return response;
+        }
+
+        //body
+        else {
+            Matcher_Response aux_better = new Matcher_Response(tokens.length);
+            Integer errors_min = null;
+
+            List<String_Tree> children = tree.getChildren();
+            boolean result = false;
+            boolean b1 = tree.getData().toLowerCase().equals(tokens[index].toLowerCase());
+            boolean b2 = tree.getData().toLowerCase().equals(tokens_tagged[index].toLowerCase());
+            boolean b3 = tree.getData().toLowerCase().equals(chunks[index].toLowerCase());
+            if (b1 || b2) {
+                //matches a [postag] or a "word", so we continue with the matcher_tree children
+                boolean found = false;
+                Matcher_Response aux;
+                for (int i = 0; ((!found) && (i < children.size())); ++i) {
+                    aux = match_recursion_error(children.get(i),tokens,tokens_tagged,chunks,index + 1);
+                    found = aux.isResult();
+                    if (!found && (errors_min == null || (errors_min > aux.getSizeErrors()))) {
+                        errors_min = aux_better.getSizeErrors();
+                        aux_better = aux;
+                    }
+                }
+                result = found;
+            }
+            if (b3 && !result) {
+                //matches a sentence tag , so we pass by all elements that are inside the same sentence tag,
+                //unless some child has a [postag] or "word" that matches some element with the same sentence tag
+
+                //children_data keeps the children tags
+                HashSet<String> children_data = new HashSet<>();
+                for (int i = 0; i < children.size(); ++i) {
+                    children_data.add(children.get(i).getData());
+                }
+                //data_permanent keeps the initial sentence tag
+                String data_permanent = chunks[index].toLowerCase();
+                boolean different = false;
+                ++index;
+                while (!different && index < tokens.length) {
+                    if (!chunks[index].toLowerCase().equals(data_permanent)) different = true;
+                    else {
+                        if (children_data.contains(tokens[index].toLowerCase()) || children_data.contains(tokens_tagged[index].toLowerCase())) {
+                            boolean found = false;
+                            Matcher_Response aux;
+                            for (int i = 0; !found && i < children.size(); ++i) {
+                                if (tokens[index].toLowerCase().equals(children.get(i).getData()) || tokens_tagged[index].toLowerCase().equals(children.get(i).getData())) {
+                                    aux = match_recursion_error(children.get(i),tokens,tokens_tagged,chunks,index);
+                                    found = aux.isResult();
+                                    if (!found && (errors_min == null || (errors_min > aux.getSizeErrors()))) {
+                                        errors_min = aux_better.getSizeErrors();
+                                        aux_better = aux;
+                                    }
+                                }
+                            }
+                            result = result || found;
+                        }
+                        ++index;
+                    }
+                }
+                if (!result) {
+                    boolean found = false;
+                    Matcher_Response aux;
+                    for (int i = 0; ((!found) && (i < children.size())); ++i) {
+                        aux = match_recursion_error(children.get(i),tokens,tokens_tagged,chunks,index);
+                        found = aux.isResult();
+                        if (!found && (errors_min == null || (errors_min > aux.getSizeErrors()))) {
+                            errors_min = aux_better.getSizeErrors();
+                            aux_better = aux;
+                        }
+                    }
+                    result = found;
+                }
+            }
+            if (!b1 && !b2 && !b3) {
+                boolean found = false;
+                if (tree.getData().contains("<")) {
+                    int aux_index = search_phrase(tree.getData(),chunks,index);
+                    if (aux_index != -1) {
+                        boolean select = false;
+                        Matcher_Response aux = match_recursion_error(tree,tokens,tokens_tagged,chunks,aux_index);
+                        if ((errors_min == null) || (errors_min > aux.getSizeErrors())) {
+                                errors_min = aux_better.getSizeErrors();
+                                aux_better = aux;
+                                select = true;
+                                found = true;
+                        }
+                        aux_index -= 1;
+                        if (select) {
+                            if (!tree.getFather().getData().contains("<")) aux_better.addError(index,aux_index,tree.getData(),tree,"");
+                            else aux_better.addError(index,aux_index,tree.getData()+"||"+tree.getFather().getData(),tree,"");
+                        }
+                    }
+                } else  {
+                    int aux_index = search_phrase(tree.getData(),tokens_tagged,index);
+                    if (aux_index != -1) {
+                        boolean select = false;
+                        for (int i = 0; i < children.size(); ++i) {
+                            Matcher_Response aux = match_recursion_error(children.get(i),tokens,tokens_tagged,chunks,aux_index+1);
+                            if ((errors_min == null) || (errors_min > aux.getSizeErrors())) {
+                                errors_min = aux_better.getSizeErrors();
+                                aux_better = aux;
+                                select = true;
+                                found = true;
+                            }
+                        }
+                        aux_index -= 1;
+                        if (select) {
+                            if (!tree.getFather().getData().contains("<")) aux_better.addError(index,aux_index,"This part does not correspond to the template",tree,"");
+                            else aux_better.addError(index,get_max_match(tree.getFather().getData(),chunks,index,aux_index),tree.getFather().getData(),tree,"");
+                        }
+                    }
+                }
+                if (!found) {
+                    response.addError(index,index,tree.getData(),tree,"");
+                    Matcher_Response aux;
+                    for (int i = 0; i < children.size(); ++i) {
+                        aux = match_recursion_error(children.get(i),tokens,tokens_tagged,chunks,index+1);
+                        if ((errors_min == null) || (errors_min > aux.getSizeErrors())) {
+                            errors_min = aux_better.getSizeErrors();
+                            aux_better = aux;
+                        }
+                    }
+                }
+            }
+            response.setResult(result);
+            if (!result) {
+                response.addAllErrors(aux_better.getErrors());
+            }
+            return response;
+        }
+    }
+
+    private int get_max_match(String phrase, String[] words, int ini_index, int finish_index) {
+        int max = ini_index;
+        for (int i = ini_index; i < finish_index; ++i) {
+            if (!words[i].equals(phrase)) max = i;
+        }
+        return max;
+    }
+
+    private int search_phrase(String phrase, String[] words, int index) {
+        boolean found = false;
+        int aux_index = -1;
+        for (int i = index; !found && i < words.length; ++i) {
+            if (words[i].equals(phrase)) {
+                found = true;
+                aux_index = i;
+            }
+        }
+        return aux_index;
     }
 }

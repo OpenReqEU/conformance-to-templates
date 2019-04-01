@@ -1,13 +1,12 @@
 {
   "templates": [
     {
-      "library": "OpenNLP",
       "name": "Ears",
       "organization": "Test",
       "rules": [
-        "#<main> ::=  <opt-condition> <np> (md) <vp> <np>",
-"#<opt-precondition> ::= <np> | <vp> | <np> <vp>",
-"#<opt-condition> ::= (all) | %WHEN <opt-precondition> | %IF <opt-precondition> <np> %THEN | %WHILE | %WHERE"
+        "<main> ::=  <opt-condition> <np> (md) <vp> <np>",
+"<opt-precondition> ::= <np> | <vp> | <np> <vp>",
+"<opt-condition> ::= (all) | %WHEN <opt-precondition> | %IF <opt-precondition> <np> %THEN | %WHILE | %WHERE"
       ]
     }
   ]
