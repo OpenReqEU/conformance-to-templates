@@ -115,41 +115,28 @@ public class ControllerIntegration {
      */
 
     private String read_file(String path) throws Exception {
-        String result = "";
-        String line = "";
-        FileReader fileReader = null;
-        BufferedReader bufferedReader = null;
-        try {
-            fileReader = new FileReader(path);
-            bufferedReader = new BufferedReader(fileReader);
+        try(FileReader fileReader = new FileReader(path);
+            BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            String result = "";
+            String line;
             while ((line = bufferedReader.readLine()) != null) {
                 result = result.concat(line);
             }
-            bufferedReader.close();
             JSONObject aux = new JSONObject(result);
             return aux.toString();
-        } finally {
-            if (fileReader != null) fileReader.close();
-            if (bufferedReader != null) bufferedReader.close();
         }
     }
 
     private String read_file_raw(String path) throws Exception {
-        String result = "";
-        String line = "";
-        FileReader fileReader = null;
-        BufferedReader bufferedReader = null;
-        try {
-            fileReader = new FileReader(path);
-            bufferedReader = new BufferedReader(fileReader);
+        try(FileReader fileReader = new FileReader(path);
+            BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            String result = "";
+            String line;
             while ((line = bufferedReader.readLine()) != null) {
                 result = result.concat(line);
             }
             bufferedReader.close();
             return result;
-        } finally {
-            if (fileReader != null) fileReader.close();
-            if (bufferedReader != null) bufferedReader.close();
         }
     }
 

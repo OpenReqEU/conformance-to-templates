@@ -6,17 +6,17 @@ import java.util.List;
 
 public interface AdapterPosTagger {
 
-    public List<String> getPos_tags();
+    public List<String> getPosTags();
 
-    public List<String> getSentence_tags();
+    public List<String> getSentenceTags();
 
     public String[] tokenizer(String sentence);
 
-    public String[] pos_tagger(String[] tokens);
+    public String[] posTagger(String[] tokens);
 
     public String[] chunker(String[] tokens, String[] tokens_tagged);
 
-    public List<SpanOut> chunker_spans(String[] tokens, String[] tokens_tagged);
+    public List<SpanOut> chunkerSpans(String[] tokens, String[] tokens_tagged);
 
     public String getTagDescription(String tag);
 }

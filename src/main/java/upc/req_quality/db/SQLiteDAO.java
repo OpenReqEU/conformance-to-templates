@@ -1,12 +1,13 @@
 package upc.req_quality.db;
 
 import upc.req_quality.entity.input_output.Template;
+import upc.req_quality.util.Control;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLiteDAO implements Template_database {
+public class SQLiteDAO implements TemplateDatabase {
 
     private static Connection db;
     private static String url = "jdbc:sqlite:./templates.db";
@@ -16,7 +17,7 @@ public class SQLiteDAO implements Template_database {
         try {
             db = DriverManager.getConnection(url);
         } catch (SQLException e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
         }
     }
 
@@ -35,57 +36,49 @@ public class SQLiteDAO implements Template_database {
             if (i != (aux.size() - 1)) rules = rules.concat(aux.get(i) + "#####SEPARATION#####");
             else rules = rules.concat(aux.get(i));
         }
-        PreparedStatement ps = null;
-        try {
-            ps = db.prepareStatement("INSERT INTO model (name, org, description) VALUES (?, ?, ?)");
+
+        String sql = "INSERT INTO model (name, org, description) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = db.prepareStatement(sql)) {
             ps.setString(1, template.getName());
             ps.setString(2, template.getOrganization());
             ps.setString(3, rules);
             ps.execute();
-        } finally {
-            if (ps != null) ps.close();
         }
     }
 
     @Override
     public List<Template> getOrganizationTemplates(String organization) throws SQLException {
         List<Template> templates = new ArrayList<>();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Statement stmt = null;
-        try {
-            if (organization != null) {
-                System.out.println("Getting all models");
-                System.out.println(organization);
-                String sql = "SELECT name, org, description FROM model WHERE org = ?";
 
-                String aux_name;
-                String aux_organization;
-                String aux_description;
+        if (organization != null) {
+            String sql = "SELECT name, org, description FROM model WHERE org = ?";
 
-                pstmt = db.prepareStatement(sql);
+            String aux_name;
+            String aux_organization;
+            String aux_description;
+
+            try(PreparedStatement pstmt = db.prepareStatement(sql)) {
                 pstmt.setString(1, organization);
 
-                rs = pstmt.executeQuery();
-
-                // loop through the result set
-                while (rs.next()) {
-                    aux_name = rs.getString("name");
-                    aux_organization = rs.getString("org");
-                    aux_description = rs.getString("description");
-                    templates.add(create_template(aux_name, aux_organization, aux_description));
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    // loop through the result set
+                    while (rs.next()) {
+                        aux_name = rs.getString("name");
+                        aux_organization = rs.getString("org");
+                        aux_description = rs.getString("description");
+                        templates.add(create_template(aux_name, aux_organization, aux_description));
+                    }
                 }
-            } else {
-                System.out.println("Getting all models");
-                String sql = "SELECT name, org, description FROM model";
+            }
+        } else {
+            String sql = "SELECT name, org, description FROM model";
 
-                String aux_name;
-                String aux_organization;
-                String aux_description;
+            String aux_name;
+            String aux_organization;
+            String aux_description;
 
-                stmt = db.createStatement();
-                rs = stmt.executeQuery(sql);
-
+            try (Statement stmt = db.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql)) {
                 // loop through the result set
                 while (rs.next()) {
                     aux_name = rs.getString("name");
@@ -95,29 +88,22 @@ public class SQLiteDAO implements Template_database {
                 }
 
             }
-            return templates;
-        } finally {
-            if (pstmt != null) pstmt.close();
-            if (rs != null) rs.close();
-            if (stmt != null) stmt.close();
+        }
+        return templates;
+    }
+
+    @Override
+    public void clearDatabase(String organization) throws SQLException {
+        String sql = "DELETE FROM model WHERE org = ?";
+        try(PreparedStatement pstmt = db.prepareStatement(sql)) {
+            pstmt.setString(1, organization);
+            pstmt.executeUpdate();
+            System.out.println("DB Cleared");
         }
     }
 
     @Override
-    public void clearDB(String organization) throws SQLException {
-        PreparedStatement pstmt = null;
-        try {
-            String sql = "DELETE FROM model WHERE org = ?";
-            pstmt = db.prepareStatement(sql);
-            pstmt.setString(1, organization);
-            pstmt.executeUpdate();
-            System.out.println("DB Cleared");
-        } finally {
-            if (pstmt != null) pstmt.close();
-        }
-    }
-
-    private void createDB() throws SQLException {
+    public void resetDatabase() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS model (\n"
                 + "	name varchar,\n"
                 + "	org varchar,\n"
@@ -129,8 +115,6 @@ public class SQLiteDAO implements Template_database {
              Statement stmt = conn.createStatement()) {
             // create a new table
             stmt.execute(sql);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
         }
     }
 }

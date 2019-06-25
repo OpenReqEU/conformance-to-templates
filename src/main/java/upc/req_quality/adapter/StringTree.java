@@ -3,30 +3,28 @@ package upc.req_quality.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class String_Tree {
+public class StringTree {
     private String data;
-    private List<String_Tree> children;
-    private List<String_Tree> hojas;
+    private List<StringTree> children;
+    private List<StringTree> hojas;
+    private StringTree father;
 
-    public String_Tree() {
+    public StringTree(StringTree father) {
+        this.father = father;
         this.children = new ArrayList<>();
         this.hojas = new ArrayList<>();
     }
 
-    public String_Tree(String data) {
+    public StringTree(StringTree father, String data) {
+        this.father = father;
         this.data = data;
         this.children = new ArrayList<>();
         this.hojas= new ArrayList<>();
     }
 
-    public String_Tree(String data, List<String_Tree> children) {
-        this.data = data;
-        this.children = children;
-        this.hojas= new ArrayList<>();
-    }
-
-    public String_Tree add_children(String_Tree children) {
+    public StringTree add_children(StringTree children) {
         this.children.add(children);
+        children.father = this;
         return children;
     }
 
@@ -34,7 +32,7 @@ public class String_Tree {
         return data;
     }
 
-    public List<String_Tree> getChildren() {
+    public List<StringTree> getChildren() {
         return children;
     }
 
@@ -42,12 +40,16 @@ public class String_Tree {
         this.data = data;
     }
 
-    public String_Tree clone_top() {
-        List<String_Tree> aux_hojas = new ArrayList<>();
+    public void setFather(StringTree father) {
+        this.father = father;
+    }
+
+    public StringTree clone_top() {
+        List<StringTree> aux_hojas = new ArrayList<>();
         //System.out.println(data);
-        String_Tree result = new String_Tree(data);
+        StringTree result = new StringTree(father,data);
         for (int i = 0; i < children.size(); ++i) {
-            String_Tree aux = children.get(i).clone(result,aux_hojas);
+            StringTree aux = children.get(i).clone(result,aux_hojas);
             if (aux != null) result.children.add(aux);
         }
         //System.out.println(children.size());
@@ -60,12 +62,11 @@ public class String_Tree {
         return result;
     }
 
-
-    private String_Tree clone(String_Tree father, List<String_Tree> aux_hojas) {
+    private StringTree clone(StringTree father, List<StringTree> aux_hojas) {
         //System.out.println(data);
-        String_Tree result = new String_Tree(data);
+        StringTree result = new StringTree(this.father,data);
         for (int i = 0; i < children.size(); ++i) {
-            String_Tree aux = children.get(i).clone(result,aux_hojas);
+            StringTree aux = children.get(i).clone(result,aux_hojas);
             if (aux != null) result.children.add(aux);
         }
         //System.out.println(children.size());
@@ -77,8 +78,12 @@ public class String_Tree {
         return result;
     }
 
-    public List<String_Tree> getHojas() {
+    public List<StringTree> getHojas() {
         return hojas;
+    }
+
+    public StringTree getFather() {
+        return father;
     }
 
     public void print() {
@@ -88,10 +93,10 @@ public class String_Tree {
         }
     }
 
-    private void print_recursion(String data, String_Tree node) {
+    private void print_recursion(String data, StringTree node) {
         data += " " + node.getData();
         //System.out.println(data);
-        List<String_Tree> children = node.getChildren();
+        List<StringTree> children = node.getChildren();
         if (children.size() <= 0) {
             System.out.println(data);
         }

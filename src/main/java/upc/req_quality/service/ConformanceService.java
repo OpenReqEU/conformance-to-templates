@@ -12,11 +12,11 @@ import java.util.List;
 
 public interface ConformanceService {
 
-    public Requirements check_conformance(String organization, List<Requirement> reqs) throws BadRequestException, BadBNFSyntaxException, InternalErrorException;
+    public Requirements checkConformance(String organization, List<Requirement> reqs) throws BadRequestException, BadBNFSyntaxException, InternalErrorException;
 
-    public void enter_new_templates(Templates templates) throws InternalErrorException, BadBNFSyntaxException;
+    public void enterNewTemplates(Templates templates) throws InternalErrorException, BadBNFSyntaxException;
 
-    public Templates check_organization_templates(String organization) throws InternalErrorException, BadBNFSyntaxException ;
+    public Templates checkOrganizationTemplates(String organization) throws InternalErrorException, BadBNFSyntaxException ;
 
-    public void clear_db(String organization) throws InternalErrorException, BadBNFSyntaxException;
+    public void clearDatabase(String organization) throws InternalErrorException, BadBNFSyntaxException;
 }

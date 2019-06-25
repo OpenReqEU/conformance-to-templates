@@ -1,0 +1,9 @@
+.idea/
+edu/
+en-chunker.bin
+en-pos-maxent.bin
+en-pos-perceptron.bin
+models/
+target/
+src/test/java/drivers/
+templates.db

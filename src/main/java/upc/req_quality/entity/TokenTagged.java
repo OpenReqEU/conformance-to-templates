@@ -1,11 +1,11 @@
 package upc.req_quality.entity;
 
-public class Token_Tagged {
+public class TokenTagged {
 
     private String tagged;
     private String token;
 
-    public Token_Tagged(String tagged, String token) {
+    public TokenTagged(String tagged, String token) {
         this.tagged = tagged;
         this.token = token;
     }
