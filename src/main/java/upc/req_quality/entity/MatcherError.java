@@ -1,17 +1,17 @@
 package upc.req_quality.entity;
 
-import upc.req_quality.adapter.String_Tree;
+import upc.req_quality.adapter.StringTree;
 
 import java.util.Comparator;
 
-public class Matcher_Error implements Comparator<Matcher_Error> {
+public class MatcherError implements Comparator<MatcherError> {
     private int index;
     private int final_index;
     private String description;
-    private String_Tree node;
+    private StringTree node;
     private String comment;
 
-    public Matcher_Error(int index, int final_index, String description, String_Tree node, String comment) {
+    public MatcherError(int index, int final_index, String description, StringTree node, String comment) {
         this.index = index;
         this.final_index = final_index;
         this.description = description;
@@ -20,7 +20,7 @@ public class Matcher_Error implements Comparator<Matcher_Error> {
     }
 
     @Override
-    public int compare(Matcher_Error a, Matcher_Error b) {
+    public int compare(MatcherError a, MatcherError b) {
         int compare = 0;
 
         int valA =  a.index;
@@ -43,7 +43,7 @@ public class Matcher_Error implements Comparator<Matcher_Error> {
         return description;
     }
 
-    public String_Tree getNode() {
+    public StringTree getNode() {
         return node;
     }
 

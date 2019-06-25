@@ -35,10 +35,10 @@ public class RestApiController {
                            @ApiResponse(code=400, message = "Bad request"),
                            @ApiResponse(code=452, message = "Bad BNF syntax"),
                            @ApiResponse(code=500, message = "Bad request")})
-    public ResponseEntity<?> check_conformance(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization,
+    public ResponseEntity<?> checkConformance(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization,
                                             @ApiParam(value="A OpenReqJson with requirements", required = true, example = "SQ-132") @RequestBody Requirements json) {
         try {
-            return new ResponseEntity<>(conformanceService.check_conformance(organization,json.getRequirements()), HttpStatus.OK);
+            return new ResponseEntity<>(conformanceService.checkConformance(organization,json.getRequirements()), HttpStatus.OK);
         } catch (BadRequestException e) {
             return getBadRequest(e);
         } catch (BadBNFSyntaxException e) {
@@ -54,9 +54,9 @@ public class RestApiController {
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=452, message = "Bad BNF syntax"),
                            @ApiResponse(code=500, message = "Internal exception")})
-    public ResponseEntity<?> enter_new_templates(@RequestBody Templates json) {
+    public ResponseEntity<?> enterNewTemplates(@RequestBody Templates json) {
         try {
-            conformanceService.enter_new_templates(json);
+            conformanceService.enterNewTemplates(json);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (BadBNFSyntaxException e) {
             return getBadBNFSyntax(e);
@@ -70,9 +70,9 @@ public class RestApiController {
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=452, message = "Bad BNF syntax"),
                            @ApiResponse(code=500, message = "Internal exception")})
-    public ResponseEntity<?> check_templates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
+    public ResponseEntity<?> checkTemplates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
         try {
-            return new ResponseEntity<>(conformanceService.check_organization_templates(organization),HttpStatus.OK);
+            return new ResponseEntity<>(conformanceService.checkOrganizationTemplates(organization),HttpStatus.OK);
         } catch (InternalErrorException e) {
             return getInternalException(e);
         } catch (BadBNFSyntaxException e) {
@@ -85,9 +85,9 @@ public class RestApiController {
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=452, message = "Bad BNF syntax"),
                            @ApiResponse(code=500, message = "Internal exception")})
-    public ResponseEntity<?> clear_templates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
+    public ResponseEntity<?> clearTemplates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
         try {
-            conformanceService.clear_db(organization);
+            conformanceService.clearDatabase(organization);
             return new ResponseEntity<>(null,HttpStatus.OK);
         } catch (InternalErrorException e) {
             return getInternalException(e);

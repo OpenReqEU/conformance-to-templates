@@ -1,14 +1,13 @@
 package upc.req_quality.service;
 
-import com.google.common.collect.ObjectArrays;
 import upc.req_quality.adapter.*;
 import upc.req_quality.db.SQLiteDAO;
-import upc.req_quality.db.Template_database;
+import upc.req_quality.db.TemplateDatabase;
 import upc.req_quality.entity.input_output.Template;
 import upc.req_quality.entity.input_output.Templates;
 import upc.req_quality.exception.BadBNFSyntaxException;
-import upc.req_quality.exception.BadRequestException;
 import upc.req_quality.exception.InternalErrorException;
+import upc.req_quality.util.Control;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,8 +22,8 @@ public class AdapterFactory {
 
     private AdapterFactory() throws BadBNFSyntaxException, InternalErrorException {
         templates = new HashMap<>();
-        posTagger = OpenNLP_PosTagger.getInstance();
-        load_models();
+        posTagger = OpenNLPPosTagger.getInstance();
+        loadModels();
     }
 
     public static AdapterFactory getInstance() throws BadBNFSyntaxException, InternalErrorException {
@@ -40,83 +39,83 @@ public class AdapterFactory {
         return templates.get(organization);
     }
 
-    public void enter_new_template(Template template) throws InternalErrorException, BadBNFSyntaxException {
+    public void enterNewTemplate(Template template) throws InternalErrorException, BadBNFSyntaxException {
         try {
-            String aux_name = template.getName();
-            String aux_organization = template.getOrganization();
-            List<String> aux_rules = template.getRules();
-            List<String> permited_pos_tags = posTagger.getPos_tags();
-            List<String> permited_sentence_tags = posTagger.getSentence_tags();
-            permited_pos_tags.addAll(permited_sentence_tags);
-            AdapterTemplate aux_template = new Generic_template(aux_name, aux_organization, aux_rules, permited_pos_tags);
-            List<AdapterTemplate> organization_templates = templates.get(aux_organization);
-            if (organization_templates == null) organization_templates = new ArrayList<>();
-            organization_templates.add(aux_template);
-            templates.put(aux_organization, organization_templates);
-            Template_database db = new SQLiteDAO();
+            String auxName = template.getName();
+            String auxOrganization = template.getOrganization();
+            List<String> auxRules = template.getRules();
+            List<String> permitedPosTags = posTagger.getPosTags();
+            List<String> permitedSentenceTags = posTagger.getSentenceTags();
+            permitedPosTags.addAll(permitedSentenceTags);
+            AdapterTemplate aux_template = new GenericTemplate(auxName, auxOrganization, auxRules, permitedPosTags);
+            List<AdapterTemplate> organizationTemplates = templates.get(auxOrganization);
+            if (organizationTemplates == null) organizationTemplates = new ArrayList<>();
+            organizationTemplates.add(aux_template);
+            templates.put(auxOrganization, organizationTemplates);
+            TemplateDatabase db = new SQLiteDAO();
             db.saveTemplate(template);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             throw new InternalErrorException("Error loading database");
         } catch (SQLException e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             throw new InternalErrorException("Database error: " + e.getMessage());
         }
     }
 
-    public Templates check_organization_models(String organization) throws InternalErrorException {
-        List<Template> aux_models;
-        Template_database db;
+    public Templates checkOrganizationModels(String organization) throws InternalErrorException {
+        List<Template> auxModels;
+        TemplateDatabase db;
         try {
             db = new SQLiteDAO();
-            aux_models = db.getOrganizationTemplates(organization);
+            auxModels = db.getOrganizationTemplates(organization);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             throw new InternalErrorException("Error loading database");
         } catch (SQLException e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             throw new InternalErrorException("Database error: " + e.getMessage());
         }
-        return new Templates(aux_models);
+        return new Templates(auxModels);
     }
 
-    public void clear_db(String organization) throws InternalErrorException {
+    public void clearDatabase(String organization) throws InternalErrorException {
         try {
-            Template_database db = new SQLiteDAO();
-            db.clearDB(organization);
+            TemplateDatabase db = new SQLiteDAO();
+            db.clearDatabase(organization);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             throw new InternalErrorException("Error loading database");
         } catch (SQLException e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             throw new InternalErrorException("Database error: " + e.getMessage());
         }
         templates.remove(organization);
     }
 
-    private void load_models() throws InternalErrorException, BadBNFSyntaxException {
+    private void loadModels() throws InternalErrorException, BadBNFSyntaxException {
         try {
-            Template_database db = new SQLiteDAO();
+            TemplateDatabase db = new SQLiteDAO();
             List<Template> aux_templates = db.getOrganizationTemplates(null);
             for (int i = 0; i < aux_templates.size(); ++i) {
                 Template template = aux_templates.get(i);
-                String aux_name = template.getName();
-                String aux_organization = template.getOrganization();
-                List<String> aux_rules = template.getRules();
-                List<String> permited_pos_tags = posTagger.getPos_tags();
-                List<String> permited_sentence_tags = posTagger.getSentence_tags();
-                permited_pos_tags.addAll(permited_sentence_tags);
-                AdapterTemplate aux_template = new Generic_template(aux_name,aux_organization,aux_rules,permited_pos_tags);
-                List<AdapterTemplate> organization_templates = templates.get(aux_organization);
+                String auxName = template.getName();
+                String auxOrganization = template.getOrganization();
+                List<String> auxRules = template.getRules();
+                List<String> permitedPosTags = posTagger.getPosTags();
+                List<String> permitedSentenceTags = posTagger.getSentenceTags();
+                permitedPosTags.addAll(permitedSentenceTags);
+                AdapterTemplate aux_template = new GenericTemplate(auxName,auxOrganization,auxRules,permitedPosTags);
+                List<AdapterTemplate> organization_templates = templates.get(auxOrganization);
                 if (organization_templates == null) organization_templates = new ArrayList<>();
                 organization_templates.add(aux_template);
-                templates.put(aux_organization, organization_templates);
+                templates.put(auxOrganization, organization_templates);
             }
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             throw new InternalErrorException("Error loading database");
         } catch (SQLException e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             throw new InternalErrorException("Database error: " + e.getMessage());
         }
     }

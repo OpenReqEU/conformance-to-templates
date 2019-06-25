@@ -1,7 +1,8 @@
-import com.google.common.collect.ObjectArrays;
+package drivers;
+
 import upc.req_quality.adapter.AdapterPosTagger;
-import upc.req_quality.adapter.OpenNLP_PosTagger;
-import upc.req_quality.adapter.Parser_Matcher;
+import upc.req_quality.adapter.OpenNLPPosTagger;
+import upc.req_quality.adapter.ParserMatcher;
 import upc.req_quality.exception.BadBNFSyntaxException;
 import upc.req_quality.exception.InternalErrorException;
 
@@ -23,11 +24,11 @@ public class DriverParser {
 
         test_initial_checking(input_modified);
 
-        AdapterPosTagger tagger = OpenNLP_PosTagger.getInstance();
-        List<String> pos_tags = tagger.getPos_tags();
-        List<String> sen_tags = tagger.getSentence_tags();
+        AdapterPosTagger tagger = OpenNLPPosTagger.getInstance();
+        List<String> pos_tags = tagger.getPosTags();
+        List<String> sen_tags = tagger.getSentenceTags();
         pos_tags.addAll(sen_tags);
-        Parser_Matcher parser = new Parser_Matcher(input_modified,pos_tags);
+        ParserMatcher parser = new ParserMatcher(input_modified,pos_tags);
 
         try {
             parser.generate_matcher();
@@ -40,9 +41,9 @@ public class DriverParser {
     }
 
     private static void test_initial_checking(List<String> input) throws BadBNFSyntaxException{
-        Parser_Matcher parser = new Parser_Matcher();
-        List<Parser_Matcher.Rule> rules = parser.parse_rules_and_check(input);
-        for (Parser_Matcher.Rule rule: rules) {
+        ParserMatcher parser = new ParserMatcher();
+        List<ParserMatcher.Rule> rules = parser.parse_rules_and_check(input);
+        for (ParserMatcher.Rule rule: rules) {
             System.out.println(rule.getTitle() + ". " + rule.getDescription());
         }
     }

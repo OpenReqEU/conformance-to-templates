@@ -19,7 +19,7 @@ import java.util.List;
 public class ConformanceServiceImpl implements ConformanceService {
 
     @Override
-    public Requirements check_conformance(String organization, List<Requirement> reqs) throws BadRequestException, BadBNFSyntaxException, InternalErrorException {
+    public Requirements checkConformance(String organization, List<Requirement> reqs) throws BadRequestException, BadBNFSyntaxException, InternalErrorException {
 
         List<Requirement> result = new ArrayList<>();
 
@@ -33,7 +33,7 @@ public class ConformanceServiceImpl implements ConformanceService {
             Requirement aux_req = reqs.get(i);
 
             String[] tokens = tagger.tokenizer(aux_req.getText());
-            String[] tokens_tagged = tagger.pos_tagger(tokens);
+            String[] tokens_tagged = tagger.posTagger(tokens);
             String[] chunks = tagger.chunker(tokens,tokens_tagged);
 
             boolean ok = false;
@@ -41,11 +41,11 @@ public class ConformanceServiceImpl implements ConformanceService {
             List<Tip> tips = new ArrayList<>();
 
             for (int j = 0; ((!ok) && j < templates.size()); ++j) {
-                Matcher_Response matcher_response = templates.get(j).check_template(tokens,tokens_tagged,chunks);
+                MatcherResponse matcher_response = templates.get(j).checkTemplate(tokens,tokens_tagged,chunks);
                 ok = matcher_response.isResult();
                 if (!ok) {
-                    for (Matcher_Error matcher_error: matcher_response.getErrors()) {
-                        tips.add(new Tip(templates.get(j).check_name(),matcher_error.getIndex()+":"+matcher_error.getFinal_index(),explain_error(matcher_error.getDescription(),tagger),matcher_error.getComment()));
+                    for (MatcherError matcher_error: matcher_response.getErrors()) {
+                        tips.add(new Tip(templates.get(j).checkName(),matcher_error.getIndex()+":"+matcher_error.getFinal_index(),explainError(matcher_error.getDescription(),tagger),matcher_error.getComment()));
                     }
                 }
             }
@@ -57,44 +57,44 @@ public class ConformanceServiceImpl implements ConformanceService {
     }
 
     @Override
-    public void enter_new_templates(Templates templates) throws BadBNFSyntaxException, InternalErrorException {
+    public void enterNewTemplates(Templates templates) throws BadBNFSyntaxException, InternalErrorException {
         AdapterFactory af = AdapterFactory.getInstance();
         List<Template> aux_templates = templates.getTemplates();
         for (int i = 0; i < aux_templates.size(); ++i) {
-            af.enter_new_template(aux_templates.get(i));
+            af.enterNewTemplate(aux_templates.get(i));
         }
     }
 
     @Override
-    public Templates check_organization_templates(String organization) throws InternalErrorException, BadBNFSyntaxException {
+    public Templates checkOrganizationTemplates(String organization) throws InternalErrorException, BadBNFSyntaxException {
         AdapterFactory af = AdapterFactory.getInstance();
-        return af.check_organization_models(organization);
+        return af.checkOrganizationModels(organization);
     }
 
     @Override
-    public void clear_db(String organization) throws InternalErrorException, BadBNFSyntaxException {
+    public void clearDatabase(String organization) throws InternalErrorException, BadBNFSyntaxException {
         AdapterFactory af = AdapterFactory.getInstance();
-        af.clear_db(organization);
+        af.clearDatabase(organization);
     }
 
-    private String explain_error(String tag, AdapterPosTagger tagger) throws InternalErrorException {
+    private String explainError(String tag, AdapterPosTagger tagger) throws InternalErrorException {
         if (tag.contains("||")) {
             String[] parts = tag.split("\\|\\|");
             boolean first = true;
             String aux = "";
             for (String part: parts) {
                 if (first) {
-                    aux = aux.concat(recognize_tag(part,tagger));
+                    aux = aux.concat(recognizeTag(part,tagger));
                     first = false;
                 }
-                else aux = aux.concat(" or " + recognize_tag(part,tagger));
+                else aux = aux.concat(" or " + recognizeTag(part,tagger));
             }
             tag = aux;
         }
-        return recognize_tag(tag,tagger);
+        return recognizeTag(tag,tagger);
     }
 
-    private String recognize_tag(String tag,AdapterPosTagger tagger) throws InternalErrorException {
+    private String recognizeTag(String tag,AdapterPosTagger tagger) throws InternalErrorException {
         String aux = "";
         if (tag.contains(")")) aux = tagger.getTagDescription(tag);
         else {
@@ -105,7 +105,7 @@ public class ConformanceServiceImpl implements ConformanceService {
         return aux;
     }
 
-    private List<String> create_tokens_output(String[] tokens, String[] tokens_tagged, String[] chunks) {
+    private List<String> createTokensOutput(String[] tokens, String[] tokens_tagged, String[] chunks) {
         List<String> result = new ArrayList<>();
         for (int i = 0; i < tokens.length; ++i) {
             result.add(tokens[i] + " " + tokens_tagged[i] + " " + chunks[i]);
