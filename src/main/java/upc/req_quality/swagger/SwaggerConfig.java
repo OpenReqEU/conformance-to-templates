@@ -11,10 +11,11 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.util.HashSet;
+
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-    private static final String SWAGGER_API_VERSION = "0.2";
     private static final String LICENCE_TEXT = "License";
     private static final String title = "Requirements Conformance to Templates";
     private static final String description = "<p> This service is meant to provide automation for checking requirements" +
@@ -57,18 +58,20 @@ public class SwaggerConfig {
                 .title(title)
                 .description(description)
                 .license(LICENCE_TEXT)
-                //.license(SWAGGER_API_VERSION)
                 .build();
     }
 
     @Bean
-    public Docket classifier_api() {
+    public Docket api() {
+        HashSet<String> protocols = new HashSet<>();
+        protocols.add("https");
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo())
+                .host("api.openreq.eu/conformance-to-templates")
+                .protocols(protocols)
                 .pathMapping("/")
                 .select()
-                /* Anything after upc will be included into my Swagger configuration */
                 .paths(PathSelectors.regex("/upc.*"))
                 .build();
     }
