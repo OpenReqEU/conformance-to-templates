@@ -1,8 +1,8 @@
-.idea/
-edu/
 en-chunker.bin
 en-pos-maxent.bin
 en-pos-perceptron.bin
+.idea/
+edu/
 models/
 target/
 src/test/java/drivers/

@@ -1,4 +1,4 @@
-package upc.req_quality.test;
+package upc.req_quality;
 
 import org.json.JSONObject;
 import org.junit.FixMethodOrder;

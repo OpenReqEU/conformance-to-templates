@@ -14,8 +14,10 @@ import upc.req_quality.entity.input_output.Requirements;
 import upc.req_quality.entity.input_output.Templates;
 import upc.req_quality.exception.BadBNFSyntaxException;
 import upc.req_quality.exception.BadRequestException;
+import upc.req_quality.exception.ComponentException;
 import upc.req_quality.exception.InternalErrorException;
 import upc.req_quality.service.ConformanceService;
+import upc.req_quality.util.Control;
 
 
 import java.util.LinkedHashMap;
@@ -39,12 +41,8 @@ public class RestApiController {
                                             @ApiParam(value="A OpenReqJson with requirements", required = true, example = "SQ-132") @RequestBody Requirements json) {
         try {
             return new ResponseEntity<>(conformanceService.checkConformance(organization,json.getRequirements()), HttpStatus.OK);
-        } catch (BadRequestException e) {
-            return getBadRequest(e);
-        } catch (BadBNFSyntaxException e) {
-            return getBadBNFSyntax(e);
-        } catch (InternalErrorException e) {
-            return getInternalException(e);
+        } catch (ComponentException e) {
+            return getComponentError(e);
         }
     }
 
@@ -58,10 +56,8 @@ public class RestApiController {
         try {
             conformanceService.enterNewTemplates(json);
             return new ResponseEntity<>(null, HttpStatus.OK);
-        } catch (BadBNFSyntaxException e) {
-            return getBadBNFSyntax(e);
-        } catch (InternalErrorException e) {
-            return getInternalException(e);
+        } catch (ComponentException e) {
+            return getComponentError(e);
         }
     }
 
@@ -73,10 +69,8 @@ public class RestApiController {
     public ResponseEntity<?> checkTemplates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
         try {
             return new ResponseEntity<>(conformanceService.checkOrganizationTemplates(organization),HttpStatus.OK);
-        } catch (InternalErrorException e) {
-            return getInternalException(e);
-        } catch (BadBNFSyntaxException e) {
-            return getBadBNFSyntax(e);
+        } catch (ComponentException e) {
+            return getComponentError(e);
         }
     }
 
@@ -89,38 +83,17 @@ public class RestApiController {
         try {
             conformanceService.clearDatabase(organization);
             return new ResponseEntity<>(null,HttpStatus.OK);
-        } catch (InternalErrorException e) {
-            return getInternalException(e);
-        } catch (BadBNFSyntaxException e) {
-            return getBadBNFSyntax(e);
+        } catch (ComponentException e) {
+            return getComponentError(e);
         }
     }
 
-    private ResponseEntity<?> getBadRequest(BadRequestException e) {
-        e.printStackTrace();
+    private ResponseEntity getComponentError(ComponentException e) {
         LinkedHashMap<String, String> result = new LinkedHashMap<>();
-        result.put("status", "400");
-        result.put("error", "Bad request");
+        result.put("status", e.getStatus()+"");
+        result.put("error", e.getError());
         result.put("message", e.getMessage());
-        return new ResponseEntity<>(result, HttpStatus.valueOf(400));
-    }
-
-    private ResponseEntity<?> getBadBNFSyntax(BadBNFSyntaxException e) {
-        e.printStackTrace();
-        LinkedHashMap<String, String> result = new LinkedHashMap<>();
-        result.put("status", "452");
-        result.put("error", "Bad BNF syntax");
-        result.put("message", e.getMessage());
-        return new ResponseEntity<>(result, HttpStatus.valueOf(452));
-    }
-
-    private ResponseEntity<?> getInternalException(InternalErrorException e) {
-        e.printStackTrace();
-        LinkedHashMap<String, String> result = new LinkedHashMap<>();
-        result.put("status", "500");
-        result.put("error", "Internal exception");
-        result.put("message", e.getMessage());
-        return new ResponseEntity<>(result, HttpStatus.valueOf(500));
+        return new ResponseEntity<>(result, HttpStatus.valueOf(e.getStatus()));
     }
 
 }
