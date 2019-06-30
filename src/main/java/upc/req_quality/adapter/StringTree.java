@@ -79,7 +79,7 @@ public class StringTree {
         return father;
     }
 
-    public void print() {
+    /*public void print() {
         for (int i = 0; i < children.size(); ++i) {
             printRecursion(data,children.get(i));
         }
@@ -93,7 +93,7 @@ public class StringTree {
                 printRecursion(data, array.get(i));
             }
         }
-    }
+    }*/
 }
 
 
