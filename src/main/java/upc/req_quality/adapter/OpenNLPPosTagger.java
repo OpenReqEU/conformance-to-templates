@@ -6,8 +6,6 @@ import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.WhitespaceTokenizer;
-import opennlp.tools.util.Span;
-import upc.req_quality.entity.SpanOut;
 import upc.req_quality.exception.InternalErrorException;
 import upc.req_quality.util.Control;
 

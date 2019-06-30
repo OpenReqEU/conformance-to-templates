@@ -13,17 +13,17 @@ import java.util.List;
 public class Templates implements Serializable {
 
     @ApiModelProperty(value="templates")
-    private List<Template> templates;
+    private List<Template> templatesArray;
 
     public Templates() {
-        this.templates = new ArrayList<>();
+        this.templatesArray = new ArrayList<>();
     }
 
     public Templates(List<Template> templates) {
-        this.templates = templates;
+        this.templatesArray = templates;
     }
 
     public List<Template> getTemplates() {
-        return templates;
+        return templatesArray;
     }
 }

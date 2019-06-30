@@ -87,10 +87,10 @@ public class StringTree {
 
     private void printRecursion(String data, StringTree node) {
         data += " " + node.getData();
-        List<StringTree> children = node.getChildren();
-        if (!children.isEmpty()) {
-            for (int i = 0; i < children.size(); ++i) {
-                printRecursion(data, children.get(i));
+        List<StringTree> array = node.getChildren();
+        if (!array.isEmpty()) {
+            for (int i = 0; i < array.size(); ++i) {
+                printRecursion(data, array.get(i));
             }
         }
     }

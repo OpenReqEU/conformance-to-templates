@@ -7,12 +7,12 @@ import java.util.List;
 
 public interface TemplateDatabase {
 
-    public void saveTemplate(Template model) throws SQLException;
+    void saveTemplate(Template model) throws SQLException;
 
-    public List<Template> getOrganizationTemplates(String organization) throws SQLException;
+    List<Template> getOrganizationTemplates(String organization) throws SQLException;
 
-    public void clearDatabase(String organization) throws SQLException;
+    void clearDatabase(String organization) throws SQLException;
 
-    public void resetDatabase() throws SQLException;
+    void resetDatabase() throws SQLException;
 
 }

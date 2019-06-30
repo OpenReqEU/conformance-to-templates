@@ -15,17 +15,17 @@ import java.util.List;
 public class Requirements implements Serializable {
 
     @ApiModelProperty(value="requirements")
-    private List<Requirement> requirements;
+    private List<Requirement> requirementsArray;
 
     public Requirements() {
-        requirements = new ArrayList<>();
+        requirementsArray = new ArrayList<>();
     }
 
     public Requirements(List<Requirement> requirements) {
-        this.requirements = requirements;
+        this.requirementsArray = requirements;
     }
 
     public List<Requirement> getRequirements() {
-        return requirements;
+        return requirementsArray;
     }
 }

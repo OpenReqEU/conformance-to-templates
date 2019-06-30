@@ -19,9 +19,9 @@ public class MatcherResponse {
         this.result = result;
     }
 
-    public void addError(int index, int final_index, String description, StringTree node, String comment) {
+    public void addError(int index, int finalIndex, String description, StringTree node, String comment) {
         if (index > this.index) this.index = index;
-        this.errors.add(new MatcherError(index,final_index,description,node,comment));
+        this.errors.add(new MatcherError(index,finalIndex,description,node,comment));
     }
 
     public List<StringTree> getLastErrorNodes() {

@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class ParserMatcher {
 
     private List<String> input;
-    private StringTree MyMatcher;
+    private StringTree myMatcher;
     private Map<String, StringTree> trees;
     private HashSet<String> words;
     private HashSet<String> permitedClauses;
@@ -38,7 +38,7 @@ public class ParserMatcher {
         for (int i = 0; i < matcherTags.length; ++i) {
             this.permitedClauses.add(matcherTags[i]);
         }
-        this.MyMatcher = new StringTree(null);
+        this.myMatcher = new StringTree(null);
     }
 
     //Is public just for testing
@@ -100,7 +100,7 @@ public class ParserMatcher {
 
         //Return ordered rules
         List<Rule> result = new ArrayList<>();
-        while (rulesWithoutDependencies.size() > 0) {
+        while (!rulesWithoutDependencies.isEmpty()) {
             String title = rulesWithoutDependencies.getFirst();
             Set<String> rulesThatDependOnMe = rulesDependOnMe.get(title);
             Iterator<String> it2 = rulesThatDependOnMe.iterator();
@@ -117,7 +117,7 @@ public class ParserMatcher {
         }
 
         //exists a cycle
-        if (rulesWithDependencies.size() > 0) {
+        if (!rulesWithDependencies.isEmpty()) {
             Iterator it = rulesWithDependencies.entrySet().iterator();
             String aux = "";
             boolean firstComa = true;
@@ -169,23 +169,23 @@ public class ParserMatcher {
 
         for (Rule auxiliaryRule: auxiliaryRules) {
             StringTree auxIniTree = new StringTree(null,auxiliaryRule.title);
-            StringTree auxTree = IniTreeBuilderOr(auxiliaryRule.description, auxIniTree);
+            StringTree auxTree = iniTreeBuilderOr(auxiliaryRule.description, auxIniTree);
             trees.put(auxiliaryRule.title, auxTree);
         }
 
-        MyMatcher = new StringTree(null,"main");
-        IniTreeBuilderOr(mainRule.description,MyMatcher);
+        this.myMatcher = new StringTree(null,"main");
+        iniTreeBuilderOr(mainRule.description,this.myMatcher);
     }
 
-    private StringTree IniTreeBuilderOr(String sentence, StringTree father) throws BadBNFSyntaxException {
+    private StringTree iniTreeBuilderOr(String sentence, StringTree father) throws BadBNFSyntaxException {
         String[] parts = sentence.split("\\|");
         for (int i = 0; i < parts.length; ++i) {
-            IniTreeBuilderSection(parts[i],father);
+            iniTreeBuilderSection(parts[i],father);
         }
         return father;
     }
 
-    private void IniTreeBuilderSection(String sentence, StringTree father) throws BadBNFSyntaxException {
+    private void iniTreeBuilderSection(String sentence, StringTree father) throws BadBNFSyntaxException {
         String[] parts = sentence.split("\\s+");
         List<StringTree> precessors = new ArrayList<>();
         precessors.add(father);
@@ -194,7 +194,7 @@ public class ParserMatcher {
             for (int j = 0; j < precessors.size(); ++j) {
                 List<StringTree> aux = new ArrayList<>();
                 if (!parts[i].equals("")) {
-                    aux = IniTreeBuilderNode(parts[i], precessors.get(j));
+                    aux = iniTreeBuilderNode(parts[i], precessors.get(j));
                 }
                 for (int m = 0; m < aux.size(); ++m) {
                     newPrecessors.add(aux.get(m));
@@ -212,7 +212,7 @@ public class ParserMatcher {
         }
     }
 
-    private List<StringTree> IniTreeBuilderNode(String data, StringTree father) throws BadBNFSyntaxException {
+    private List<StringTree> iniTreeBuilderNode(String data, StringTree father) throws BadBNFSyntaxException {
         data = data.toLowerCase();
         boolean found = false;
         List<StringTree> newChildrens = new ArrayList<>();
@@ -307,8 +307,8 @@ public class ParserMatcher {
     }
 
     public void printMatcher() {
-        String data = MyMatcher.getData();
-        List<StringTree> children = MyMatcher.getChildren();
+        String data = this.myMatcher.getData();
+        List<StringTree> children = this.myMatcher.getChildren();
         for (int i = 0; i < children.size(); ++i) {
             printRecursion(data,children.get(i));
         }
@@ -327,7 +327,7 @@ public class ParserMatcher {
     public MatcherResponse match(String[] tokens, String[] tokensTagged, String[] chunks) {
         MatcherResponse result = new MatcherResponse();
         boolean found = false;
-        List<StringTree> children = MyMatcher.getChildren();
+        List<StringTree> children = this.myMatcher.getChildren();
         for (int i = 0; ((!found) && (i < children.size())); ++i) {
             found = matchRecursion(children.get(i),tokens, tokensTagged, chunks,0, result);
         }
@@ -402,7 +402,7 @@ public class ParserMatcher {
                 boolean different = false;
                 ++index;
                 while (!different && index < tokens.length) {
-                    if (!chunks[index].toLowerCase().equals(dataPermanent)) different = true;
+                    if (!chunks[index].equalsIgnoreCase(dataPermanent)) different = true;
                     else {
                         if (childrenData.contains(tokens[index].toLowerCase()) || childrenData.contains(tokensTagged[index].toLowerCase())) {
                             boolean found = false;
@@ -525,22 +525,22 @@ public class ParserMatcher {
                 //unless some child has a [postag] or "word" that matches some element with the same sentence tag
 
                 //children_data keeps the children tags
-                HashSet<String> children_data = new HashSet<>();
+                HashSet<String> childrenData = new HashSet<>();
                 for (int i = 0; i < children.size(); ++i) {
-                    children_data.add(children.get(i).getData());
+                    childrenData.add(children.get(i).getData());
                 }
                 //data_permanent keeps the initial sentence tag
-                String data_permanent = chunks[index].toLowerCase();
+                String dataPermanent = chunks[index].toLowerCase();
                 boolean different = false;
                 ++index;
                 while (!different && index < tokens.length) {
-                    if (!chunks[index].toLowerCase().equals(data_permanent)) different = true;
+                    if (!chunks[index].equalsIgnoreCase(dataPermanent)) different = true;
                     else {
-                        if (children_data.contains(tokens[index].toLowerCase()) || children_data.contains(tokensTagged[index].toLowerCase())) {
+                        if (childrenData.contains(tokens[index].toLowerCase()) || childrenData.contains(tokensTagged[index].toLowerCase())) {
                             boolean found = false;
                             MatcherResponse aux;
                             for (int i = 0; !found && i < children.size(); ++i) {
-                                if (tokens[index].toLowerCase().equals(children.get(i).getData()) || tokensTagged[index].toLowerCase().equals(children.get(i).getData())) {
+                                if (tokens[index].equalsIgnoreCase(children.get(i).getData()) || tokensTagged[index].equalsIgnoreCase(children.get(i).getData())) {
                                     aux = matchRecursionError(children.get(i),tokens,tokensTagged,chunks,index);
                                     found = aux.isResult();
                                     if (!found && (errorsMin == null || (errorsMin > aux.getSizeErrors()))) {
@@ -571,28 +571,28 @@ public class ParserMatcher {
             if (!b1 && !b2 && !b3) {
                 boolean found = false;
                 if (tree.getData().contains("<")) {
-                    int aux_index = searchPhrase(tree.getData(),chunks,index);
-                    if (aux_index != -1) {
+                    int auxIndex = searchPhrase(tree.getData(),chunks,index);
+                    if (auxIndex != -1) {
                         boolean select = false;
-                        MatcherResponse aux = matchRecursionError(tree,tokens,tokensTagged,chunks,aux_index);
+                        MatcherResponse aux = matchRecursionError(tree,tokens,tokensTagged,chunks,auxIndex);
                         if ((errorsMin == null) || (errorsMin > aux.getSizeErrors())) {
                                 errorsMin = auxBetter.getSizeErrors();
                                 auxBetter = aux;
                                 select = true;
                                 found = true;
                         }
-                        aux_index -= 1;
+                        auxIndex -= 1;
                         if (select) {
-                            if (!tree.getFather().getData().contains("<")) auxBetter.addError(index,aux_index,tree.getData(),tree,"");
-                            else auxBetter.addError(index,aux_index,tree.getData()+"||"+tree.getFather().getData(),tree,"");
+                            if (!tree.getFather().getData().contains("<")) auxBetter.addError(index,auxIndex,tree.getData(),tree,"");
+                            else auxBetter.addError(index,auxIndex,tree.getData()+"||"+tree.getFather().getData(),tree,"");
                         }
                     }
                 } else  {
-                    int aux_index = searchPhrase(tree.getData(),tokensTagged,index);
-                    if (aux_index != -1) {
+                    int auxIndex = searchPhrase(tree.getData(),tokensTagged,index);
+                    if (auxIndex != -1) {
                         boolean select = false;
                         for (int i = 0; i < children.size(); ++i) {
-                            MatcherResponse aux = matchRecursionError(children.get(i),tokens,tokensTagged,chunks,aux_index+1);
+                            MatcherResponse aux = matchRecursionError(children.get(i),tokens,tokensTagged,chunks,auxIndex+1);
                             if ((errorsMin == null) || (errorsMin > aux.getSizeErrors())) {
                                 errorsMin = auxBetter.getSizeErrors();
                                 auxBetter = aux;
@@ -600,10 +600,10 @@ public class ParserMatcher {
                                 found = true;
                             }
                         }
-                        aux_index -= 1;
+                        auxIndex -= 1;
                         if (select) {
-                            if (!tree.getFather().getData().contains("<")) auxBetter.addError(index,aux_index,"This part does not correspond to the template",tree,"");
-                            else auxBetter.addError(index,getMaxMatch(tree.getFather().getData(),chunks,index,aux_index),tree.getFather().getData(),tree,"");
+                            if (!tree.getFather().getData().contains("<")) auxBetter.addError(index,auxIndex,"This part does not correspond to the template",tree,"");
+                            else auxBetter.addError(index,getMaxMatch(tree.getFather().getData(),chunks,index,auxIndex),tree.getFather().getData(),tree,"");
                         }
                     }
                 }

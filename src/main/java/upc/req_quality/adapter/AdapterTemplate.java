@@ -4,9 +4,9 @@ import upc.req_quality.entity.MatcherResponse;
 
 public interface AdapterTemplate {
 
-    public MatcherResponse checkTemplate(String[] tokens, String[] tokensTagged, String[] chunks);
+    MatcherResponse checkTemplate(String[] tokens, String[] tokensTagged, String[] chunks);
 
-    public String checkOrganization();
+    String checkOrganization();
 
-    public String checkName();
+    String checkName();
 }

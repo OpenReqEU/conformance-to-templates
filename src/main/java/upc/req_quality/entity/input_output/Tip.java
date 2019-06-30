@@ -16,24 +16,24 @@ public class Tip implements Serializable {
     @ApiModelProperty(value="index")
     private String index;
     @ApiModelProperty(value="expected_tokens")
-    private String expected_tokens;
+    private String expectedTokens;
     @ApiModelProperty(value="comments")
     private String comments;
 
     public Tip (){}
 
-    public Tip (String template, String index, String expected_tokens, String comments) throws InternalErrorException{
+    public Tip (String template, String index, String expectedTokens, String comments) throws InternalErrorException{
         this.template = template;
         try {
             String[] parts = index.split(":");
-            int ini_index = Integer.parseInt(parts[0]);
-            int fin_index = Integer.parseInt(parts[1]);
-            if (ini_index == fin_index) this.index = ini_index + "";
+            int iniIndex = Integer.parseInt(parts[0]);
+            int finIndex = Integer.parseInt(parts[1]);
+            if (iniIndex == finIndex) this.index = iniIndex + "";
             else this.index = index;
         } catch (Exception e) {
             throw new InternalErrorException("Error while parsing tips.");
         }
-        this.expected_tokens = expected_tokens;
+        this.expectedTokens = expectedTokens;
         this.comments = comments;
     }
 
@@ -45,8 +45,8 @@ public class Tip implements Serializable {
         return index;
     }
 
-    public String getExpected_tokens() {
-        return expected_tokens;
+    public String getExpectedTokens() {
+        return expectedTokens;
     }
 
     public String getComments() {

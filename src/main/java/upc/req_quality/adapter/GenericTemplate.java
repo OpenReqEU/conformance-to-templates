@@ -16,7 +16,6 @@ public class GenericTemplate implements AdapterTemplate {
         this.name = name;
         this.parserMatcher = new ParserMatcher(rules,permitedClauses);
         this.parserMatcher.generateMatcher();
-        System.out.println("Model " + name + " of " + organization + "generated correctly.");
     }
 
     @Override
