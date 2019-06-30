@@ -44,17 +44,7 @@ public class AdapterFactory {
 
     public void enterNewTemplate(Template template) throws InternalErrorException, BadBNFSyntaxException {
         try {
-            String auxName = template.getName();
-            String auxOrganization = template.getOrganization();
-            List<String> auxRules = template.getRules();
-            List<String> permitedPosTags = posTagger.getPosTags();
-            List<String> permitedSentenceTags = posTagger.getSentenceTags();
-            permitedPosTags.addAll(permitedSentenceTags);
-            AdapterTemplate auxTemplate = new GenericTemplate(auxName, auxOrganization, auxRules, permitedPosTags);
-            List<AdapterTemplate> organizationTemplates = templates.get(auxOrganization);
-            if (organizationTemplates == null) organizationTemplates = new ArrayList<>();
-            organizationTemplates.add(auxTemplate);
-            templates.put(auxOrganization, organizationTemplates);
+            generateTemplate(template);
             TemplateDatabase db = new SQLiteDAO();
             db.saveTemplate(template);
         } catch (ClassNotFoundException e) {
@@ -102,17 +92,7 @@ public class AdapterFactory {
             List<Template> auxTemplates = db.getOrganizationTemplates(null);
             for (int i = 0; i < auxTemplates.size(); ++i) {
                 Template template = auxTemplates.get(i);
-                String auxName = template.getName();
-                String auxOrganization = template.getOrganization();
-                List<String> auxRules = template.getRules();
-                List<String> permitedPosTags = posTagger.getPosTags();
-                List<String> permitedSentenceTags = posTagger.getSentenceTags();
-                permitedPosTags.addAll(permitedSentenceTags);
-                AdapterTemplate auxTemplate = new GenericTemplate(auxName,auxOrganization,auxRules,permitedPosTags);
-                List<AdapterTemplate> organizationTemplates = templates.get(auxOrganization);
-                if (organizationTemplates == null) organizationTemplates = new ArrayList<>();
-                organizationTemplates.add(auxTemplate);
-                templates.put(auxOrganization, organizationTemplates);
+                generateTemplate(template);
             }
         } catch (ClassNotFoundException e) {
             Control.getInstance().showErrorMessage(e.getMessage());
@@ -121,5 +101,19 @@ public class AdapterFactory {
             Control.getInstance().showErrorMessage(e.getMessage());
             throw new InternalErrorException(ERROR2 + e.getMessage());
         }
+    }
+
+    private void generateTemplate(Template template) throws BadBNFSyntaxException {
+        String auxName = template.getName();
+        String auxOrganization = template.getOrganization();
+        List<String> auxRules = template.getRules();
+        List<String> permitedPosTags = posTagger.getPosTags();
+        List<String> permitedSentenceTags = posTagger.getSentenceTags();
+        permitedPosTags.addAll(permitedSentenceTags);
+        AdapterTemplate auxTemplate = new GenericTemplate(auxName,auxOrganization,auxRules,permitedPosTags);
+        List<AdapterTemplate> organizationTemplates = templates.get(auxOrganization);
+        if (organizationTemplates == null) organizationTemplates = new ArrayList<>();
+        organizationTemplates.add(auxTemplate);
+        templates.put(auxOrganization, organizationTemplates);
     }
 }

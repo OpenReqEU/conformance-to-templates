@@ -107,7 +107,7 @@ public class ParserMatcher {
             while (it2.hasNext()) {
                 String aux = it2.next();
                 rulesWithDependencies.get(aux).remove(title);
-                if (rulesWithDependencies.get(aux).size() == 0) {
+                if (rulesWithDependencies.get(aux).isEmpty()) {
                     rulesWithoutDependencies.addLast(aux);
                     rulesWithDependencies.remove(aux);
                 }
@@ -295,7 +295,7 @@ public class ParserMatcher {
         }
     }
 
-    public void printTrees() {
+    /*public void printTrees() {
         for (Map.Entry<String, StringTree> entry : trees.entrySet()) {
             StringTree auxTree = entry.getValue();
             String data = auxTree.getData();
@@ -312,9 +312,9 @@ public class ParserMatcher {
         for (int i = 0; i < children.size(); ++i) {
             printRecursion(data,children.get(i));
         }
-    }
+    }*/
 
-    private void printRecursion(String data, StringTree node) {
+    /*private void printRecursion(String data, StringTree node) {
         data += " " + node.getData();
         List<StringTree> children = node.getChildren();
         if (!children.isEmpty()) {
@@ -322,7 +322,7 @@ public class ParserMatcher {
                 printRecursion(data, children.get(i));
             }
         }
-    }
+    }*/
 
     public MatcherResponse match(String[] tokens, String[] tokensTagged, String[] chunks) {
         MatcherResponse result = new MatcherResponse();

@@ -54,13 +54,19 @@ public class ControllerTests {
     }
 
     @Test
-    public void cTestOutTemplates() throws Exception {
+    public void cTestInTemplateCycle() throws Exception {
+        this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/InTemplates").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"input_InTemplate_cycle.json")))
+                .andDo(print()).andExpect(status().isBadRequest()).andExpect(content().string(read_file_raw(path+"output_inTemplate_cycle.json")));
+    }
+
+    @Test
+    public void dTestOutTemplates() throws Exception {
         this.mockMvc.perform(get("/upc/reqquality/check-conformance-to-templates/OutTemplates?organization=_---Test---_"))
                 .andDo(print()).andExpect(status().isOk()).andExpect(content().string(read_file_raw(path+"output_outTemplates_simple.json")));
     }
 
     @Test
-    public void dTestDeleteTemplates() throws Exception {
+    public void eTestDeleteTemplates() throws Exception {
         this.mockMvc.perform(delete("/upc/reqquality/check-conformance-to-templates/DeleteTemplates?organization=_---Test---_"))
                 .andDo(print()).andExpect(status().isOk());
         this.mockMvc.perform(get("/upc/reqquality/check-conformance-to-templates/OutTemplates?organization=_---Test---_"))
@@ -68,7 +74,7 @@ public class ControllerTests {
     }
 
     @Test
-    public void eTestConformanceOK() throws Exception {
+    public void fTestConformanceOK() throws Exception {
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/InTemplates").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"templates/input_model_rupp.json")))
                 .andDo(print()).andExpect(status().isOk());
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/Conformance").param("organization", "_---Test---_").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"input_conformance_OK_simple.json")))
@@ -78,7 +84,7 @@ public class ControllerTests {
     }
 
     @Test
-    public void fTestConformanceNOTOK() throws Exception {
+    public void gTestConformanceNOTOK() throws Exception {
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/InTemplates").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"templates/input_model_rupp.json")))
                 .andDo(print()).andExpect(status().isOk());
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/Conformance").param("organization", "_---Test---_").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"input_conformance_NOTOK_simple.json")))
