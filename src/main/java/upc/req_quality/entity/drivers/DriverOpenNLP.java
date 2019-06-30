@@ -1,4 +1,4 @@
-package drivers;
+package upc.req_quality.entity.drivers;
 
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.TaggedWord;

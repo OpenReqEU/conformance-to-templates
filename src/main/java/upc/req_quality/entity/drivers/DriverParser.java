@@ -1,4 +1,4 @@
-package drivers;
+package upc.req_quality.entity.drivers;
 
 import upc.req_quality.adapter.AdapterPosTagger;
 import upc.req_quality.adapter.OpenNLPPosTagger;
