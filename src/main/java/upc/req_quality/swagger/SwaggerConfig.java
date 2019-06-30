@@ -1,9 +1,7 @@
 package upc.req_quality.swagger;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -17,8 +15,8 @@ import java.util.HashSet;
 @EnableSwagger2
 public class SwaggerConfig {
     private static final String LICENCE_TEXT = "License";
-    private static final String title = "Requirements Conformance to Templates";
-    private static final String description = "<p> This service is meant to provide automation for checking requirements" +
+    private static final String TITLE = "Requirements Conformance to Templates";
+    private static final String DESCRIPTON = "<p> This service is meant to provide automation for checking requirements" +
             " conformance to boilerplates/templates. A boilerplate or template organizes the syntactic structure of a" +
             " requirement statement into a number of pre-defined slots.</p>" +
             " <p> This API has two main operations:</p>" +
@@ -55,8 +53,8 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title(title)
-                .description(description)
+                .title(TITLE)
+                .description(DESCRIPTON)
                 .license(LICENCE_TEXT)
                 .build();
     }

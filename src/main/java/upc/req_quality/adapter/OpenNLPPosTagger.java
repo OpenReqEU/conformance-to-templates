@@ -46,12 +46,12 @@ public class OpenNLPPosTagger implements AdapterPosTagger {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 String[] parts = line.split("->");
-                if (parts.length != 2) throw new InternalErrorException("Error loading tags data");
+                if (parts.length != 2) throw new InternalErrorException("Error loading tags data. Syntax error around '->' symbol");
                 String tag = parts[0].replaceAll(" ", "");
                 String description = "";
-                String[] aux_description = parts[1].split(" ");
+                String[] auxDescription = parts[1].split(" ");
                 boolean firstWord = true;
-                for (String word: aux_description) {
+                for (String word: auxDescription) {
                     if (!word.equals("")) {
                         if (!firstWord) description = description.concat(" ");
                         firstWord = false;
@@ -60,13 +60,13 @@ public class OpenNLPPosTagger implements AdapterPosTagger {
                 }
                 if (tag.contains("<")) sentenceTags.add(tag);
                 else if (tag.contains("(")) posTags.add(tag);
-                else throw new InternalErrorException("Error loading tags data");
+                else throw new InternalErrorException("Error loading tags data. The next tag is not well written: " + tag);
                 hashDescriptions.put(tag,description);
             }
 
         } catch (IOException e) {
             Control.getInstance().showErrorMessage(e.getMessage());
-            throw new InternalErrorException("Error loading tags data");
+            throw new InternalErrorException("Error loading tags data. File error.");
         }
     }
 
@@ -126,32 +126,14 @@ public class OpenNLPPosTagger implements AdapterPosTagger {
     }
 
     @Override
-    public String[] chunker(String[] tokens, String[] tokens_tagged) {
-        String[] chunks = chunker.chunk(tokens,tokens_tagged);
+    public String[] chunker(String[] tokens, String[] tokensTagged) {
+        String[] chunks = chunker.chunk(tokens,tokensTagged);
         for (int i = 0; i < chunks.length; ++i) {
             chunks[i] = chunks[i].toLowerCase();
             if (chunks[i].contains("vp")) chunks[i] = "<vp>";
             else chunks[i] = "<np>";
         }
         return chunks;
-    }
-
-    @Override
-    public List<SpanOut> chunkerSpans(String[] tokens, String[] tokens_tagged) {
-        Span[] chunks = chunker.chunkAsSpans(tokens,tokens_tagged);
-
-        List<SpanOut> aux = new ArrayList<>();
-
-        for (int i = 0; i < chunks.length; ++i) {
-            String value = chunks[i].getType();
-            if (!value.equals("PP") && !value.equals("SBAR")) {
-                int start = chunks[i].getStart();
-                int end = chunks[i].getEnd();
-                aux.add(new SpanOut(start, end, value));
-            }
-        }
-
-        return aux;
     }
 
     @Override

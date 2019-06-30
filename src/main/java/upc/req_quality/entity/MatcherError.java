@@ -6,14 +6,14 @@ import java.util.Comparator;
 
 public class MatcherError implements Comparator<MatcherError> {
     private int index;
-    private int final_index;
+    private int finalIndex;
     private String description;
     private StringTree node;
     private String comment;
 
-    public MatcherError(int index, int final_index, String description, StringTree node, String comment) {
+    public MatcherError(int index, int finalIndex, String description, StringTree node, String comment) {
         this.index = index;
-        this.final_index = final_index;
+        this.finalIndex = finalIndex;
         this.description = description;
         this.node = node;
         this.comment = comment;
@@ -35,8 +35,8 @@ public class MatcherError implements Comparator<MatcherError> {
         return index;
     }
 
-    public int getFinal_index() {
-        return final_index;
+    public int getFinalIndex() {
+        return finalIndex;
     }
 
     public String getDescription() {

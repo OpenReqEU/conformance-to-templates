@@ -8,13 +8,11 @@ public class MatcherResponse {
 
     private boolean result;
     private int index;
-    private int length;
     private LinkedList<MatcherError> errors;
 
-    public MatcherResponse(int length) {
+    public MatcherResponse() {
         this.errors = new LinkedList<>();
         this.index = 0;
-        this.length = length;
     }
 
     public void setResult(boolean result) {
@@ -27,17 +25,17 @@ public class MatcherResponse {
     }
 
     public List<StringTree> getLastErrorNodes() {
-        List<StringTree> result = new ArrayList<>();
-        if (errors.size() > 0) {
-            int max_index = errors.getLast().getIndex();
+        List<StringTree> array = new ArrayList<>();
+        if (!errors.isEmpty()) {
+            int maxIndex = errors.getLast().getIndex();
             for (MatcherError error : errors) {
-                if (error.getIndex() > max_index) max_index = error.getIndex();
+                if (error.getIndex() > maxIndex) maxIndex = error.getIndex();
             }
             for (MatcherError error : errors) {
-                if (error.getIndex() == max_index) result.add(error.getNode());
+                if (error.getIndex() == maxIndex) array.add(error.getNode());
             }
         }
-        return result;
+        return array;
     }
 
 
@@ -45,9 +43,9 @@ public class MatcherResponse {
         return errors.size();
     }
 
-    public void addAllErrors(LinkedList<MatcherError> errors) {
+    public void addAllErrors(List<MatcherError> errors) {
         for (MatcherError error: errors) {
-            this.addError(error.getIndex(),error.getFinal_index(),error.getDescription(),error.getNode(),error.getComment());
+            this.addError(error.getIndex(),error.getFinalIndex(),error.getDescription(),error.getNode(),error.getComment());
         }
     }
 
@@ -63,7 +61,7 @@ public class MatcherResponse {
         return this.index;
     }
 
-    public LinkedList<MatcherError> getErrors() {
+    public List<MatcherError> getErrors() {
         return errors;
     }
 }

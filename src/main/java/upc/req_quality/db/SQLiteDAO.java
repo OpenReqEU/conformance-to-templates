@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SQLiteDAO implements TemplateDatabase {
 
-    private static Connection db;
+    private Connection db;
     private static String url = "jdbc:sqlite:./templates.db";
 
     public SQLiteDAO() throws ClassNotFoundException {
@@ -21,7 +21,7 @@ public class SQLiteDAO implements TemplateDatabase {
         }
     }
 
-    private Template create_template(String name, String organization, String rules) {
+    private Template createTemplate(String name, String organization, String rules) {
         String[] r = rules.split("#####SEPARATION#####");
         List<String> aux = new ArrayList<>();
         for (int i = 0; i < r.length; ++i) aux.add(r[i]);
@@ -53,9 +53,9 @@ public class SQLiteDAO implements TemplateDatabase {
         if (organization != null) {
             String sql = "SELECT name, org, description FROM model WHERE org = ?";
 
-            String aux_name;
-            String aux_organization;
-            String aux_description;
+            String auxName;
+            String auxOrganization;
+            String auxDescription;
 
             try(PreparedStatement pstmt = db.prepareStatement(sql)) {
                 pstmt.setString(1, organization);
@@ -63,28 +63,28 @@ public class SQLiteDAO implements TemplateDatabase {
                 try (ResultSet rs = pstmt.executeQuery()) {
                     // loop through the result set
                     while (rs.next()) {
-                        aux_name = rs.getString("name");
-                        aux_organization = rs.getString("org");
-                        aux_description = rs.getString("description");
-                        templates.add(create_template(aux_name, aux_organization, aux_description));
+                        auxName = rs.getString("name");
+                        auxOrganization = rs.getString("org");
+                        auxDescription = rs.getString("description");
+                        templates.add(createTemplate(auxName, auxOrganization, auxDescription));
                     }
                 }
             }
         } else {
             String sql = "SELECT name, org, description FROM model";
 
-            String aux_name;
-            String aux_organization;
-            String aux_description;
+            String auxName;
+            String auxOrganization;
+            String auxDescription;
 
             try (Statement stmt = db.createStatement();
                  ResultSet rs = stmt.executeQuery(sql)) {
                 // loop through the result set
                 while (rs.next()) {
-                    aux_name = rs.getString("name");
-                    aux_organization = rs.getString("org");
-                    aux_description = rs.getString("description");
-                    templates.add(create_template(aux_name, aux_organization, aux_description));
+                    auxName = rs.getString("name");
+                    auxOrganization = rs.getString("org");
+                    auxDescription = rs.getString("description");
+                    templates.add(createTemplate(auxName, auxOrganization, auxDescription));
                 }
 
             }
@@ -98,7 +98,6 @@ public class SQLiteDAO implements TemplateDatabase {
         try(PreparedStatement pstmt = db.prepareStatement(sql)) {
             pstmt.setString(1, organization);
             pstmt.executeUpdate();
-            System.out.println("DB Cleared");
         }
     }
 

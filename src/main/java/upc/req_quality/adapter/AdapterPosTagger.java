@@ -14,9 +14,7 @@ public interface AdapterPosTagger {
 
     public String[] posTagger(String[] tokens);
 
-    public String[] chunker(String[] tokens, String[] tokens_tagged);
-
-    public List<SpanOut> chunkerSpans(String[] tokens, String[] tokens_tagged);
+    public String[] chunker(String[] tokens, String[] tokensTagged);
 
     public String getTagDescription(String tag);
 }

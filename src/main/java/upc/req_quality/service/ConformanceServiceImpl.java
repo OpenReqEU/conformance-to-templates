@@ -30,27 +30,27 @@ public class ConformanceServiceImpl implements ConformanceService {
         if (templates == null) throw new BadRequestException("This organization has zero templates.");
 
         for (int i = 0; i < reqs.size(); ++i) {
-            Requirement aux_req = reqs.get(i);
+            Requirement auxReq = reqs.get(i);
 
-            String[] tokens = tagger.tokenizer(aux_req.getText());
-            String[] tokens_tagged = tagger.posTagger(tokens);
-            String[] chunks = tagger.chunker(tokens,tokens_tagged);
+            String[] tokens = tagger.tokenizer(auxReq.getText());
+            String[] tokensTagged = tagger.posTagger(tokens);
+            String[] chunks = tagger.chunker(tokens,tokensTagged);
 
             boolean ok = false;
 
             List<Tip> tips = new ArrayList<>();
 
             for (int j = 0; ((!ok) && j < templates.size()); ++j) {
-                MatcherResponse matcher_response = templates.get(j).checkTemplate(tokens,tokens_tagged,chunks);
-                ok = matcher_response.isResult();
+                MatcherResponse matcherResponse = templates.get(j).checkTemplate(tokens,tokensTagged,chunks);
+                ok = matcherResponse.isResult();
                 if (!ok) {
-                    for (MatcherError matcher_error: matcher_response.getErrors()) {
-                        tips.add(new Tip(templates.get(j).checkName(),matcher_error.getIndex()+":"+matcher_error.getFinal_index(),explainError(matcher_error.getDescription(),tagger),matcher_error.getComment()));
+                    for (MatcherError matcher_error: matcherResponse.getErrors()) {
+                        tips.add(new Tip(templates.get(j).checkName(),matcher_error.getIndex()+":"+matcher_error.getFinalIndex(),explainError(matcher_error.getDescription(),tagger),matcher_error.getComment()));
                     }
                 }
             }
 
-            if (!ok) result.add(new Requirement(aux_req.getId(),aux_req.getText(),tips));
+            if (!ok) result.add(new Requirement(auxReq.getId(),auxReq.getText(),tips));
         }
 
         return new Requirements(result);
@@ -59,9 +59,9 @@ public class ConformanceServiceImpl implements ConformanceService {
     @Override
     public void enterNewTemplates(Templates templates) throws BadBNFSyntaxException, InternalErrorException {
         AdapterFactory af = AdapterFactory.getInstance();
-        List<Template> aux_templates = templates.getTemplates();
-        for (int i = 0; i < aux_templates.size(); ++i) {
-            af.enterNewTemplate(aux_templates.get(i));
+        List<Template> auxTemplates = templates.getTemplates();
+        for (int i = 0; i < auxTemplates.size(); ++i) {
+            af.enterNewTemplate(auxTemplates.get(i));
         }
     }
 
@@ -103,13 +103,5 @@ public class ConformanceServiceImpl implements ConformanceService {
         }
         if (aux == null) throw new InternalErrorException("Tag "+ tag + " not recognized");
         return aux;
-    }
-
-    private List<String> createTokensOutput(String[] tokens, String[] tokens_tagged, String[] chunks) {
-        List<String> result = new ArrayList<>();
-        for (int i = 0; i < tokens.length; ++i) {
-            result.add(tokens[i] + " " + tokens_tagged[i] + " " + chunks[i]);
-        }
-        return result;
     }
 }

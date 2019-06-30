@@ -2,8 +2,8 @@ package upc.req_quality.exception;
 
 public abstract class ComponentException extends Exception {
 
-    private int status;
-    private String error;
+    private final int status;
+    private final String error;
 
     public ComponentException(String message, int status, String error) {
         super(message);
