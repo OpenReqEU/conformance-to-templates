@@ -1,18 +1,19 @@
 package upc.req_quality.db;
 
-import upc.req_quality.entity.input_output.Template;
+import upc.req_quality.entity.ParsedTemplate;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 public interface TemplateDatabase {
 
-    void saveTemplate(Template model) throws SQLException;
+    void saveTemplate(ParsedTemplate template) throws SQLException;
 
-    List<Template> getOrganizationTemplates(String organization) throws SQLException;
+    List<ParsedTemplate> getOrganizationTemplates(String organization) throws SQLException;
 
-    void clearDatabase(String organization) throws SQLException;
+    void clearOrganizationTemplates(String organization) throws SQLException;
 
-    void resetDatabase() throws SQLException;
+    void clearDatabase() throws SQLException, IOException;
 
 }

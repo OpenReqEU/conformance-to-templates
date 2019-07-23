@@ -6,20 +6,20 @@ import java.util.List;
 public class StringTree {
     private String data;
     private List<StringTree> children;
-    private List<StringTree> hojas;
+    private List<StringTree> leaves; //only visible in the top node
     private StringTree father;
 
     public StringTree(StringTree father) {
         this.father = father;
         this.children = new ArrayList<>();
-        this.hojas = new ArrayList<>();
+        this.leaves = new ArrayList<>();
     }
 
     public StringTree(StringTree father, String data) {
         this.father = father;
         this.data = data;
         this.children = new ArrayList<>();
-        this.hojas= new ArrayList<>();
+        this.leaves= new ArrayList<>();
     }
 
     public StringTree addChildren(StringTree children) {
@@ -54,7 +54,7 @@ public class StringTree {
         if (children.isEmpty()) {
             return null;
         }
-        result.hojas = auxHojas;
+        result.leaves = auxHojas;
         return result;
     }
 
@@ -72,7 +72,7 @@ public class StringTree {
     }
 
     public List<StringTree> getHojas() {
-        return hojas;
+        return leaves;
     }
 
     public StringTree getFather() {
