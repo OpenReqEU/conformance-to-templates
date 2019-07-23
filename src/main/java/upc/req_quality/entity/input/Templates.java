@@ -10,20 +10,20 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(value = "Templates", description = "A list of templates")
-public class InputTemplates implements Serializable {
+public class Templates implements Serializable {
 
     @ApiModelProperty(value="templates")
-    private List<InputTemplate> templatesArray;
+    private List<Template> templatesArray;
 
-    public InputTemplates() {
+    public Templates() {
         this.templatesArray = new ArrayList<>();
     }
 
-    public InputTemplates(List<InputTemplate> templates) {
+    public Templates(List<Template> templates) {
         this.templatesArray = templates;
     }
 
-    public List<InputTemplate> getTemplates() {
+    public List<Template> getTemplates() {
         return templatesArray;
     }
 }

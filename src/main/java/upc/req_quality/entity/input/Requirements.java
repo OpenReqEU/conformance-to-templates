@@ -12,16 +12,16 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(value = "Requirements", description = "A list of requirements with id and text")
-public class InputRequirements implements Serializable {
+public class Requirements implements Serializable {
 
     @ApiModelProperty(value="requirements")
     private List<Requirement> requirementsArray;
 
-    public InputRequirements() {
+    public Requirements() {
         requirementsArray = new ArrayList<>();
     }
 
-    public InputRequirements(List<Requirement> requirements) {
+    public Requirements(List<Requirement> requirements) {
         this.requirementsArray = requirements;
     }
 

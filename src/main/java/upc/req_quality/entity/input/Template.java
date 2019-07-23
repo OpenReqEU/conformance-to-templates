@@ -9,7 +9,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(value = "Template", description = "A template to be checked against requirements")
-public class InputTemplate implements Serializable {
+public class Template implements Serializable {
 
     @ApiModelProperty(value="name")
     private String name;
@@ -18,9 +18,9 @@ public class InputTemplate implements Serializable {
     @ApiModelProperty(value="organization")
     private String organization;
 
-    public InputTemplate() {}
+    public Template() {}
 
-    public InputTemplate(String name, String organization, List<String> rules) {
+    public Template(String name, String organization, List<String> rules) {
         this.organization = organization;
         this.name = name;
         this.rules = rules;

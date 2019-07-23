@@ -16,20 +16,13 @@ import java.util.List;
 
 public class OpenNLPTagger implements AdapterTagger {
 
-    private OpenNLPTagger() throws InternalErrorException {
+    public OpenNLPTagger() throws InternalErrorException {
         posTags = new ArrayList<>();
         sentenceTags = new ArrayList<>();
         hashDescriptions = new HashMap<>();
         loadInformation("./opennlp_tags");
         loadModels();
     }
-
-    public static OpenNLPTagger getInstance() throws InternalErrorException {
-        if (instance == null) instance = new OpenNLPTagger();
-        return instance;
-    }
-
-    private static OpenNLPTagger instance;
 
     private List<String> posTags;
     private List<String> sentenceTags;

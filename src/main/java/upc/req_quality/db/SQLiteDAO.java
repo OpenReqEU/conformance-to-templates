@@ -4,6 +4,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import upc.req_quality.adapter_template.StringTree;
 import upc.req_quality.entity.ParsedTemplate;
+import upc.req_quality.exception.BadBNFSyntaxException;
+import upc.req_quality.exception.InternalErrorException;
+import upc.req_quality.exception.NotFoundException;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +39,7 @@ public class SQLiteDAO implements TemplateDatabase {
 
         //TODO asegurar que existe como minimo el nodo top
         Connection connection = getConnection();
-        String sql = "INSERT INTO templates (name, organization, description) VALUES (?, ?, ?)";
+        String sql = "INSERT OR REPLACE INTO templates (name, organization, description) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, template.getName());
             ps.setString(2, template.getOrganization());
@@ -46,7 +49,7 @@ public class SQLiteDAO implements TemplateDatabase {
     }
 
     @Override
-    public List<ParsedTemplate> getOrganizationTemplates(String organization) throws SQLException {
+    public List<ParsedTemplate> getOrganizationTemplates(String organization) throws NotFoundException, SQLException {
 
         List<ParsedTemplate> templates = new ArrayList<>();
         Connection connection = getConnection();
@@ -56,16 +59,42 @@ public class SQLiteDAO implements TemplateDatabase {
             pstmt.setString(1, organization);
 
             try (ResultSet rs = pstmt.executeQuery()) {
+                int count = 0;
                 while (rs.next()) {
+                    ++count;
                     String auxName = rs.getString("name");
                     String auxOrganization = rs.getString("organization");
                     String auxDescription = rs.getString("description");
                     templates.add(new ParsedTemplate(auxName, auxOrganization, loadRules(auxDescription)));
                 }
+                if (count == 0) throw new NotFoundException("The organization " + organization + " has no templates in the database");
             }
         }
 
         return templates;
+    }
+
+    @Override
+    public List<String> getOrganizationTemplatesNames(String organization) throws NotFoundException, SQLException {
+
+        List<String> names = new ArrayList<>();
+        Connection connection = getConnection();
+        String sql = "SELECT name FROM templates WHERE organization = ?";
+
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, organization);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                int count = 0;
+                while (rs.next()) {
+                    ++count;
+                    names.add(rs.getString("name"));
+                }
+                if (count == 0) throw new NotFoundException("The organization " + organization + " has no templates in the database");
+            }
+        }
+
+        return names;
     }
 
     @Override

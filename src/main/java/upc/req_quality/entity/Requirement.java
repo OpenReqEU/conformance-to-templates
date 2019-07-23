@@ -15,9 +15,9 @@ public class Requirement implements Serializable {
 
     @ApiModelProperty(value="id")
     private String id;
-    @ApiModelProperty(value="text")
+    @ApiModelProperty(value="text") //TODO change this to description or title OpenReq conformance
     private String text;
-    @ApiModelProperty(value="tips")
+    @ApiModelProperty(value="tips") //TODO check input in swagger
     private List<OutputTip> tips;
 
     public Requirement() {

@@ -1,22 +1,25 @@
 package upc.req_quality.service;
 
 import upc.req_quality.entity.*;
-import upc.req_quality.entity.input.InputRequirements;
-import upc.req_quality.entity.input.InputTemplates;
+import upc.req_quality.entity.input.Requirements;
+import upc.req_quality.entity.input.Templates;
 import upc.req_quality.exception.BadBNFSyntaxException;
 import upc.req_quality.exception.BadRequestException;
 import upc.req_quality.exception.InternalErrorException;
+import upc.req_quality.exception.NotFoundException;
 
 
 import java.util.List;
 
 public interface ConformanceService {
 
-    InputRequirements checkConformance(String organization, List<Requirement> reqs) throws BadRequestException, BadBNFSyntaxException, InternalErrorException;
+    Requirements checkConformance(String organization, List<Requirement> requirements) throws NotFoundException, InternalErrorException;
 
-    void enterNewTemplates(InputTemplates inputTemplates) throws InternalErrorException, BadBNFSyntaxException;
+    void enterNewTemplates(Templates templates) throws InternalErrorException, BadBNFSyntaxException;
 
-    InputTemplates checkOrganizationTemplates(String organization) throws InternalErrorException, BadBNFSyntaxException ;
+    List<String> checkOrganizationTemplates(String organization) throws NotFoundException, InternalErrorException;
 
-    void clearDatabase(String organization) throws InternalErrorException, BadBNFSyntaxException;
+    void clearOrganizationTemplates(String organization) throws InternalErrorException;
+
+    void clearDatabase() throws InternalErrorException;
 }

@@ -10,8 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import upc.req_quality.entity.input.InputRequirements;
-import upc.req_quality.entity.input.InputTemplates;
+import upc.req_quality.entity.input.Requirements;
+import upc.req_quality.entity.input.Templates;
 import upc.req_quality.exception.ComponentException;
 import upc.req_quality.service.ConformanceService;
 
@@ -34,7 +34,7 @@ public class RestApiController {
                            @ApiResponse(code=452, message = "Bad BNF syntax"),
                            @ApiResponse(code=500, message = "Bad request")})
     public ResponseEntity checkConformance(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization,
-                                            @ApiParam(value="A OpenReqJson with requirements", required = true, example = "SQ-132") @RequestBody InputRequirements json) {
+                                            @ApiParam(value="A OpenReqJson with requirements", required = true, example = "SQ-132") @RequestBody Requirements json) {
         try {
             return new ResponseEntity<>(conformanceService.checkConformance(organization,json.getRequirements()), HttpStatus.OK);
         } catch (ComponentException e) {
@@ -48,7 +48,7 @@ public class RestApiController {
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=452, message = "Bad BNF syntax"),
                            @ApiResponse(code=500, message = "Internal exception")})
-    public ResponseEntity enterNewTemplates(@RequestBody InputTemplates json) {
+    public ResponseEntity enterNewTemplates(@RequestBody Templates json) {
         try {
             conformanceService.enterNewTemplates(json);
             return new ResponseEntity<>(null, HttpStatus.OK);

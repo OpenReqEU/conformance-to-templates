@@ -3,15 +3,20 @@ package upc.req_quality.service;
 import org.springframework.stereotype.Service;
 import upc.req_quality.adapter_tagger.AdapterTagger;
 import upc.req_quality.adapter_template.AdapterTemplate;
+import upc.req_quality.db.TemplateDatabase;
 import upc.req_quality.entity.*;
-import upc.req_quality.entity.input.InputRequirements;
-import upc.req_quality.entity.input.InputTemplate;
-import upc.req_quality.entity.input.InputTemplates;
+import upc.req_quality.entity.input.Requirements;
+import upc.req_quality.entity.input.Template;
+import upc.req_quality.entity.input.Templates;
 import upc.req_quality.entity.output.OutputTip;
 import upc.req_quality.exception.BadBNFSyntaxException;
 import upc.req_quality.exception.BadRequestException;
 import upc.req_quality.exception.InternalErrorException;
+import upc.req_quality.exception.NotFoundException;
+import upc.req_quality.util.Control;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,62 +25,109 @@ import java.util.regex.Pattern;
 public class ConformanceServiceImpl implements ConformanceService {
 
     @Override
-    public InputRequirements checkConformance(String organization, List<Requirement> reqs) throws BadRequestException, BadBNFSyntaxException, InternalErrorException {
+    public Requirements checkConformance(String organization, List<Requirement> requirements) throws NotFoundException, InternalErrorException {
 
         List<Requirement> result = new ArrayList<>();
 
-        AdapterFactory factory = AdapterFactory.getInstance();
-        AdapterTagger tagger = factory.getAdapterTagger();
-        List<AdapterTemplate> templates = factory.getAdapterTemplates(organization);
+        AdapterFactory af = AdapterFactory.getInstance();
+        AdapterTagger adapterTagger = af.getAdapterTagger();
+        AdapterTemplate adapterTemplate = af.getAdapterTemplate();
+        TemplateDatabase templateDatabase = af.getTemplateDatabase();
 
-        if (templates == null) throw new BadRequestException("This organization has zero templates.");
+        List<ParsedTemplate> templates;
+        try {
+            templates = templateDatabase.getOrganizationTemplates(organization);
+        } catch (SQLException sq) {
+            Control.getInstance().showErrorMessage(sq.getMessage());
+            throw new InternalErrorException("Error while loading the organization templates from the database");
+        }
 
-        for (int i = 0; i < reqs.size(); ++i) {
-            Requirement auxReq = reqs.get(i);
+        for (Requirement requirement: requirements) {
 
-            String[] tokens = tagger.tokenizer(auxReq.getText());
-            String[] tokensTagged = tagger.posTagger(tokens);
-            String[] chunks = tagger.chunker(tokens,tokensTagged);
+            String[] tokens = adapterTagger.tokenizer(requirement.getText());
+            String[] tokensTagged = adapterTagger.posTagger(tokens);
+            String[] chunks = adapterTagger.chunker(tokens,tokensTagged);
 
             boolean ok = false;
 
             List<OutputTip> tips = new ArrayList<>();
 
-            for (int j = 0; ((!ok) && j < templates.size()); ++j) {
-                MatcherResponse matcherResponse = templates.get(j).checkTemplate(tokens,tokensTagged,chunks);
+            //TODO do all the loop and tell the user which templates the requirement is not conformance with
+            for (int i = 0; ((!ok) && i < templates.size()); ++i) {
+                ParsedTemplate template = templates.get(i);
+                MatcherResponse matcherResponse = adapterTemplate.matchTemplate(template, tokens, tokensTagged, chunks);
                 ok = matcherResponse.isResult();
                 if (!ok) {
                     for (MatcherError matcher_error: matcherResponse.getErrors()) {
-                        tips.add(new OutputTip(templates.get(j).checkName(),matcher_error.getIndex()+":"+matcher_error.getFinalIndex(),explainError(matcher_error.getDescription(),tagger),matcher_error.getComment()));
+                        tips.add(new OutputTip(templates.get(i).getName(),matcher_error.getIndex()+":"+matcher_error.getFinalIndex(),explainError(matcher_error.getDescription(),adapterTagger),matcher_error.getComment()));
                     }
                 }
             }
 
-            if (!ok) result.add(new Requirement(auxReq.getId(),auxReq.getText(),tips));
+            if (!ok) result.add(new Requirement(requirement.getId(),requirement.getText(),tips));
         }
 
-        return new InputRequirements(result);
+        return new Requirements(result);
     }
 
     @Override
-    public void enterNewTemplates(InputTemplates inputTemplates) throws BadBNFSyntaxException, InternalErrorException {
+    public void enterNewTemplates(Templates input) throws BadBNFSyntaxException, InternalErrorException {
         AdapterFactory af = AdapterFactory.getInstance();
-        List<InputTemplate> auxTemplates = inputTemplates.getTemplates();
-        for (int i = 0; i < auxTemplates.size(); ++i) {
-            af.enterNewTemplate(auxTemplates.get(i));
+        AdapterTemplate adapterTemplate = af.getAdapterTemplate();
+        TemplateDatabase templateDatabase = af.getTemplateDatabase();
+        List<Template> templates = input.getTemplates();
+        try {
+            for (Template template : templates) {
+                String name = template.getName();
+                String organization = template.getOrganization();
+                List<String> rules = template.getRules();
+                List<Rule> parsedRules = parseRulesAndCheck(rules);
+                List<String> permittedClauses = af.getPermittedClauses();
+                ParsedTemplate parsedTemplate = adapterTemplate.createTemplate(name, organization, parsedRules, permittedClauses);
+                templateDatabase.saveTemplate(parsedTemplate);
+            }
+        } catch (SQLException sq) {
+            Control.getInstance().showErrorMessage(sq.getMessage());
+            throw new InternalErrorException("Error while saving a new template in the database");
         }
     }
 
     @Override
-    public InputTemplates checkOrganizationTemplates(String organization) throws InternalErrorException, BadBNFSyntaxException {
+    public List<String> checkOrganizationTemplates(String organization) throws NotFoundException, InternalErrorException {
         AdapterFactory af = AdapterFactory.getInstance();
-        return af.checkOrganizationModels(organization);
+        TemplateDatabase templateDatabase = af.getTemplateDatabase();
+        List<String> names;
+        try {
+            names = templateDatabase.getOrganizationTemplatesNames(organization);
+        } catch (SQLException sq) {
+            Control.getInstance().showErrorMessage(sq.getMessage());
+            throw new InternalErrorException("Error while reading the organization templates from the database");
+        }
+        return names;
     }
 
     @Override
-    public void clearDatabase(String organization) throws InternalErrorException, BadBNFSyntaxException {
+    public void clearOrganizationTemplates(String organization) throws InternalErrorException {
         AdapterFactory af = AdapterFactory.getInstance();
-        af.clearDatabase(organization);
+        TemplateDatabase templateDatabase = af.getTemplateDatabase();
+        try {
+            templateDatabase.clearOrganizationTemplates(organization);
+        } catch (SQLException sq) {
+            Control.getInstance().showErrorMessage(sq.getMessage());
+            throw new InternalErrorException("Error while clearing organization templates");
+        }
+    }
+
+    @Override
+    public void clearDatabase() throws InternalErrorException {
+        AdapterFactory af = AdapterFactory.getInstance();
+        TemplateDatabase templateDatabase = af.getTemplateDatabase();
+        try {
+            templateDatabase.clearDatabase();
+        } catch (SQLException | IOException e) {
+            Control.getInstance().showErrorMessage(e.getMessage());
+            throw new InternalErrorException("Error while clearing the database");
+        }
     }
 
 
