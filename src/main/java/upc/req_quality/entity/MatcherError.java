@@ -1,6 +1,6 @@
 package upc.req_quality.entity;
 
-import upc.req_quality.adapter.StringTree;
+import upc.req_quality.adapter_template.StringTree;
 
 public class MatcherError {
     private int index;

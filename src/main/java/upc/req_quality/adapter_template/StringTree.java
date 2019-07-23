@@ -1,4 +1,4 @@
-package upc.req_quality.adapter;
+package upc.req_quality.adapter_template;
 
 import java.util.ArrayList;
 import java.util.List;

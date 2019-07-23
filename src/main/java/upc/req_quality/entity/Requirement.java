@@ -3,7 +3,7 @@ package upc.req_quality.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import upc.req_quality.entity.input_output.Tip;
+import upc.req_quality.entity.output.OutputTip;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,13 +18,13 @@ public class Requirement implements Serializable {
     @ApiModelProperty(value="text")
     private String text;
     @ApiModelProperty(value="tips")
-    private List<Tip> tips;
+    private List<OutputTip> tips;
 
     public Requirement() {
         this.tips = new ArrayList<>();
     }
 
-    public Requirement(String id, String text, List<Tip> tips) {
+    public Requirement(String id, String text, List<OutputTip> tips) {
         this.id = id;
         this.text = text;
         this.tips = tips;
@@ -38,7 +38,7 @@ public class Requirement implements Serializable {
         return text;
     }
 
-    public List<Tip> getTips() {
+    public List<OutputTip> getTips() {
         return tips;
     }
 

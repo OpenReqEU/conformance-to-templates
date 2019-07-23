@@ -1,4 +1,4 @@
-package upc.req_quality.entity.input_output;
+package upc.req_quality.entity.input;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,16 +12,16 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(value = "Requirements", description = "A list of requirements with id and text")
-public class Requirements implements Serializable {
+public class InputRequirements implements Serializable {
 
     @ApiModelProperty(value="requirements")
     private List<Requirement> requirementsArray;
 
-    public Requirements() {
+    public InputRequirements() {
         requirementsArray = new ArrayList<>();
     }
 
-    public Requirements(List<Requirement> requirements) {
+    public InputRequirements(List<Requirement> requirements) {
         this.requirementsArray = requirements;
     }
 

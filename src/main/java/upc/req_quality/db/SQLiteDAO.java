@@ -2,10 +2,8 @@ package upc.req_quality.db;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import upc.req_quality.adapter.StringTree;
+import upc.req_quality.adapter_template.StringTree;
 import upc.req_quality.entity.ParsedTemplate;
-import upc.req_quality.entity.input_output.Template;
-import upc.req_quality.util.Control;
 
 import java.io.File;
 import java.io.IOException;

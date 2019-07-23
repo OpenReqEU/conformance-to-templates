@@ -1,4 +1,4 @@
-package upc.req_quality.entity.input_output;
+package upc.req_quality.entity.output;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(value = "Tip", description = "Advice to improve requirement structure to follow a template structure")
-public class Tip implements Serializable {
+public class OutputTip implements Serializable {
 
     @ApiModelProperty(value="name_template")
     private String template;
@@ -20,9 +20,9 @@ public class Tip implements Serializable {
     @ApiModelProperty(value="comments")
     private String comments;
 
-    public Tip (){}
+    public OutputTip(){}
 
-    public Tip (String template, String index, String expectedTokens, String comments) throws InternalErrorException{
+    public OutputTip(String template, String index, String expectedTokens, String comments) throws InternalErrorException{
         this.template = template;
         try {
             String[] parts = index.split(":");

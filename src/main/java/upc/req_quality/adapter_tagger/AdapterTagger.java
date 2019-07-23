@@ -1,8 +1,8 @@
-package upc.req_quality.adapter;
+package upc.req_quality.adapter_tagger;
 
 import java.util.List;
 
-public interface AdapterPosTagger {
+public interface AdapterTagger {
 
     List<String> getPosTags();
 

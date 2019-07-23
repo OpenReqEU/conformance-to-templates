@@ -1,4 +1,4 @@
-package upc.req_quality.adapter;
+package upc.req_quality.adapter_tagger;
 
 import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class OpenNLPPosTagger implements AdapterPosTagger {
+public class OpenNLPTagger implements AdapterTagger {
 
-    private OpenNLPPosTagger() throws InternalErrorException {
+    private OpenNLPTagger() throws InternalErrorException {
         posTags = new ArrayList<>();
         sentenceTags = new ArrayList<>();
         hashDescriptions = new HashMap<>();
@@ -24,12 +24,12 @@ public class OpenNLPPosTagger implements AdapterPosTagger {
         loadModels();
     }
 
-    public static OpenNLPPosTagger getInstance() throws InternalErrorException {
-        if (instance == null) instance = new OpenNLPPosTagger();
+    public static OpenNLPTagger getInstance() throws InternalErrorException {
+        if (instance == null) instance = new OpenNLPTagger();
         return instance;
     }
 
-    private static OpenNLPPosTagger instance;
+    private static OpenNLPTagger instance;
 
     private List<String> posTags;
     private List<String> sentenceTags;

@@ -1,4 +1,4 @@
-package upc.req_quality.entity.input_output;
+package upc.req_quality.entity.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(value = "Template", description = "A template to be checked against requirements")
-public class Template implements Serializable {
+public class InputTemplate implements Serializable {
 
     @ApiModelProperty(value="name")
     private String name;
@@ -18,9 +18,9 @@ public class Template implements Serializable {
     @ApiModelProperty(value="organization")
     private String organization;
 
-    public Template() {}
+    public InputTemplate() {}
 
-    public Template(String name, String organization, List<String> rules) {
+    public InputTemplate(String name, String organization, List<String> rules) {
         this.organization = organization;
         this.name = name;
         this.rules = rules;

@@ -1,4 +1,4 @@
-package upc.req_quality.entity.input_output;
+package upc.req_quality.entity.input;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
@@ -10,20 +10,20 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(value = "Templates", description = "A list of templates")
-public class Templates implements Serializable {
+public class InputTemplates implements Serializable {
 
     @ApiModelProperty(value="templates")
-    private List<Template> templatesArray;
+    private List<InputTemplate> templatesArray;
 
-    public Templates() {
+    public InputTemplates() {
         this.templatesArray = new ArrayList<>();
     }
 
-    public Templates(List<Template> templates) {
+    public InputTemplates(List<InputTemplate> templates) {
         this.templatesArray = templates;
     }
 
-    public List<Template> getTemplates() {
+    public List<InputTemplate> getTemplates() {
         return templatesArray;
     }
 }

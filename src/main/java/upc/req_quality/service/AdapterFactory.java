@@ -1,32 +1,33 @@
 package upc.req_quality.service;
 
-import upc.req_quality.adapter.*;
+import upc.req_quality.adapter_tagger.AdapterTagger;
+import upc.req_quality.adapter_tagger.OpenNLPTagger;
+import upc.req_quality.adapter_template.*;
 import upc.req_quality.db.SQLiteDAO;
 import upc.req_quality.db.TemplateDatabase;
-import upc.req_quality.entity.input_output.Template;
-import upc.req_quality.entity.input_output.Templates;
+import upc.req_quality.entity.input.InputTemplate;
+import upc.req_quality.entity.input.InputTemplates;
 import upc.req_quality.exception.BadBNFSyntaxException;
 import upc.req_quality.exception.InternalErrorException;
 import upc.req_quality.util.Control;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class AdapterFactory {
 
-    private static AdapterFactory ourInstance;
-    private HashMap<String,List<AdapterTemplate>> templates;
-    private AdapterPosTagger posTagger;
+    private static AdapterFactory instance;
+    private AdapterTagger adapterTagger;
+    private AdapterTemplate adapterTemplate;
+    private TemplateDatabase templateDatabase;
 
     private static final String ERROR1 = "Error loading database";
     private static final String ERROR2 = "Database error: ";
 
     private AdapterFactory() throws BadBNFSyntaxException, InternalErrorException {
-        templates = new HashMap<>();
-        posTagger = OpenNLPPosTagger.getInstance();
-        loadModels();
+        this.adapterTagger = new OpenNLPTagger();
+        this.adapterTemplate = new
     }
 
     public static AdapterFactory getInstance() throws BadBNFSyntaxException, InternalErrorException {
@@ -34,7 +35,7 @@ public class AdapterFactory {
         return ourInstance;
     }
 
-    public AdapterPosTagger getAdapterPosTagger() {
+    public AdapterTagger getAdapterTagger() {
         return posTagger;
     }
 
@@ -42,7 +43,7 @@ public class AdapterFactory {
         return templates.get(organization);
     }
 
-    public void enterNewTemplate(Template template) throws InternalErrorException, BadBNFSyntaxException {
+    public void enterNewTemplate(InputTemplate template) throws InternalErrorException, BadBNFSyntaxException {
         try {
             generateTemplate(template);
             TemplateDatabase db = new SQLiteDAO();
@@ -56,8 +57,8 @@ public class AdapterFactory {
         }
     }
 
-    public Templates checkOrganizationModels(String organization) throws InternalErrorException {
-        List<Template> auxModels;
+    public InputTemplates checkOrganizationModels(String organization) throws InternalErrorException {
+        List<InputTemplate> auxModels;
         TemplateDatabase db;
         try {
             db = new SQLiteDAO();
@@ -69,7 +70,7 @@ public class AdapterFactory {
             Control.getInstance().showErrorMessage(e.getMessage());
             throw new InternalErrorException(ERROR2 + e.getMessage());
         }
-        return new Templates(auxModels);
+        return new InputTemplates(auxModels);
     }
 
     public void clearDatabase(String organization) throws InternalErrorException {
@@ -89,9 +90,9 @@ public class AdapterFactory {
     private void loadModels() throws InternalErrorException, BadBNFSyntaxException {
         try {
             TemplateDatabase db = new SQLiteDAO();
-            List<Template> auxTemplates = db.getOrganizationTemplates(null);
+            List<InputTemplate> auxTemplates = db.getOrganizationTemplates(null);
             for (int i = 0; i < auxTemplates.size(); ++i) {
-                Template template = auxTemplates.get(i);
+                InputTemplate template = auxTemplates.get(i);
                 generateTemplate(template);
             }
         } catch (ClassNotFoundException e) {
@@ -103,7 +104,7 @@ public class AdapterFactory {
         }
     }
 
-    private void generateTemplate(Template template) throws BadBNFSyntaxException {
+    private void generateTemplate(InputTemplate template) throws BadBNFSyntaxException {
         String auxName = template.getName();
         String auxOrganization = template.getOrganization();
         List<String> auxRules = template.getRules();
