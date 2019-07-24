@@ -26,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ControllerTests {
 
     @Autowired

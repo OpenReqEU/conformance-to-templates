@@ -1,9 +1,11 @@
 package upc.req_quality.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import upc.req_quality.entity.output.OutputTip;
+import upc.req_quality.entity.output.Tip;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,18 +17,19 @@ public class Requirement implements Serializable {
 
     @ApiModelProperty(value="id")
     private String id;
-    @ApiModelProperty(value="text") //TODO change this to description or title OpenReq conformance
-    private String text;
-    @ApiModelProperty(value="tips") //TODO check input in swagger
-    private List<OutputTip> tips;
+    @ApiModelProperty(value="description")
+    private String description;
+    @JsonIgnore
+    @ApiModelProperty(value="tips")
+    private List<Tip> tips;
 
     public Requirement() {
         this.tips = new ArrayList<>();
     }
 
-    public Requirement(String id, String text, List<OutputTip> tips) {
+    public Requirement(String id, String description, List<Tip> tips) {
         this.id = id;
-        this.text = text;
+        this.description = description;
         this.tips = tips;
     }
 
@@ -34,11 +37,11 @@ public class Requirement implements Serializable {
         return id;
     }
 
-    public String getText() {
-        return text;
+    public String getDescription() {
+        return description;
     }
 
-    public List<OutputTip> getTips() {
+    public List<Tip> getTips() {
         return tips;
     }
 
@@ -46,7 +49,7 @@ public class Requirement implements Serializable {
         this.id = id;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

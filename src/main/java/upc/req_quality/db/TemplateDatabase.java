@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface TemplateDatabase {
 
+    boolean existsOrganization(String organization) throws SQLException;
+
     void saveTemplate(ParsedTemplate template) throws SQLException;
 
     List<ParsedTemplate> getOrganizationTemplates(String organization) throws NotFoundException, SQLException;

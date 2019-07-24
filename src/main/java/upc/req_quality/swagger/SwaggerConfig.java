@@ -35,7 +35,7 @@ public class SwaggerConfig {
             " <li>The name of the first rule must be main.</li>" +
             " <li>The first rule must define the structure of the requirement.</li>" +
             " <li>The other rules should be used to define auxiliary structures.</li>" +
-            " <li> Are only permitted the next tags : <ul>" +
+            " <li> The permitted tags are: <ul>" +
             " <li> plain words (specified with \"%\"). </li>" +
             " <li> pos tags of the <a href=\"http://dpdearing.com/posts/2011/12/opennlp-part-of-speech-pos-tags-penn-english-treebank/\">OpenNLP</a> library (specified with \"()\"). </li>" +
             " <li> sentence tags -NP or VP- (specified with \"<>\"). </li>" +

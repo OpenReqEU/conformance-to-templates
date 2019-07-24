@@ -27,12 +27,11 @@ public class RestApiController {
 
     @CrossOrigin
     @RequestMapping(value="/Conformance", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Check requirements conformance to templates", notes = "The operation returns the ids" +
-            " of the requirements that do not conform to any template saved in the database of the chosen organization.")
+    @ApiOperation(value = "Check requirements conformance to templates", notes = "Returns the ids" +
+            " of the requirements that do not conform to any template saved in the database of the chosen organization.", tags = "Main operations")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-                           @ApiResponse(code=400, message = "Bad request"),
-                           @ApiResponse(code=452, message = "Bad BNF syntax"),
-                           @ApiResponse(code=500, message = "Bad request")})
+                           @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
+                           @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity checkConformance(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization,
                                             @ApiParam(value="A OpenReqJson with requirements", required = true, example = "SQ-132") @RequestBody Requirements json) {
         try {
@@ -43,11 +42,11 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/InTemplates", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Save templates to the database", notes = "This operation saves the specified templates to the database. The templates must follow the structure explained in the " +
-            "top description.")
+    @ApiOperation(value = "Save templates to the database", notes = "Saves the specified templates to the database. The templates must follow the structure explained in the " +
+            "top description.", tags = "Main operations")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-                           @ApiResponse(code=452, message = "Bad BNF syntax"),
-                           @ApiResponse(code=500, message = "Internal exception")})
+                           @ApiResponse(code=400, message = "Bad BNF syntax"),
+                           @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity enterNewTemplates(@RequestBody Templates json) {
         try {
             conformanceService.enterNewTemplates(json);
@@ -58,10 +57,10 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/OutTemplates", method = RequestMethod.GET)
-    @ApiOperation(value = "Show the templates saved on the database", notes = "This operation shows the templates saved in the database of the specified organization")
+    @ApiOperation(value = "Show the templates saved on the database", notes = "Shows the templates saved in the database of the specified organization", tags = "Main operations")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-                           @ApiResponse(code=452, message = "Bad BNF syntax"),
-                           @ApiResponse(code=500, message = "Internal exception")})
+                           @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
+                           @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity checkTemplates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
         try {
             return new ResponseEntity<>(conformanceService.checkOrganizationTemplates(organization),HttpStatus.OK);
@@ -70,14 +69,27 @@ public class RestApiController {
         }
     }
 
-    @RequestMapping(value="/DeleteTemplates", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Delete templates on the database", notes = "This operation deletes all the templates of the specified organization.")
+    @RequestMapping(value="/ClearOrganizationTemplates", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete all templates of an organization", notes = "Deletes all the templates of the specified organization.", tags = "Auxiliary operations")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-                           @ApiResponse(code=452, message = "Bad BNF syntax"),
-                           @ApiResponse(code=500, message = "Internal exception")})
+            @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
+            @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity clearTemplates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
         try {
-            conformanceService.clearDatabase(organization);
+            conformanceService.clearOrganizationTemplates(organization);
+            return new ResponseEntity<>(null,HttpStatus.OK);
+        } catch (ComponentException e) {
+            return getComponentError(e);
+        }
+    }
+
+    @RequestMapping(value="/ClearDatabase", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete all data from the database", notes = "Deletes all the data from the database.", tags = "Auxiliary operations")
+    @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
+                           @ApiResponse(code=500, message = "Internal error")})
+    public ResponseEntity clearTemplates() {
+        try {
+            conformanceService.clearDatabase();
             return new ResponseEntity<>(null,HttpStatus.OK);
         } catch (ComponentException e) {
             return getComponentError(e);

@@ -35,6 +35,25 @@ public class SQLiteDAO implements TemplateDatabase {
     }
 
     @Override
+    public boolean existsOrganization(String organization) throws SQLException {
+
+        boolean found = false;
+        Connection connection = getConnection();
+        String sql = "SELECT name FROM templates WHERE organization = ?";
+
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, organization);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    found = true;
+                }
+            }
+        }
+        return found;
+    }
+
+    @Override
     public void saveTemplate(ParsedTemplate template) throws SQLException {
 
         //TODO asegurar que existe como minimo el nodo top

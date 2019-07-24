@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(value = "Tip", description = "Advice to improve requirement structure to follow a template structure")
-public class OutputTip implements Serializable {
+public class Tip implements Serializable {
 
     @ApiModelProperty(value="name_template")
     private String template;
@@ -20,9 +20,9 @@ public class OutputTip implements Serializable {
     @ApiModelProperty(value="comments")
     private String comments;
 
-    public OutputTip(){}
+    public Tip(){}
 
-    public OutputTip(String template, String index, String expectedTokens, String comments) throws InternalErrorException{
+    public Tip(String template, String index, String expectedTokens, String comments) throws InternalErrorException{
         this.template = template;
         try {
             String[] parts = index.split(":");

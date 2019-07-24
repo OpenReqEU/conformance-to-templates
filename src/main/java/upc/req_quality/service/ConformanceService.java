@@ -19,7 +19,7 @@ public interface ConformanceService {
 
     List<String> checkOrganizationTemplates(String organization) throws NotFoundException, InternalErrorException;
 
-    void clearOrganizationTemplates(String organization) throws InternalErrorException;
+    void clearOrganizationTemplates(String organization) throws NotFoundException, InternalErrorException;
 
     void clearDatabase() throws InternalErrorException;
 }

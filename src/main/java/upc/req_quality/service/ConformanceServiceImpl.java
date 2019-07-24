@@ -8,9 +8,8 @@ import upc.req_quality.entity.*;
 import upc.req_quality.entity.input.Requirements;
 import upc.req_quality.entity.input.Template;
 import upc.req_quality.entity.input.Templates;
-import upc.req_quality.entity.output.OutputTip;
+import upc.req_quality.entity.output.Tip;
 import upc.req_quality.exception.BadBNFSyntaxException;
-import upc.req_quality.exception.BadRequestException;
 import upc.req_quality.exception.InternalErrorException;
 import upc.req_quality.exception.NotFoundException;
 import upc.req_quality.util.Control;
@@ -44,13 +43,13 @@ public class ConformanceServiceImpl implements ConformanceService {
 
         for (Requirement requirement: requirements) {
 
-            String[] tokens = adapterTagger.tokenizer(requirement.getText());
+            String[] tokens = adapterTagger.tokenizer(requirement.getDescription());
             String[] tokensTagged = adapterTagger.posTagger(tokens);
             String[] chunks = adapterTagger.chunker(tokens,tokensTagged);
 
             boolean ok = false;
 
-            List<OutputTip> tips = new ArrayList<>();
+            List<Tip> tips = new ArrayList<>();
 
             //TODO do all the loop and tell the user which templates the requirement is not conformance with
             for (int i = 0; ((!ok) && i < templates.size()); ++i) {
@@ -59,12 +58,12 @@ public class ConformanceServiceImpl implements ConformanceService {
                 ok = matcherResponse.isResult();
                 if (!ok) {
                     for (MatcherError matcher_error: matcherResponse.getErrors()) {
-                        tips.add(new OutputTip(templates.get(i).getName(),matcher_error.getIndex()+":"+matcher_error.getFinalIndex(),explainError(matcher_error.getDescription(),adapterTagger),matcher_error.getComment()));
+                        tips.add(new Tip(templates.get(i).getName(),matcher_error.getIndex()+":"+matcher_error.getFinalIndex(),explainError(matcher_error.getDescription(),adapterTagger),matcher_error.getComment()));
                     }
                 }
             }
 
-            if (!ok) result.add(new Requirement(requirement.getId(),requirement.getText(),tips));
+            if (!ok) result.add(new Requirement(requirement.getId(),requirement.getDescription(),tips));
         }
 
         return new Requirements(result);
@@ -107,10 +106,11 @@ public class ConformanceServiceImpl implements ConformanceService {
     }
 
     @Override
-    public void clearOrganizationTemplates(String organization) throws InternalErrorException {
+    public void clearOrganizationTemplates(String organization) throws NotFoundException, InternalErrorException {
         AdapterFactory af = AdapterFactory.getInstance();
         TemplateDatabase templateDatabase = af.getTemplateDatabase();
         try {
+            if (!templateDatabase.existsOrganization(organization)) throw new NotFoundException("The specified organization has no templates in the database");
             templateDatabase.clearOrganizationTemplates(organization);
         } catch (SQLException sq) {
             Control.getInstance().showErrorMessage(sq.getMessage());
