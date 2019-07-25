@@ -8,6 +8,8 @@ public class Constants {
     Generic constants
      */
 
+    private int maxSyncIterations = 50;
+    private int sleepTime = 500;
     private String[] matcherTags = {"<*>","(all)"};
 
     /*
@@ -25,6 +27,14 @@ public class Constants {
     public static Constants getInstance() {
         if (instance == null) instance = new Constants();
         return instance;
+    }
+
+    public int getMaxSyncIterations() {
+        return maxSyncIterations;
+    }
+
+    public int getSleepTime() {
+        return sleepTime;
     }
 
     public String[] getMatcherTags() {

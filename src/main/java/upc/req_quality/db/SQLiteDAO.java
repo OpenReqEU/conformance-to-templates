@@ -7,41 +7,52 @@ import upc.req_quality.entity.ParsedTemplate;
 import upc.req_quality.exception.BadBNFSyntaxException;
 import upc.req_quality.exception.InternalErrorException;
 import upc.req_quality.exception.NotFoundException;
+import upc.req_quality.util.Constants;
+import upc.req_quality.util.Control;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 public class SQLiteDAO implements TemplateDatabase {
 
-    private Connection connection;
-    private static String url = "jdbc:sqlite:./templates.db";
+    private AtomicBoolean mainDbLock = new AtomicBoolean(false);
+    private static String path = "./data/";
+    private static String dbName = "templates.db";
+    private static String drivers = "jdbc:sqlite:";
 
-    public SQLiteDAO() throws ClassNotFoundException, SQLException {
+    public static void setPath(String path) {
+        SQLiteDAO.path = path;
+    }
+
+    public static String getDbName() {
+        return dbName;
+    }
+
+    private String buildDbUrl() {
+        return drivers + path + dbName;
+    }
+
+    public SQLiteDAO() throws ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
-        String sql = "PRAGMA journal_mode=WAL;";
-        Connection connection = getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            boolean correct = true;
-            if (rs.next()) {
-                String response = rs.getString(1);
-                if (!response.equals("wal")) correct = false;
-            } else correct = false;
-            if (!correct) throw new SQLException("Error while setting wal-mode");
-        }
     }
 
     @Override
     public boolean existsOrganization(String organization) throws SQLException {
 
         boolean found = false;
-        Connection connection = getConnection();
         String sql = "SELECT name FROM templates WHERE organization = ?";
 
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try(Connection connection = getConnection();
+            PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, organization);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -54,27 +65,29 @@ public class SQLiteDAO implements TemplateDatabase {
     }
 
     @Override
-    public void saveTemplate(ParsedTemplate template) throws SQLException {
+    public void saveTemplate(ParsedTemplate template) throws InternalErrorException, SQLException {
 
         //TODO asegurar que existe como minimo el nodo top
-        Connection connection = getConnection();
         String sql = "INSERT OR REPLACE INTO templates (name, organization, description) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        getAccessToUpdate();
+        try (Connection connection = getConnection();
+              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, template.getName());
             ps.setString(2, template.getOrganization());
             ps.setString(3, transformRules(template.getRules()).toString());
             ps.execute();
         }
+        releaseAccessToUpdate();
     }
 
     @Override
     public List<ParsedTemplate> getOrganizationTemplates(String organization) throws NotFoundException, SQLException {
 
         List<ParsedTemplate> templates = new ArrayList<>();
-        Connection connection = getConnection();
         String sql = "SELECT name, organization, description FROM templates WHERE organization = ?";
 
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try(Connection connection = getConnection();
+            PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, organization);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -97,10 +110,10 @@ public class SQLiteDAO implements TemplateDatabase {
     public List<String> getOrganizationTemplatesNames(String organization) throws NotFoundException, SQLException {
 
         List<String> names = new ArrayList<>();
-        Connection connection = getConnection();
         String sql = "SELECT name FROM templates WHERE organization = ?";
 
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try(Connection connection = getConnection();
+            PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, organization);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -117,20 +130,23 @@ public class SQLiteDAO implements TemplateDatabase {
     }
 
     @Override
-    public void clearOrganizationTemplates(String organization) throws SQLException {
+    public void clearOrganizationTemplates(String organization) throws InternalErrorException, SQLException {
         String sql = "DELETE FROM templates WHERE organization = ?";
-        Connection connection = getConnection();
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        getAccessToUpdate();
+        try(Connection connection = getConnection();
+            PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, organization);
             pstmt.executeUpdate();
         }
+        releaseAccessToUpdate();
     }
 
     @Override
-    public void clearDatabase() throws SQLException, IOException {
+    public void clearDatabase() throws SQLException, IOException, InternalErrorException {
 
-        File file = new File("./templates.db");
-        file.delete();
+        getAccessToUpdate();
+        deleteDataFiles("db");
+        File file = new File(path+dbName);
         if (!file.createNewFile()) throw new IOException("Error while creating database");
 
         String sql = "CREATE TABLE templates (\n"
@@ -140,25 +156,77 @@ public class SQLiteDAO implements TemplateDatabase {
                 + " PRIMARY KEY (name, organization)"
                 + ");";
 
-        Connection connection = getConnection();
-
-        try (Statement stmt = connection.createStatement()) {
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement()) {
+            configureDatabase(connection);
             stmt.execute(sql);
         }
+        releaseAccessToUpdate();
     }
 
 
     /*
     Auxiliary operations
      */
+    private void getAccessToUpdate() throws InternalErrorException {
+        int maxIterations = Constants.getInstance().getMaxSyncIterations();
+        int sleepTime = Constants.getInstance().getSleepTime();
+        boolean correct = false;
+        int count = 0;
+        Random random = new Random();
+        while (!correct && count <= maxIterations) {
+            correct = mainDbLock.compareAndSet(false,true);
+            if (!correct) {
+                ++count;
+                try {
+                    Thread.sleep(random.nextInt(sleepTime));
+                } catch (InterruptedException e) {
+                    Control.getInstance().showErrorMessage(e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+        if (count == (maxIterations + 1)) throw new InternalErrorException("Synchronization error in the main database");
+    }
 
-    private synchronized void createConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) connection = DriverManager.getConnection(url);
+    public void releaseAccessToUpdate() {
+        mainDbLock.set(false);
+    }
+
+
+    public void deleteDataFiles(String text) throws IOException, InternalErrorException {
+        Path dirPath = Paths.get(path);
+        class Control {
+            private volatile boolean error = false;
+        }
+        final Control control = new Control();
+        try (Stream<Path> walk = Files.walk(dirPath)) {
+            walk.map(Path::toFile)
+                    .forEach(file -> {
+                                if (!file.isDirectory() && file.getName().contains(text)) {
+                                    if(!file.delete()) control.error = true;
+                                }
+                            }
+                    );
+        }
+        if (control.error) throw new InternalErrorException("Error while deleting a file");
+    }
+
+    private void configureDatabase(Connection connection) throws SQLException {
+        String sql = "PRAGMA journal_mode=WAL;";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            boolean correct = true;
+            if (rs.next()) {
+                String response = rs.getString(1);
+                if (!response.equals("wal")) correct = false;
+            } else correct = false;
+            if (!correct) throw new SQLException("Error while setting wal-mode");
+        }
     }
 
     private Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) createConnection();
-        return connection;
+        return DriverManager.getConnection(buildDbUrl());
     }
 
     private JSONObject transformRules(StringTree node) {

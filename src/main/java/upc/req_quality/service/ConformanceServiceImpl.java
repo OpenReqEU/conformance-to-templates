@@ -1,15 +1,19 @@
 package upc.req_quality.service;
 
+import com.google.protobuf.ByteString;
 import org.springframework.stereotype.Service;
 import upc.req_quality.adapter_tagger.AdapterTagger;
 import upc.req_quality.adapter_template.AdapterTemplate;
 import upc.req_quality.db.TemplateDatabase;
 import upc.req_quality.entity.*;
-import upc.req_quality.entity.input.Requirements;
+import upc.req_quality.entity.input.InputRequirements;
 import upc.req_quality.entity.input.Template;
 import upc.req_quality.entity.input.Templates;
+import upc.req_quality.entity.output.OutputRequirement;
+import upc.req_quality.entity.output.OutputRequirements;
 import upc.req_quality.entity.output.Tip;
 import upc.req_quality.exception.BadBNFSyntaxException;
+import upc.req_quality.exception.BadRequestException;
 import upc.req_quality.exception.InternalErrorException;
 import upc.req_quality.exception.NotFoundException;
 import upc.req_quality.util.Control;
@@ -24,9 +28,9 @@ import java.util.regex.Pattern;
 public class ConformanceServiceImpl implements ConformanceService {
 
     @Override
-    public Requirements checkConformance(String organization, List<Requirement> requirements) throws NotFoundException, InternalErrorException {
+    public OutputRequirements checkConformance(String organization, List<Requirement> requirements) throws NotFoundException, BadRequestException, InternalErrorException {
 
-        List<Requirement> result = new ArrayList<>();
+        List<OutputRequirement> result = new ArrayList<>();
 
         AdapterFactory af = AdapterFactory.getInstance();
         AdapterTagger adapterTagger = af.getAdapterTagger();
@@ -42,7 +46,10 @@ public class ConformanceServiceImpl implements ConformanceService {
         }
 
         for (Requirement requirement: requirements) {
-
+            String id = requirement.getId();
+            String description = requirement.getDescription();
+            if (id == null) throw new BadRequestException("An input requirement has no id");
+            if (description == null) throw new BadRequestException("An input requirement with id " + id + " has no description");
             String[] tokens = adapterTagger.tokenizer(requirement.getDescription());
             String[] tokensTagged = adapterTagger.posTagger(tokens);
             String[] chunks = adapterTagger.chunker(tokens,tokensTagged);
@@ -63,10 +70,10 @@ public class ConformanceServiceImpl implements ConformanceService {
                 }
             }
 
-            if (!ok) result.add(new Requirement(requirement.getId(),requirement.getDescription(),tips));
+            if (!ok) result.add(new OutputRequirement(requirement.getId(),requirement.getDescription(),tips));
         }
 
-        return new Requirements(result);
+        return new OutputRequirements(result);
     }
 
     @Override
@@ -203,7 +210,7 @@ public class ConformanceServiceImpl implements ConformanceService {
                 firstComa = false;
                 it.remove();
             }
-            throw new BadBNFSyntaxException("Exists a cycle between the input_output rules: " + aux);
+            throw new BadBNFSyntaxException("Exists a cycle between the next rules: " + aux);
         }
 
         //put main clause at index 0

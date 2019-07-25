@@ -26,7 +26,7 @@ public class AdapterFactory {
             this.adapterTagger = new OpenNLPTagger();
             this.adapterTemplate = new GenericTemplate();
             this.templateDatabase = new SQLiteDAO();
-        } catch (InternalErrorException | SQLException | ClassNotFoundException e) {
+        } catch (InternalErrorException | ClassNotFoundException e) {
             Control.getInstance().showErrorMessage(e.getMessage());
         }
     }

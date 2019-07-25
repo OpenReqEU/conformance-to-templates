@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import upc.req_quality.entity.input.Requirements;
+import upc.req_quality.entity.input.InputRequirements;
 import upc.req_quality.entity.input.Templates;
 import upc.req_quality.exception.ComponentException;
 import upc.req_quality.service.ConformanceService;
@@ -30,10 +30,11 @@ public class RestApiController {
     @ApiOperation(value = "Check requirements conformance to templates", notes = "Returns the ids" +
             " of the requirements that do not conform to any template saved in the database of the chosen organization.", tags = "Main operations")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
+                           @ApiResponse(code=400, message = "Bad request: An input requirement has no id"),
                            @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
                            @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity checkConformance(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization,
-                                            @ApiParam(value="A OpenReqJson with requirements", required = true, example = "SQ-132") @RequestBody Requirements json) {
+                                            @ApiParam(value="A OpenReqJson with requirements", required = true, example = "SQ-132") @RequestBody InputRequirements json) {
         try {
             return new ResponseEntity<>(conformanceService.checkConformance(organization,json.getRequirements()), HttpStatus.OK);
         } catch (ComponentException e) {
@@ -57,7 +58,7 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/OutTemplates", method = RequestMethod.GET)
-    @ApiOperation(value = "Show the templates saved on the database", notes = "Shows the templates saved in the database of the specified organization", tags = "Main operations")
+    @ApiOperation(value = "Show the templates saved on the database", notes = "Returns an array with the names of the templates saved in the database of the specified organization", tags = "Main operations")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
                            @ApiResponse(code=500, message = "Internal error")})
@@ -84,7 +85,7 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/ClearDatabase", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Delete all data from the database", notes = "Deletes all the data from the database.", tags = "Auxiliary operations")
+    @ApiOperation(value = "Delete all data from the database", notes = "Deletes all the data from the database. If this method is called while a calculation is being carried out, unforeseen results may occur.", tags = "Auxiliary operations")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity clearTemplates() {

@@ -2,12 +2,14 @@
   "templates": [
     {
       "name": "Rupp",
-      "organization": "_---Test---_",
+      "organization": "Test",
       "rules": [
         "<main> ::=  <opt-condition> <np> (md) (vb) <np> | <opt-condition> <np> <modal> %PROVIDE <np> %WITH %THE %ABILITY <infinitive-vp> <np> <*> | <opt-condition> <np> <modal> %BE %ABLE <vp> <np> | <opt-condition> <np> <modal> <vp> <np>",
 "<conditional-keyword> ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS",
 "<modal> ::= %SHALL | %SHOULD | %WOULD",
 "<opt-condition> ::= <conditional-keyword> | (all)",
+"<recursive> ::= <recursive2>",
+"<recursive2> ::= <recursive>",
 "<infinitive-vp> ::= %to <vp>"
       ]
     }

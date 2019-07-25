@@ -1,8 +1,9 @@
 package upc.req_quality.service;
 
 import upc.req_quality.entity.*;
-import upc.req_quality.entity.input.Requirements;
+import upc.req_quality.entity.input.InputRequirements;
 import upc.req_quality.entity.input.Templates;
+import upc.req_quality.entity.output.OutputRequirements;
 import upc.req_quality.exception.BadBNFSyntaxException;
 import upc.req_quality.exception.BadRequestException;
 import upc.req_quality.exception.InternalErrorException;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public interface ConformanceService {
 
-    Requirements checkConformance(String organization, List<Requirement> requirements) throws NotFoundException, InternalErrorException;
+    OutputRequirements checkConformance(String organization, List<Requirement> requirements) throws NotFoundException, BadRequestException, InternalErrorException;
 
     void enterNewTemplates(Templates templates) throws InternalErrorException, BadBNFSyntaxException;
 
