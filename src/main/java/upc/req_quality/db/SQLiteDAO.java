@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 
 public class SQLiteDAO implements TemplateDatabase {
 
+    private Random random = new Random();;
     private AtomicBoolean mainDbLock = new AtomicBoolean(false);
     private static String path = "./data/";
     private static String dbName = "templates.db";
@@ -173,7 +174,6 @@ public class SQLiteDAO implements TemplateDatabase {
         int sleepTime = Constants.getInstance().getSleepTime();
         boolean correct = false;
         int count = 0;
-        Random random = new Random();
         while (!correct && count <= maxIterations) {
             correct = mainDbLock.compareAndSet(false,true);
             if (!correct) {
