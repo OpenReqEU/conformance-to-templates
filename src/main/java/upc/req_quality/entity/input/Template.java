@@ -11,11 +11,11 @@ import java.util.List;
 @ApiModel(value = "Template", description = "A template to be checked against requirements")
 public class Template implements Serializable {
 
-    @ApiModelProperty(value="name")
+    @ApiModelProperty(value="name", example = "Rupp")
     private String name;
-    @ApiModelProperty(value="rules")
+    @ApiModelProperty(value="rules", example = "[<main> ::= <np> \"to\" (vb) <*>]")
     private List<String> rules;
-    @ApiModelProperty(value="organization")
+    @ApiModelProperty(value="organization", example = "UPC")
     private String organization;
 
     public Template() {}
