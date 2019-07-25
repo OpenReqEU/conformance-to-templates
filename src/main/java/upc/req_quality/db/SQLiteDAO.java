@@ -70,15 +70,18 @@ public class SQLiteDAO implements TemplateDatabase {
 
         //TODO asegurar que existe como minimo el nodo top
         String sql = "INSERT OR REPLACE INTO templates (name, organization, description) VALUES (?, ?, ?)";
-        getAccessToUpdate();
-        try (Connection connection = getConnection();
-              PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, template.getName());
-            ps.setString(2, template.getOrganization());
-            ps.setString(3, transformRules(template.getRules()).toString());
-            ps.execute();
+        try {
+            getAccessToUpdate();
+            try (Connection connection = getConnection();
+                 PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, template.getName());
+                ps.setString(2, template.getOrganization());
+                ps.setString(3, transformRules(template.getRules()).toString());
+                ps.execute();
+            }
+        } finally {
+            releaseAccessToUpdate();
         }
-        releaseAccessToUpdate();
     }
 
     @Override
@@ -133,36 +136,43 @@ public class SQLiteDAO implements TemplateDatabase {
     @Override
     public void clearOrganizationTemplates(String organization) throws InternalErrorException, SQLException {
         String sql = "DELETE FROM templates WHERE organization = ?";
-        getAccessToUpdate();
-        try(Connection connection = getConnection();
-            PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, organization);
-            pstmt.executeUpdate();
+        try {
+            getAccessToUpdate();
+            try (Connection connection = getConnection();
+                 PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setString(1, organization);
+                pstmt.executeUpdate();
+            }
+        } finally {
+            releaseAccessToUpdate();
         }
-        releaseAccessToUpdate();
     }
 
     @Override
     public void clearDatabase() throws SQLException, IOException, InternalErrorException {
 
-        getAccessToUpdate();
-        deleteDataFiles("db");
-        File file = new File(path+dbName);
-        if (!file.createNewFile()) throw new IOException("Error while creating database");
+        try {
+            getAccessToUpdate();
+            deleteDataFiles("db");
+            File file = new File(path + dbName);
+            if (!file.createNewFile()) throw new IOException("Error while creating database");
 
-        String sql = "CREATE TABLE templates (\n"
-                + "	name varchar,\n"
-                + "	organization varchar,\n"
-                + "	description text NOT NULL,\n"
-                + " PRIMARY KEY (name, organization)"
-                + ");";
+            String sql = "CREATE TABLE templates (\n"
+                    + "	name varchar,\n"
+                    + "	organization varchar,\n"
+                    + "	description text NOT NULL,\n"
+                    + " PRIMARY KEY (name, organization)"
+                    + ");";
 
-        try (Connection connection = getConnection();
-             Statement stmt = connection.createStatement()) {
-            configureDatabase(connection);
-            stmt.execute(sql);
+            try (Connection connection = getConnection();
+                 Statement stmt = connection.createStatement()) {
+                configureDatabase(connection);
+                stmt.execute(sql);
+            }
         }
-        releaseAccessToUpdate();
+        finally {
+            releaseAccessToUpdate();
+        }
     }
 
 
