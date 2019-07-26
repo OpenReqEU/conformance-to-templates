@@ -13,7 +13,7 @@ public class Template implements Serializable {
 
     @ApiModelProperty(value="name", example = "Rupp")
     private String name;
-    @ApiModelProperty(value="rules", example = "[<main> ::= <np> \"to\" (vb) <*>]")
+    @ApiModelProperty(value="rules", example = "[<main> ::= <np> %to (vb) <*>]")
     private List<String> rules;
     @ApiModelProperty(value="organization", example = "UPC")
     private String organization;

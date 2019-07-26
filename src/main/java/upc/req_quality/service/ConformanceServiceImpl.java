@@ -54,19 +54,16 @@ public class ConformanceServiceImpl implements ConformanceService {
             String[] tokensTagged = adapterTagger.posTagger(tokens);
             String[] chunks = adapterTagger.chunker(tokens,tokensTagged);
 
-            boolean ok = false;
+            boolean ok = true;
 
             List<Tip> tips = new ArrayList<>();
 
-            //TODO do all the loop and tell the user which templates the requirement is not conformance with
-            for (int i = 0; ((!ok) && i < templates.size()); ++i) {
-                ParsedTemplate template = templates.get(i);
+            for (ParsedTemplate template: templates) {
                 MatcherResponse matcherResponse = adapterTemplate.matchTemplate(template, tokens, tokensTagged, chunks);
-                ok = matcherResponse.isResult();
-                if (!ok) {
-                    for (MatcherError matcher_error: matcherResponse.getErrors()) {
-                        tips.add(new Tip(templates.get(i).getName(),matcher_error.getIndex()+":"+matcher_error.getFinalIndex(),explainError(matcher_error.getDescription(),adapterTagger),matcher_error.getComment()));
-                    }
+                boolean aux = matcherResponse.isResult();
+                if (!aux) ok = false;
+                for (MatcherError matcher_error: matcherResponse.getErrors()) {
+                    tips.add(new Tip(template.getName(),matcher_error.getIndex()+":"+matcher_error.getFinalIndex(),explainError(matcher_error.getDescription(),adapterTagger),matcher_error.getComment()));
                 }
             }
 
