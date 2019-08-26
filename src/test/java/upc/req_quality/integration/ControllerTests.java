@@ -136,13 +136,13 @@ public class ControllerTests {
         this.mockMvc.perform(get("/upc/reqquality/check-conformance-to-templates/OutTemplates?organization=Test1"))
                 .andDo(print()).andExpect(status().isNotFound());
         this.mockMvc.perform(get("/upc/reqquality/check-conformance-to-templates/OutTemplates?organization=Test2"))
-                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(read_file_raw(path+"DeleteOrganizationTemplates/output_test2.json")));
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(read_file_raw(path+"ClearOrganizationTemplates/output_test2.json")));
     }
 
     @Test
     public void DeleteOrganizationTemplatesNotExists() throws Exception {
         this.mockMvc.perform(delete("/upc/reqquality/check-conformance-to-templates/DeleteOrganizationTemplates?organization=Test"))
-                .andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(read_file_raw(path+"DeleteOrganizationTemplates/output_notfound.json")));
+                .andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(read_file_raw(path+"ClearOrganizationTemplates/output_notfound.json")));
     }
 
     @Test
