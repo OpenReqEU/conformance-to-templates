@@ -27,8 +27,9 @@ public class RestApiController {
 
     @CrossOrigin
     @RequestMapping(value="/Conformance", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Check requirements conformance to templates", notes = "Returns the ids" +
-            " of the requirements that do not conform to any template saved in the database of the chosen organization.", tags = "Main operations")
+    @ApiOperation(value = "Check requirements conformance to templates", notes = "<p>Checks if the input requirements follow at least one of the templates of the specified organization. " +
+            "The method returns the requirements that do not conform to any template and for each one a similarity score and a set of tips to correct the structure of the requirement to " +
+            "fit the organization's templates.</p>", tags = "Main methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=400, message = "Bad request: An input requirement has no id"),
                            @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
@@ -43,8 +44,8 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/InTemplates", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Save templates to the database", notes = "Saves the specified templates to the database. The templates must follow the structure explained in the " +
-            "top description.", tags = "Main operations")
+    @ApiOperation(value = "Adds templates to an organization", notes = "<p>Adds the input templates to the service's database and assigns them to a specified organization. " +
+            "The templates must be written following a defined format explained in the top description.</p>", tags = "Main methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=400, message = "Bad BNF syntax"),
                            @ApiResponse(code=500, message = "Internal error")})
@@ -58,7 +59,7 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/OutTemplates", method = RequestMethod.GET)
-    @ApiOperation(value = "Show the templates saved on the database", notes = "Returns an array with the names of the templates saved in the database of the specified organization", tags = "Main operations")
+    @ApiOperation(value = "Returns the templates of an organization", notes = "Returns an array with the names of the templates saved in the database of the specified organization", tags = "Main methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
                            @ApiResponse(code=500, message = "Internal error")})
@@ -70,8 +71,8 @@ public class RestApiController {
         }
     }
 
-    @RequestMapping(value="/ClearOrganizationTemplates", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Delete all templates of an organization", notes = "Deletes all the templates of the specified organization.", tags = "Auxiliary operations")
+    @RequestMapping(value="/DeleteOrganizationTemplates", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete all templates of an organization", notes = "Deletes all the templates of the specified organization.", tags = "Auxiliary methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
             @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
             @ApiResponse(code=500, message = "Internal error")})
@@ -85,7 +86,7 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/ClearDatabase", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Delete all data from the database", notes = "Deletes all the data from the database. If this method is called while a calculation is being carried out, unforeseen results may occur.", tags = "Auxiliary operations")
+    @ApiOperation(value = "Delete all data from the database", notes = "Deletes all data from the database. If this method is called while a calculation is being carried out, unforeseen results may occur.", tags = "Auxiliary methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity clearTemplates() {

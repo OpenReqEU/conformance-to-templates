@@ -124,25 +124,25 @@ public class ControllerTests {
      */
 
     @Test
-    public void ClearOrganizationTemplates() throws Exception {
+    public void deleteOrganizationTemplates() throws Exception {
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/InTemplates").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"ClearOrganizationTemplates/input_template_1.json")))
                 .andDo(print()).andExpect(status().isOk());
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/InTemplates").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"ClearOrganizationTemplates/input_template_2.json")))
                 .andDo(print()).andExpect(status().isOk());
         this.mockMvc.perform(post("/upc/reqquality/check-conformance-to-templates/InTemplates").contentType(MediaType.APPLICATION_JSON).content(read_file(path+"ClearOrganizationTemplates/input_template_3.json")))
                 .andDo(print()).andExpect(status().isOk());
-        this.mockMvc.perform(delete("/upc/reqquality/check-conformance-to-templates/ClearOrganizationTemplates?organization=Test1"))
+        this.mockMvc.perform(delete("/upc/reqquality/check-conformance-to-templates/DeleteOrganizationTemplates?organization=Test1"))
                 .andDo(print()).andExpect(status().isOk());
         this.mockMvc.perform(get("/upc/reqquality/check-conformance-to-templates/OutTemplates?organization=Test1"))
                 .andDo(print()).andExpect(status().isNotFound());
         this.mockMvc.perform(get("/upc/reqquality/check-conformance-to-templates/OutTemplates?organization=Test2"))
-                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(read_file_raw(path+"ClearOrganizationTemplates/output_test2.json")));
+                .andDo(print()).andExpect(status().isOk()).andExpect(content().string(read_file_raw(path+"DeleteOrganizationTemplates/output_test2.json")));
     }
 
     @Test
-    public void ClearOrganizationTemplatesNotExists() throws Exception {
-        this.mockMvc.perform(delete("/upc/reqquality/check-conformance-to-templates/ClearOrganizationTemplates?organization=Test"))
-                .andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(read_file_raw(path+"ClearOrganizationTemplates/output_notfound.json")));
+    public void DeleteOrganizationTemplatesNotExists() throws Exception {
+        this.mockMvc.perform(delete("/upc/reqquality/check-conformance-to-templates/DeleteOrganizationTemplates?organization=Test"))
+                .andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(read_file_raw(path+"DeleteOrganizationTemplates/output_notfound.json")));
     }
 
     @Test

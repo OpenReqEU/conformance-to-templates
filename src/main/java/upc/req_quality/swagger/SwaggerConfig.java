@@ -14,20 +14,25 @@ import java.util.HashSet;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-    private static final String LICENCE_TEXT = "License";
     private static final String TITLE = "Requirements Conformance to Templates";
-    private static final String DESCRIPTON = "<p> This service is meant to provide automation for checking requirements" +
-            " conformance to boilerplates/templates. A boilerplate or template organizes the syntactic structure of a" +
-            " requirement statement into a number of pre-defined slots.</p>" +
-            " <p> This API has two main operations:</p>" +
-            " <ul>" +
-            " <li> InTemplates </li>" +
-            " <li> Conformance </li></ul>" +
-            " <p> The first operation serves to add templates to the API database. The templates must be written following a defined format explained later in this section. The " +
-            "operation receives the template and organization names as parameters which identify the template in the database. We use the OpenNLP library to process the templates and the requirements. </p>" +
-            " <p> The second operation checks if the input requirements follow one or more templates stored in the database. Each requirement is compared with all the templates " +
-            "of the organization received as parameter. The method returns the requirements that do not conform to any template. In this case, the API also returns a conformance score and one or more tips " +
-            " to help improving the requirement. </p>" +
+    private static final String DESCRIPTION = "" +
+            "<p> This service is meant to provide automation for checking requirements " +
+            "conformance to boilerplates/templates. A boilerplate or template organizes the syntactic structure of a " +
+            "requirement statement into some pre-defined slots.</p>" +
+            "<p> There are two type of operations (each method has a more extensive description in its own operation box):</p>" +
+            "<ul>" +
+            "<li> Main methods " +
+            "<ul>" +
+            "<li>InTemplates: Adds the input templates to the service's database and assigns them to a specified organization. The templates must be written following a defined format explained later in this section.</li>" +
+            "<li>OutTemplates: Returns the templates of a specified organization.</li>" +
+            "<li>Conformance: Checks if the input requirements follow at least one of the templates of a specified organization.</li>" +
+            "</ul></li>" +
+            "<li> Auxiliary methods" +
+            "<ul>" +
+            "<li>DeleteOrganizationTemplates: Deletes the templates of a specified organization.</li>" +
+            "<li>ClearDatabase: Deletes all data from the database.</li>" +
+            "</ul></li>" +
+            "</ul>" +
             " <p> A template follows a modified BNF diagram:</p>" +
             " <ul>" +
             " <li>A template is defined by one or more rules (the rules are defined by an array of strings).</li>" +
@@ -43,7 +48,7 @@ public class SwaggerConfig {
             " <ul> <li> | : OR </li>" +
             " <li> (all) : ignores the rule</li>" +
             " <li> <*> : accepts anything that comes after </li></ul></li></ul></li></ul>" +
-            "<p> An example: </p> <ul> " +
+            "<p> An example (Rupp template): </p> <ul> " +
             "<li> &ltmain&gt ::= &ltopt-condition&gt &ltnp&gt (md) (vb) &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %PROVIDE &ltnp&gt %WITH %THE %ABILITY &ltinfinitive-vp&gt &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %BE %ABLE &ltvp&gt &ltnp&gt </li>" +
             "<li> &ltconditional-keyword&gt ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS </li>" +
             "<li> &ltmodal&gt ::= %SHALL | %SHOULD | %WOULD </li>" +
@@ -54,8 +59,9 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title(TITLE)
-                .description(DESCRIPTON)
-                .license(LICENCE_TEXT)
+                .description(DESCRIPTION)
+                .license("License").licenseUrl("https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt")
+                .version("2.0")
                 .build();
     }
 
