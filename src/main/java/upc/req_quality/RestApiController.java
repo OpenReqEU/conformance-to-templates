@@ -28,7 +28,7 @@ public class RestApiController {
     @CrossOrigin
     @RequestMapping(value="/Conformance", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Check requirements conformance to templates", notes = "<p>Checks if the input requirements follow at least one of the templates of the specified organization. " +
-            "The method returns the requirements that do not conform to any template and for each one a similarity score and a set of tips to correct the structure of the requirement to " +
+            "The method returns the requirements that do not conform to any template and for each one a set of tips to correct the structure of the requirement to " +
             "fit the organization's templates.</p>", tags = "Main methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
                            @ApiResponse(code=400, message = "Bad request: An input requirement has no id"),

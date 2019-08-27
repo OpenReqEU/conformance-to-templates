@@ -1,0 +1,280 @@
+swagger: '2.0'
+info:
+  description: '<p> This service is meant to provide automation for checking requirements conformance to boilerplates/templates. A boilerplate or template organizes the syntactic structure of a requirement statement into some pre-defined slots.</p><p> There are two type of operations (each method has a more extensive description in its own operation box):</p><ul><li> Main methods <ul><li>InTemplates: Adds the input templates to the service''s database and assigns them to a specified organization. The templates must be written following a defined format explained later in this section.</li><li>OutTemplates: Returns the templates of a specified organization.</li><li>Conformance: Checks if the input requirements follow at least one of the templates of a specified organization.</li></ul></li><li> Auxiliary methods<ul><li>DeleteOrganizationTemplates: Deletes the templates of a specified organization.</li><li>ClearDatabase: Deletes all data from the database.</li></ul></li></ul> <p> A template follows a modified BNF diagram:</p> <ul> <li>A template is defined by one or more rules (the rules are defined by an array of strings).</li> <li>The first word of each rule must be written as " &ltname_of_the_rule&gt ::= " that defines the name of the rule.</li> <li>The name of the first rule must be main.</li> <li>The first rule must define the structure of the requirement.</li> <li>The other rules should be used to define auxiliary structures.</li> <li> The permitted tags are: <ul> <li> plain words (specified with "%"). </li> <li> pos tags of the <a href="http://dpdearing.com/posts/2011/12/opennlp-part-of-speech-pos-tags-penn-english-treebank/">OpenNLP</a> library (specified with "()"). </li> <li> sentence tags -NP or VP- (specified with "<>"). </li> <li> component special tags:   <ul> <li> | : OR </li> <li> (all) : ignores the rule</li> <li> <*> : accepts anything that comes after </li></ul></li></ul></li></ul><p> An example (Rupp template): </p> <ul> <li> &ltmain&gt ::= &ltopt-condition&gt &ltnp&gt (md) (vb) &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %PROVIDE &ltnp&gt %WITH %THE %ABILITY &ltinfinitive-vp&gt &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %BE %ABLE &ltvp&gt &ltnp&gt </li><li> &ltconditional-keyword&gt ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS </li><li> &ltmodal&gt ::= %SHALL | %SHOULD | %WOULD </li><li> &ltopt-condition&gt ::= &ltconditional-keyword&gt | (all) </li><li> &ltinfinitive-vp&gt ::= %to &ltvp&gt </li> </ul><p> The API uses UTF-8 charset. Also, it uses the OpenReq format for input JSONs. </p>'
+  version: '2.0'
+  title: Requirements Conformance to Templates
+  license:
+    name: License
+    url: 'https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt'
+host: api.openreq.eu
+basePath: /
+tags:
+  - name: rest-api-controller
+    description: Rest Api Controller
+schemes:
+  - https
+paths:
+  /upc/reqquality/check-conformance-to-templates/ClearDatabase:
+    delete:
+      tags:
+        - Auxiliary methods
+      summary: Delete all data from the database
+      description: 'Deletes all data from the database. If this method is called while a calculation is being carried out, unforeseen results may occur.'
+      operationId: clearTemplatesUsingDELETE
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '500':
+          description: Internal error
+      deprecated: false
+  /upc/reqquality/check-conformance-to-templates/Conformance:
+    post:
+      tags:
+        - Main methods
+      summary: Check requirements conformance to templates
+      description: <p>Checks if the input requirements follow at least one of the templates of the specified organization. The method returns the requirements that do not conform to any template and for each one a set of tips to correct the structure of the requirement to fit the organization's templates.</p>
+      operationId: checkConformanceUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: json
+          description: A OpenReqJson with requirements
+          required: true
+          schema:
+            $ref: '#/definitions/Requirements'
+        - name: organization
+          in: query
+          description: The name of the organization
+          required: true
+          type: string
+          allowEmptyValue: false
+          x-example: UPC
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '400':
+          description: 'Bad request: An input requirement has no id'
+        '404':
+          description: 'Not found: The organization UPC has no templates in the database'
+        '500':
+          description: Internal error
+      deprecated: false
+  /upc/reqquality/check-conformance-to-templates/DeleteOrganizationTemplates:
+    delete:
+      tags:
+        - Auxiliary methods
+      summary: Delete all templates of an organization
+      description: Deletes all the templates of the specified organization.
+      operationId: clearTemplatesUsingDELETE_1
+      produces:
+        - '*/*'
+      parameters:
+        - name: organization
+          in: query
+          description: The name of the organization
+          required: true
+          type: string
+          allowEmptyValue: false
+          x-example: UPC
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '404':
+          description: 'Not found: The organization UPC has no templates in the database'
+        '500':
+          description: Internal error
+      deprecated: false
+  /upc/reqquality/check-conformance-to-templates/InTemplates:
+    post:
+      tags:
+        - Main methods
+      summary: Adds templates to an organization
+      description: <p>Adds the input templates to the service's database and assigns them to a specified organization. The templates must be written following a defined format explained in the top description.</p>
+      operationId: enterNewTemplatesUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: json
+          description: json
+          required: true
+          schema:
+            $ref: '#/definitions/Templates'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '400':
+          description: Bad BNF syntax
+        '500':
+          description: Internal error
+      deprecated: false
+  /upc/reqquality/check-conformance-to-templates/OutTemplates:
+    get:
+      tags:
+        - Main methods
+      summary: Returns the templates of an organization
+      description: Returns an array with the names of the templates saved in the database of the specified organization
+      operationId: checkTemplatesUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: organization
+          in: query
+          description: The name of the organization
+          required: true
+          type: string
+          allowEmptyValue: false
+          x-example: UPC
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '404':
+          description: 'Not found: The organization UPC has no templates in the database'
+        '500':
+          description: Internal error
+      deprecated: false
+definitions:
+  Requirement:
+    type: object
+    properties:
+      description:
+        type: string
+        example: The Surveillance and Tracking module shall provide the system administrator with the ability to monitor system configuration changes posted to the database.
+        description: description
+      id:
+        type: string
+        example: UPC-1
+        description: id
+    title: Requirement
+    description: A requirement with id and text
+  Requirements:
+    type: object
+    properties:
+      requirements:
+        type: array
+        items:
+          $ref: '#/definitions/Requirement'
+    title: Requirements
+    description: A list of requirements with id and text
+  ResponseEntity:
+    type: object
+    properties:
+      body:
+        type: object
+      statusCode:
+        type: string
+        enum:
+          - '100'
+          - '101'
+          - '102'
+          - '103'
+          - '200'
+          - '201'
+          - '202'
+          - '203'
+          - '204'
+          - '205'
+          - '206'
+          - '207'
+          - '208'
+          - '226'
+          - '300'
+          - '301'
+          - '302'
+          - '303'
+          - '304'
+          - '305'
+          - '307'
+          - '308'
+          - '400'
+          - '401'
+          - '402'
+          - '403'
+          - '404'
+          - '405'
+          - '406'
+          - '407'
+          - '408'
+          - '409'
+          - '410'
+          - '411'
+          - '412'
+          - '413'
+          - '414'
+          - '415'
+          - '416'
+          - '417'
+          - '418'
+          - '419'
+          - '420'
+          - '421'
+          - '422'
+          - '423'
+          - '424'
+          - '426'
+          - '428'
+          - '429'
+          - '431'
+          - '451'
+          - '500'
+          - '501'
+          - '502'
+          - '503'
+          - '504'
+          - '505'
+          - '506'
+          - '507'
+          - '508'
+          - '509'
+          - '510'
+          - '511'
+      statusCodeValue:
+        type: integer
+        format: int32
+    title: ResponseEntity
+  Template:
+    type: object
+    properties:
+      name:
+        type: string
+        example: Rupp
+        description: name
+      organization:
+        type: string
+        example: UPC
+        description: organization
+      rules:
+        type: array
+        example:
+          - '<main> ::= <np> %to (vb) <*>'
+        description: rules
+        items:
+          type: string
+    title: Template
+    description: A template to be checked against requirements
+  Templates:
+    type: object
+    properties:
+      templates:
+        type: array
+        items:
+          $ref: '#/definitions/Template'
+    title: Templates
+    description: A list of templates
