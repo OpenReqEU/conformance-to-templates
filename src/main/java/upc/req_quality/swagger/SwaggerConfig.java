@@ -22,38 +22,38 @@ public class SwaggerConfig {
     private static final String TITLE = "Requirements Conformance to Templates";
     private static final String DESCRIPTION = "" +
             "<p> This service is meant to provide automation for checking requirements " +
-            "conformance to boilerplates/templates. A boilerplate or template organizes the syntactic structure of a " +
-            "requirement statement into some pre-defined slots.</p>" +
+            "conformance to boilerplates/templates. A boilerplate or template contains the syntactic structure of a " +
+            "requirement statement.</p>" +
             "<p> There are two type of operations (each method has a more extensive description in its own operation box):</p>" +
             "<ul>" +
             "<li> Main methods " +
             "<ul>" +
-            "<li>InTemplates: Adds the input templates to the service's database and assigns them to a specified organization. The templates must be written following a defined format explained later in this section.</li>" +
-            "<li>OutTemplates: Returns the templates of a specified organization.</li>" +
-            "<li>Conformance: Checks if the input requirements follow at least one of the templates of a specified organization.</li>" +
+            "<li><i>InTemplates</i>: Adds templates to the service's database and assigns them to the specified organization. The templates must be written following a defined format explained later in this section.</li>" +
+            "<li><i>OutTemplates</i>: Returns the templates of the specified organization.</li>" +
+            "<li><i>Conformance</i>: Checks if the input requirements follow at least one of the templates of the specified organization.</li>" +
             "</ul></li>" +
             "<li> Auxiliary methods" +
             "<ul>" +
-            "<li>DeleteOrganizationTemplates: Deletes the templates of a specified organization.</li>" +
-            "<li>ClearDatabase: Deletes all data from the database.</li>" +
+            "<li><i>DeleteOrganizationTemplates</i>: Deletes the templates of the specified organization.</li>" +
+            "<li><i>ClearDatabase</i>: Deletes all the templates from the database.</li>" +
             "</ul></li>" +
             "</ul>" +
             " <p> A template follows a modified BNF diagram:</p>" +
             " <ul>" +
             " <li>A template is defined by one or more rules (the rules are defined by an array of strings).</li>" +
             " <li>The first word of each rule must be written as \" &ltname_of_the_rule&gt ::= \" that defines the name of the rule.</li>" +
-            " <li>The name of the first rule must be main.</li>" +
+            " <li>The name of the first rule must be <i>main</i>.</li>" +
             " <li>The first rule must define the structure of the requirement.</li>" +
             " <li>The other rules should be used to define auxiliary structures.</li>" +
             " <li> The permitted tags are: <ul>" +
             " <li> plain words (specified with \"%\"). </li>" +
             " <li> pos tags of the <a href=\"http://dpdearing.com/posts/2011/12/opennlp-part-of-speech-pos-tags-penn-english-treebank/\">OpenNLP</a> library (specified with \"()\"). </li>" +
-            " <li> sentence tags -NP or VP- (specified with \"<>\"). </li>" +
+            " <li> sentence tags -<i>NP</i> or <i>VP</i>- (specified with \"<>\"). </li>" +
             " <li> component special tags:  " +
-            " <ul> <li> | : OR </li>" +
-            " <li> (all) : ignores the rule</li>" +
-            " <li> <*> : accepts anything that comes after </li></ul></li></ul></li></ul>" +
-            "<p> An example (Rupp template): </p> <ul> " +
+            " <ul> <li> <i>|</i> : OR </li>" +
+            " <li> <i>(all)</i> : ignores the rule</li>" +
+            " <li> <i><*></i> : accepts anything that comes after </li></ul></li></ul></li></ul>" +
+            "<p> An example of the needed template structure by the service is as follow. The example contains the Rupp's template: </p> <ul> " +
             "<li> &ltmain&gt ::= &ltopt-condition&gt &ltnp&gt (md) (vb) &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %PROVIDE &ltnp&gt %WITH %THE %ABILITY &ltinfinitive-vp&gt &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %BE %ABLE &ltvp&gt &ltnp&gt </li>" +
             "<li> &ltconditional-keyword&gt ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS </li>" +
             "<li> &ltmodal&gt ::= %SHALL | %SHOULD | %WOULD </li>" +

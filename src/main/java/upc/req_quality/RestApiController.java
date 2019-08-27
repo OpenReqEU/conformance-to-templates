@@ -27,15 +27,15 @@ public class RestApiController {
 
     @CrossOrigin
     @RequestMapping(value="/Conformance", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Check requirements conformance to templates", notes = "<p>Checks if the input requirements follow at least one of the templates of the specified organization. " +
+    @ApiOperation(value = "Check whether requirements are conformant to templates", notes = "<p>Checks if the input requirements follow at least one of the templates of the specified organization. " +
             "The method returns the requirements that do not conform to any template and for each one a set of tips to correct the structure of the requirement to " +
             "fit the organization's templates.</p>", tags = "Main methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-                           @ApiResponse(code=400, message = "Bad request: An input requirement has no id"),
-                           @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
-                           @ApiResponse(code=500, message = "Internal error")})
+            @ApiResponse(code=400, message = "Bad request: An input requirement has no id"),
+            @ApiResponse(code=404, message = "Not found: The organization has no templates in the database"),
+            @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity checkConformance(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization,
-                                            @ApiParam(value="A OpenReqJson with requirements", required = true, example = "SQ-132") @RequestBody InputRequirements json) {
+                                           @ApiParam(value="A OpenReq JSON with requirements", required = true, example = "SQ-132") @RequestBody InputRequirements json) {
         try {
             return new ResponseEntity<>(conformanceService.checkConformance(organization,json.getRequirements()), HttpStatus.OK);
         } catch (ComponentException e) {
@@ -44,11 +44,11 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/InTemplates", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Adds templates to an organization", notes = "<p>Adds the input templates to the service's database and assigns them to a specified organization. " +
+    @ApiOperation(value = "Adds templates to an organization", notes = "<p>Adds the input templates to the service's database and assigns them to the specified organizations. " +
             "The templates must be written following a defined format explained in the top description.</p>", tags = "Main methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-                           @ApiResponse(code=400, message = "Bad BNF syntax"),
-                           @ApiResponse(code=500, message = "Internal error")})
+            @ApiResponse(code=400, message = "Bad BNF syntax"),
+            @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity enterNewTemplates(@RequestBody Templates json) {
         try {
             conformanceService.enterNewTemplates(json);
@@ -59,11 +59,11 @@ public class RestApiController {
     }
 
     @RequestMapping(value="/OutTemplates", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns the templates of an organization", notes = "Returns an array with the names of the templates saved in the database of the specified organization", tags = "Main methods")
+    @ApiOperation(value = "Returns the templates of an organization", notes = "Returns an array with the names of the templates saved in the database of the specified organization. ", tags = "Main methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-                           @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
-                           @ApiResponse(code=500, message = "Internal error")})
-    public ResponseEntity checkTemplates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
+            @ApiResponse(code=404, message = "Not found: The organization has no templates in the database"),
+            @ApiResponse(code=500, message = "Internal error")})
+    public ResponseEntity checkTemplates(@ApiParam(value="The name of the organization. ", required = true, example = "UPC") @RequestParam String organization) {
         try {
             return new ResponseEntity<>(conformanceService.checkOrganizationTemplates(organization),HttpStatus.OK);
         } catch (ComponentException e) {
@@ -74,7 +74,7 @@ public class RestApiController {
     @RequestMapping(value="/DeleteOrganizationTemplates", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete all templates of an organization", notes = "Deletes all the templates of the specified organization.", tags = "Auxiliary methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-            @ApiResponse(code=404, message = "Not found: The organization UPC has no templates in the database"),
+            @ApiResponse(code=404, message = "Not found: The organization has no templates in the database"),
             @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity clearTemplates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
         try {
@@ -88,7 +88,7 @@ public class RestApiController {
     @RequestMapping(value="/ClearDatabase", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete all data from the database", notes = "Deletes all data from the database. If this method is called while a calculation is being carried out, unforeseen results may occur.", tags = "Auxiliary methods")
     @ApiResponses(value = {@ApiResponse(code=200, message = "OK"),
-                           @ApiResponse(code=500, message = "Internal error")})
+            @ApiResponse(code=500, message = "Internal error")})
     public ResponseEntity clearTemplates() {
         try {
             conformanceService.clearDatabase();
