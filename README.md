@@ -63,6 +63,10 @@ Steps to configure the service:
         - en-pos-perceptron.bin
 
     2. Download and install 8 JDK and last Maven version. 
+    
+    3. Run the service (Follow the steps explained below)
+    
+    4. Create the default database file calling the method ClearDatabase exposed in the API i.e. curl -X DELETE 'http://localhost:9409/upc/reqquality/check-conformance-to-templates/ClearDatabase'
 
 Steps to run the service:
 
