@@ -66,19 +66,15 @@ public class SwaggerConfig {
                 .title(TITLE)
                 .description(DESCRIPTION)
                 .license("License").licenseUrl("https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt")
-                .version("2.0")
+                .version("1.0")
                 .build();
     }
 
     @Bean
     public Docket api() {
-        HashSet<String> protocols = new HashSet<>();
-        protocols.add("https");
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo())
-                .host("api.openreq.eu/conformance-to-templates")
-                .protocols(protocols)
                 .pathMapping("/")
                 .select()
                 .paths(PathSelectors.regex("/upc.*"))
