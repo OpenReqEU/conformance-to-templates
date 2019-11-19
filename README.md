@@ -78,7 +78,7 @@ Steps to run the service:
 
 All requests must be sent to "http://localhost:9409/upc/reqquality/check-conformance-to-templates/".
 
-Check API details [here](http://217.172.12.199:9409/swagger-ui.html).
+Check API details [here](https://api.openreq.eu/conformance-to-templates/swagger-ui.html#/).
 
 ### Notes for developers
 
