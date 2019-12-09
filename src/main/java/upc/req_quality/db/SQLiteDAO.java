@@ -68,7 +68,6 @@ public class SQLiteDAO implements TemplateDatabase {
     @Override
     public void saveTemplate(ParsedTemplate template) throws InternalErrorException, SQLException {
 
-        //TODO asegurar que existe como minimo el nodo top
         String sql = "INSERT OR REPLACE INTO templates (name, organization, description) VALUES (?, ?, ?)";
         try {
             getAccessToUpdate();
