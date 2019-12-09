@@ -72,13 +72,9 @@ public class SwaggerConfig {
 
     @Bean
     public Docket api() {
-        HashSet<String> protocols = new HashSet<>();
-        protocols.add("https");
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo())
-                .host("api.openreq.eu/conformance-to-templates")
-                .protocols(protocols)
                 .pathMapping("/")
                 .select()
                 .paths(PathSelectors.regex("/upc.*"))

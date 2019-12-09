@@ -52,7 +52,7 @@ public class RestApiController {
     public ResponseEntity enterNewTemplates(@RequestBody Templates json) {
         try {
             conformanceService.enterNewTemplates(json);
-            return new ResponseEntity<>(null, HttpStatus.OK);
+            return createEmptySuccessResponse();
         } catch (ComponentException e) {
             return getComponentError(e);
         }
@@ -79,7 +79,7 @@ public class RestApiController {
     public ResponseEntity clearTemplates(@ApiParam(value="The name of the organization", required = true, example = "UPC") @RequestParam String organization) {
         try {
             conformanceService.clearOrganizationTemplates(organization);
-            return new ResponseEntity<>(null,HttpStatus.OK);
+            return createEmptySuccessResponse();
         } catch (ComponentException e) {
             return getComponentError(e);
         }
@@ -92,7 +92,7 @@ public class RestApiController {
     public ResponseEntity clearTemplates() {
         try {
             conformanceService.clearDatabase();
-            return new ResponseEntity<>(null,HttpStatus.OK);
+            return createEmptySuccessResponse();
         } catch (ComponentException e) {
             return getComponentError(e);
         }
@@ -104,6 +104,13 @@ public class RestApiController {
         result.put("error", e.getError());
         result.put("message", e.getMessage());
         return new ResponseEntity<>(result, HttpStatus.valueOf(e.getStatus()));
+    }
+
+    private ResponseEntity createEmptySuccessResponse() {
+        LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        result.put("status", "200");
+        result.put("message", "Success");
+        return new ResponseEntity<>(result, HttpStatus.valueOf(200));
     }
 
 }
