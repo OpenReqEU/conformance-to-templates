@@ -12,7 +12,7 @@ Next sections provide a general overview of the technical details of the conform
 
 ### Main functionalities
 
-There are two type of operations (each method has a more extensive description in its own operation box):
+There are two types of operations (each method has a more extensive description in its own operation box):
 
     - Main methods
         - InTemplates: Adds the input templates to the service's database and assigns them to a specified organization. The templates must be written following a defined format explained later in this section.

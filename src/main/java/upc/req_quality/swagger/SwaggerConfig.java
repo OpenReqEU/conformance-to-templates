@@ -24,7 +24,7 @@ public class SwaggerConfig {
             "<p> This service is meant to provide automation for checking requirements " +
             "conformance to boilerplates/templates. A boilerplate or template contains the syntactic structure of a " +
             "requirement statement.</p>" +
-            "<p> There are two type of operations (each method has a more extensive description in its own operation box):</p>" +
+            "<p> There are two types of operations (each method has a more extensive description in its own operation box):</p>" +
             "<ul>" +
             "<li> Main methods " +
             "<ul>" +
@@ -53,7 +53,7 @@ public class SwaggerConfig {
             " <ul> <li> <i>|</i> : OR </li>" +
             " <li> <i>(all)</i> : ignores the rule</li>" +
             " <li> <i><*></i> : accepts anything that comes after </li></ul></li></ul></li></ul>" +
-            "<p> An example of the needed template structure by the service is as follow. The example contains the Rupp's template: </p> <ul> " +
+            "<p> An example of the needed template structure of the service is as follows. The example contains the Rupp's template: </p> <ul> " +
             "<li> &ltmain&gt ::= &ltopt-condition&gt &ltnp&gt (md) (vb) &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %PROVIDE &ltnp&gt %WITH %THE %ABILITY &ltinfinitive-vp&gt &ltnp&gt | &ltopt-condition&gt &ltnp&gt &ltmodal&gt %BE %ABLE &ltvp&gt &ltnp&gt </li>" +
             "<li> &ltconditional-keyword&gt ::= %IF | %AFTER | %AS %SOON %AS | %AS %LONG %AS </li>" +
             "<li> &ltmodal&gt ::= %SHALL | %SHOULD | %WOULD </li>" +
